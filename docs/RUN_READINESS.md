@@ -15,15 +15,16 @@
 
 ## What is not established
 
-This baseline has not yet been proven to start end-to-end. At the initial
-inspection, the local machine had Node.js and npm but no Java runtime, Maven,
-or Docker. No runtime or container dependency has been installed as part of
-the import.
+The Docker baseline has now been proven to start end-to-end using PostgreSQL
+15, Java 11 and Node 18 images. Native Java, Maven and PostgreSQL installations
+are not required. The services bind to loopback ports only and use generated
+local credentials plus synthetic data.
 
-The source has no container definition, CI workflow, database migration tool,
-or production-ready test suite. Its backend test configuration explicitly skips
-the Maven test phase. It also includes legacy state-changing endpoints that
-accept `GET`; do not expose it publicly before security remediation.
+The source now has a local Docker Compose definition but no CI workflow,
+database migration tool or production-ready test suite. Its backend test
+configuration explicitly skips the Maven test phase. It also includes legacy
+state-changing endpoints that accept `GET`; do not expose it publicly before
+security remediation.
 
 ## Safe verification order
 

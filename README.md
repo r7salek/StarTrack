@@ -31,6 +31,12 @@ Start with [run readiness](docs/RUN_READINESS.md), then work through the
 [baseline verification record](docs/BASELINE_VERIFICATION.md). Do not use a production
 database, user directory, or OAuth application during baseline verification.
 
+## Local Docker baseline
+
+The isolated baseline is run through Docker Compose with generated local-only
+credentials and synthetic data. Follow [local Docker development](docs/LOCAL_DEVELOPMENT.md)
+for the build, start, smoke-test and stop commands.
+
 ## Licence and attribution
 
 The imported code is under the [MIT licence](LICENSE), with CPC-M bioArchive

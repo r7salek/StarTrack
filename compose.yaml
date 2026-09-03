@@ -1,0 +1,73 @@
+name: startrack
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: starTrack
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${STARTRACK_DB_PASSWORD:?Run scripts/init-local-env.sh first}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - startrack-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d starTrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  db-init:
+    image: postgres:15-alpine
+    environment:
+      PGPASSWORD: ${STARTRACK_DB_PASSWORD:?Run scripts/init-local-env.sh first}
+    command:
+      - psql
+      - -h
+      - db
+      - -U
+      - postgres
+      - -d
+      - starTrack
+      - -v
+      - ON_ERROR_STOP=1
+      - -c
+      - CREATE SCHEMA IF NOT EXISTS startrack AUTHORIZATION postgres;
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    image: startrack-backend:local
+    build:
+      context: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/starTrack
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${STARTRACK_DB_PASSWORD:?Run scripts/init-local-env.sh first}
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 5
+      STARTRACK_TOKEN_SECRET: ${STARTRACK_TOKEN_SECRET:?Run scripts/init-local-env.sh first}
+      STARTRACK_BOOTSTRAP_ADMIN_ENABLED: "true"
+      STARTRACK_BOOTSTRAP_ADMIN_EMAIL: ${STARTRACK_BOOTSTRAP_ADMIN_EMAIL:?Run scripts/init-local-env.sh first}
+      STARTRACK_BOOTSTRAP_ADMIN_PASSWORD: ${STARTRACK_BOOTSTRAP_ADMIN_PASSWORD:?Run scripts/init-local-env.sh first}
+      STARTRACK_REMOTE_PIDS: "false"
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+
+  frontend:
+    image: startrack-frontend:local
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "127.0.0.1:4200:4200"
+    depends_on:
+      - backend
+
+volumes:
+  startrack-postgres:

@@ -1,6 +1,8 @@
+import { environment } from 'src/environments/environment';
+
 /** Defining URLS for OAUth autorizations */
 export class AppConstants {
-  private static API_BASE_URL = 'http://localhost:8080/'; // Serve URL (Backend)
+  private static API_BASE_URL = `${environment.apiBaseUrl.replace(/\/+$/, '')}/`;
   //private static API_BASE_URL = 'https://brc.camide.cam.ac.uk:443/backend/'; // Serve URL (Backend) srvphstra DEV
   //private static API_BASE_URL ='https://srvphstrata.srv.med.uni-muenchen.de:443/backend/'; // production URL (Backend) test
   private static OAUTH2_URL =

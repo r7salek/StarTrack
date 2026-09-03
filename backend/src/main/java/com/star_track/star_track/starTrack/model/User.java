@@ -118,7 +118,6 @@ public class User implements Serializable {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", delete=" + delete +
                 ", enabled=" + enabled +
                 ", provider='" + provider + '\'' +
