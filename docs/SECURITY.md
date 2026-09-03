@@ -20,13 +20,30 @@ environment-supplied synthetic credentials. OAuth-created accounts now receive
 a random unusable local password, and user diagnostic output no longer includes
 the password hash.
 
+## Phase 2 account hardening
+
+- The predictable administrator password-reset endpoint and frontend control
+  have been removed. Authenticated users retain only their own password-change
+  operation.
+- Administrator account-management and role operations now require the
+  administrator role. Profile, password and deletion-request operations enforce
+  the authenticated account identity.
+- Password hashes are excluded from JSON responses, state-changing `GET`
+  variants have been removed, and CORS uses a central environment-backed
+  allowlist.
+- OAuth login routes are disabled by default for the bearer-token baseline;
+  enabling and redesigning OAuth/SSO remains separately gated work.
+- The enforced access rules are recorded in
+  [the authorization matrix](AUTHORIZATION_MATRIX.md).
+
 ## Inherited risks not yet remediated
 
-- The password-reset endpoint still assigns a fixed temporary password. Do not
-  expose the baseline beyond loopback; replace this flow in the hardening phase.
-- CORS and CSRF policies require review before any shared or hosted deployment.
-- Dependency and authentication-library upgrades remain Phase 2/3 work and
-  must be accompanied by restored automated tests.
+- CSRF remains disabled for the stateless bearer-token API. The dormant OAuth
+  cookie flow requires a separate threat model before OAuth is enabled.
+- Project-level ownership and authorisation rules still require product-owner
+  decisions; the Phase 2 matrix covers account management only.
+- Dependency and authentication-library upgrades remain future modernisation
+  work and must preserve the restored automated test gate.
 
 ## Local-development rules
 

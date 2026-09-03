@@ -12,6 +12,10 @@
   Angular 16.2 and uses its committed npm lockfile.
 - The API expects PostgreSQL and the frontend's local development API base URL
   is `http://127.0.0.1:8080`.
+- Backend and frontend tests now run in Docker, and one shared command exercises
+  tests, builds and a fresh isolated runtime stack.
+- Critical account operations have explicit administrator or self-only rules;
+  see [the authorization matrix](AUTHORIZATION_MATRIX.md).
 
 ## What is not established
 
@@ -20,24 +24,18 @@ The Docker baseline has now been proven to start end-to-end using PostgreSQL
 are not required. The services bind to loopback ports only and use generated
 local credentials plus synthetic data.
 
-The source now has a local Docker Compose definition but no CI workflow,
-database migration tool or production-ready test suite. Its backend test
-configuration explicitly skips the Maven test phase. It also includes legacy
-state-changing endpoints that accept `GET`; do not expose it publicly before
-security remediation.
+The source now has a local Docker Compose definition and a GitHub Actions
+workflow, but the remote workflow has not run because this branch is unpushed.
+There is still no database migration tool or production-ready test coverage.
+Project-level permission rules and dependency upgrades remain unresolved; do
+not expose it publicly.
 
 ## Safe verification order
 
-1. Install a supported JDK and use an isolated PostgreSQL instance with an
-   empty database. Do not point it at the hosted application or its data.
-2. Provide distinct local values for `STARTRACK_DB_PASSWORD` and
-   `STARTRACK_TOKEN_SECRET`. Configure any OAuth provider only with a separate
-   development application.
-3. Run the backend's Maven wrapper and record compilation and test results.
-4. Run `npm ci`, then build and test the frontend using the lockfile.
-5. Bring up both services locally and exercise an explicit, non-sensitive smoke
-   dataset through the core project, user, and role flows.
-6. Capture the resulting API contract and schema before changing behaviour.
+1. Generate local synthetic values with `./scripts/init-local-env.sh`.
+2. Run `./scripts/test-local.sh`; it uses a separate Compose project and
+   temporary PostgreSQL volume.
+3. Review the test, build and smoke results before accepting a change.
+4. Capture the API contract and schema before changing database behaviour.
 
-Only after those steps should a modern runtime, a CI pipeline, containers, or
-a deployment environment be selected.
+Only after those steps should database migrations or runtime upgrades begin.

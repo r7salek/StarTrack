@@ -20,6 +20,18 @@ The image-build script stages clean build contexts in a temporary directory.
 This avoids a Docker Desktop file-sharing deadlock observed when BuildKit read
 the existing `frontend/node_modules` tree from this Documents workspace.
 
+## Complete verification
+
+```sh
+./scripts/test-local.sh
+```
+
+This runs backend and frontend tests, a production frontend build and a fresh
+end-to-end Docker smoke test. It uses an isolated Compose project on alternate
+loopback ports and removes its temporary database afterward, leaving the normal
+development stack and its persistent data unchanged. CI runs the same command
+with `./scripts/test-local.sh --ci`.
+
 ## Inspect and stop
 
 ```sh
@@ -36,5 +48,7 @@ not part of the normal stop command.
 - `.env` is generated locally, permission-restricted and ignored by Git.
 - Published ports bind to `127.0.0.1` only.
 - The PID-dispatcher integration is disabled and has no URL or token locally.
-- OAuth is outside the baseline smoke test.
+- OAuth is disabled in the baseline and its authorization route is checked by
+  the security smoke test.
 - Use no hosted StarTrack credentials, database dumps or real project data.
+- Account permissions are recorded in [the authorization matrix](AUTHORIZATION_MATRIX.md).

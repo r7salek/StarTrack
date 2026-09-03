@@ -1,68 +1,94 @@
 # Modernisation plan
 
-## Phase 0 — establish a reproducible baseline
+StarTrack is being stabilised in evidence-based phases. A phase is complete
+only when its documented checks pass; local success is not a production or
+security approval.
 
-**Outcome:** a local, isolated build with a documented schema and smoke test.
+## Phase 0 — provenance and credential containment (complete)
 
-- Add a repeatable local-service definition and configuration examples with no
-  secrets.
-- Replace automatic schema mutation (`ddl-auto=update`) with versioned,
-  reviewed database migrations.
-- Enable meaningful backend tests; add frontend and API smoke tests around the
-  current behaviour before refactoring it.
-- Generate an API and data-model inventory from the working baseline.
+**Outcome:** both public upstream repositories are consolidated with traceable
+revisions, operational credentials removed from the current source, and remote
+PID lookup disabled by default.
 
-## Phase 1 — security and operational hardening
+The legacy PID-dispatcher credential remains exposed in earlier Git history and
+still requires owner-side revocation or rotation.
 
-**Outcome:** an application that can be assessed for controlled internal use.
+## Phase 1 — reproducible local baseline (complete)
 
-- Eliminate state-changing `GET` routes and add method-level authorisation.
-- Review role boundaries, registration, password-reset and account-lifecycle
-  flows; add audit logging for significant data changes.
-- Externalise every secret and environment-specific setting; add dependency
-  scanning, a CI build, test gates and software-bill-of-material generation.
-- Define backup, retention, access, incident and support ownership before any
-  deployment decision.
+**Outcome:** the inherited application starts locally through Docker Compose
+with PostgreSQL, loopback-only ports, generated synthetic credentials and a
+repeatable API smoke test. Restart persistence has been demonstrated without
+using live Cambridge, Munich, OAuth or PID services.
 
-## Phase 2 — framework and code-quality upgrade
+## Phase 2 — test and account-security foundation (complete locally)
 
-**Outcome:** supported runtimes without losing verified business behaviour.
+**Outcome:** backend and frontend tests, production compilation, isolated
+runtime verification and critical account authorization share one repeatable
+quality gate.
 
-- Upgrade the Java/Spring stack incrementally to a supported LTS runtime and a
-  supported Spring line, addressing the Jakarta migration as a separately
-  tested change.
-- Update the Angular stack in compatible increments, remove unused packages,
-  tighten TypeScript checks and address accessibility and responsive behaviour.
-- Simplify the frontend-to-API contract, centralise errors and validation, and
-  add observability that excludes sensitive project content.
+- Maven executes focused MockMvc/security tests and fails if no tests run.
+- Angular tests execute once in staged Node 18/headless-Chromium containers.
+- Administrator and self-only account boundaries are enforced server-side;
+  password hashes are not serialized; the predictable reset operation and
+  state-changing `GET` routes are removed; CORS uses a local allowlist.
+- `./scripts/test-local.sh` validates tests, builds, an isolated PostgreSQL
+  stack, synthetic account rules, project creation and restart persistence.
+- GitHub Actions runs the same command with read-only repository permission.
 
-## Phase 3 — product improvements
+The local gate has passed. The remote workflow remains unverified until this
+branch is deliberately pushed.
 
-**Outcome:** high-value workflow changes based on observed user needs.
+## Phase 3 — versioned data model and API inventory (next)
 
-- Improve project updates, history, reporting/export, ownership and structured
-  validation only after a prioritised requirements review.
-- Build a clear data dictionary and permissions model before adding new fields
-  or reporting calculations.
-- Pilot changes using synthetic or suitably approved data, with acceptance
-  criteria and rollback capability.
+**Outcome:** database changes become explicit and reviewable before runtime
+framework upgrades.
 
-## Phase 4 — AI-assisted interface (future, gated)
+- Document the current API routes, request/response contracts, entities,
+  relationships, PostgreSQL catalog/schema assumptions and data ownership.
+- Capture the current generated schema from a synthetic database and establish
+  a reviewed migration baseline.
+- Introduce a versioned PostgreSQL migration tool and replace automatic
+  `ddl-auto=update` only after a migration/recovery rehearsal passes.
+- Add database-level integration tests where unit/MockMvc tests cannot validate
+  PostgreSQL-specific behaviour.
+
+## Phase 4 — supported runtimes and code quality
+
+**Outcome:** supported Java/Spring and Angular versions without losing verified
+business behaviour.
+
+- Upgrade Java and Spring incrementally, treating the Jakarta transition as a
+  separate tested change.
+- Upgrade Angular in supported increments, remove unused packages, tighten
+  TypeScript checks and address accessibility, bundle and stylesheet warnings.
+- Centralise frontend/API errors and validation, and add observability that
+  excludes sensitive project content.
+
+## Phase 5 — product improvements
+
+**Outcome:** prioritised workflow improvements grounded in user needs.
+
+- Define project ownership and permission rules before expanding collaboration.
+- Improve search, project updates, history, reporting/export and structured
+  validation against agreed acceptance criteria.
+- Pilot changes with synthetic or suitably approved data and a rollback path.
+
+## Phase 6 — AI-assisted interface (future, gated)
 
 **Outcome:** assistive search and drafting that never silently changes records.
 
-- Begin with permission-filtered retrieval over approved records, returning
-  citations/links to the underlying entries.
-- Treat suggested new or amended entries as drafts requiring authenticated human
+- Start with permission-filtered retrieval over approved records and return
+  citations or links to underlying entries.
+- Treat suggested entries or amendments as drafts requiring authenticated human
   review, validation and explicit submission.
-- Log model, prompt class, sources, output and reviewer decision; do not send
-  project data to an external model provider without an approved data-flow and
+- Log the model, prompt class, sources, output and reviewer decision; do not send
+  project data to an external model provider without an approved data flow and
   supplier assessment.
 - Measure usefulness, error rate, access-boundary adherence and operational
   impact before expanding scope.
 
 ## Current decision gates
 
-No deployment, production-data migration, or AI connection is authorised by
-this code import. The immediate next gate is a successful isolated baseline
-build plus an agreed data, access and operational ownership model.
+No deployment, production-data migration, OAuth/SSO connection, remote PID
+connection or AI connection is authorised by these local results. Phase 3 must
+establish the data/API baseline before framework modernisation begins.

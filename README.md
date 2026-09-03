@@ -18,13 +18,14 @@ copied operational data. Runtime credentials must be supplied outside Git.
 ## Current state
 
 The imported code has been matched to the public upstream revisions documented
-in [the provenance record](docs/UPSTREAM_PROVENANCE.md). It has **not** been
-connected to a database, deployed, or tested against the live StarTrack
-service. The current working tree replaces historic database passwords and
-token material with environment-variable references. The initial consolidated
-commit retained a legacy PID-dispatcher credential from the upstream source;
-it must be treated as exposed and revoked by its owner. Removing it from the
-current tree does not make the old credential safe.
+in [the provenance record](docs/UPSTREAM_PROVENANCE.md). It now runs locally
+against an isolated PostgreSQL database using synthetic credentials and data;
+it has **not** been deployed or tested against the live StarTrack service. The
+current source replaces historic database passwords and token material with
+environment-variable references. The initial consolidated commit retained a
+legacy PID-dispatcher credential from the upstream source; it must be treated as
+exposed and revoked by its owner. Removing it from the current tree does not
+make the old credential safe.
 
 Start with [run readiness](docs/RUN_READINESS.md), then work through the
 [modernisation plan](docs/MODERNISATION_PLAN.md) and the
@@ -36,6 +37,10 @@ database, user directory, or OAuth application during baseline verification.
 The isolated baseline is run through Docker Compose with generated local-only
 credentials and synthetic data. Follow [local Docker development](docs/LOCAL_DEVELOPMENT.md)
 for the build, start, smoke-test and stop commands.
+
+Run the complete test, build and isolated runtime gate with
+`./scripts/test-local.sh`. Account-management permissions are documented in the
+[authorization matrix](docs/AUTHORIZATION_MATRIX.md).
 
 ## Licence and attribution
 
