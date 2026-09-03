@@ -28,9 +28,11 @@ the existing `frontend/node_modules` tree from this Documents workspace.
 
 This runs backend and frontend tests, a production frontend build and a fresh
 end-to-end Docker smoke test. It uses an isolated Compose project on alternate
-loopback ports and removes its temporary database afterward, leaving the normal
-development stack and its persistent data unchanged. CI runs the same command
-with `./scripts/test-local.sh --ci`.
+loopback ports and removes its temporary database afterward. On memory-limited
+local machines it temporarily pauses a running developer frontend and restores
+it during cleanup; the developer backend and persistent database are not
+stopped or replaced. CI runs the same command with `./scripts/test-local.sh
+--ci`.
 
 ## Inspect and stop
 

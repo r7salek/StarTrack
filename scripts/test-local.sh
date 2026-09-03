@@ -13,6 +13,7 @@ esac
 project_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 env_file="$project_root/.env"
 created_env=false
+developer_frontend_was_running=false
 frontend_test_context=$(mktemp -d "${TMPDIR:-/tmp}/startrack-frontend-test.XXXXXX")
 backend_test_context=$(mktemp -d "${TMPDIR:-/tmp}/startrack-backend-test.XXXXXX")
 verify_tag=${GITHUB_RUN_ID:-$$}
@@ -59,6 +60,11 @@ cleanup() {
     "$STARTRACK_BACKEND_IMAGE" "$STARTRACK_FRONTEND_IMAGE" >/dev/null 2>&1 || true
   rm -rf "$frontend_test_context" "$backend_test_context"
 
+  if [ "$developer_frontend_was_running" = true ]; then
+    echo "Restoring the developer frontend..."
+    docker compose start frontend >/dev/null 2>&1 || true
+  fi
+
   if [ "$mode" = "--ci" ] && [ "$created_env" = true ]; then
     rm -f "$env_file"
   fi
@@ -90,6 +96,12 @@ sh -n "$project_root/scripts/init-local-env.sh" \
 node --check "$project_root/scripts/smoke-local.mjs"
 node --check "$project_root/scripts/security-smoke-local.mjs"
 verify_compose config --quiet
+
+if [ "$mode" = "local" ] && docker compose ps --status running --services 2>/dev/null | grep -qx frontend; then
+  developer_frontend_was_running=true
+  echo "Pausing the developer frontend during resource-intensive verification..."
+  docker compose stop frontend >/dev/null
+fi
 
 echo "Building and running frontend tests in Node 18 with Chromium..."
 rsync -a --exclude node_modules --exclude dist --exclude .angular --exclude .git \
