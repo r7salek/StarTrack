@@ -1,28 +1,12 @@
-/* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
 import { ToolbarComponent } from './toolbar.component';
 
 describe('ToolbarComponent', () => {
-  let component: ToolbarComponent;
-  let fixture: ComponentFixture<ToolbarComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ToolbarComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ToolbarComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
+  it('creates in a logged-out state without reading invalid user fields', () => {
+    const component = new ToolbarComponent(
+      { getToken: () => null, getUser: () => null } as any,
+      {} as any, {} as any
+    );
     expect(component).toBeTruthy();
+    expect(component.isLoggedIn).toBeFalse();
   });
 });

@@ -30,7 +30,6 @@ export class UM_usersComponent implements OnInit {
     'role',
     'update',
     'deleteUser',
-    'resetPassword',
   ];
   // Defining Datasource , pagination and sorting
   public dataSource2 = new MatTableDataSource<UserData>();

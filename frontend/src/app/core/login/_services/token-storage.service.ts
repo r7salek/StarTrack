@@ -23,8 +23,8 @@ export class TokenStorageService {
     window.sessionStorage.setItem(TOKEN_KEY, token);
   }
   // get current token value information
-  public getToken(): string {
-    return sessionStorage.getItem(TOKEN_KEY)!;
+  public getToken(): string | null {
+    return sessionStorage.getItem(TOKEN_KEY);
   }
   // save current user value into session storage
   public saveUser(user: any): void {
@@ -32,7 +32,16 @@ export class TokenStorageService {
     window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
   }
   // Get current user
-  public getUser(): any {
-    return JSON.parse(sessionStorage.getItem(USER_KEY)!);
+  public getUser(): any | null {
+    const storedUser = sessionStorage.getItem(USER_KEY);
+    if (!storedUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(storedUser);
+    } catch {
+      return null;
+    }
   }
 }

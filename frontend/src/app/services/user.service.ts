@@ -46,13 +46,6 @@ export class UserService {
       ''
     );
   }
-  //  for resetPassword user
-  public resetPassword(email: string): Observable<UserData> {
-    return this.http.put<UserData>(
-      `${this.apiServerUrl}/sybeUser/resetPassword/${email}`,
-      ''
-    );
-  }
     // Update user roles
     public updateUserRole(email: string, role: string[]): Observable<UserData> {
       return this.http.put<UserData>(
