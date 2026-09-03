@@ -4,8 +4,8 @@
 
 StarTrack is an OTR project and impact tracker associated with the Cambridge–LMU
 STAR-Track collaboration. This repository places the verified public backend
-and frontend in one maintainable codebase, with source attribution, no copied
-operational data, and no live credentials.
+and frontend in one maintainable codebase, with source attribution and no
+copied operational data. Runtime credentials must be supplied outside Git.
 
 ## Repository layout
 
@@ -20,9 +20,11 @@ operational data, and no live credentials.
 The imported code has been matched to the public upstream revisions documented
 in [the provenance record](docs/UPSTREAM_PROVENANCE.md). It has **not** been
 connected to a database, deployed, or tested against the live StarTrack
-service. The initial import replaces historic database passwords and token
-material with environment-variable references before the code enters this
-repository.
+service. The current working tree replaces historic database passwords and
+token material with environment-variable references. The initial consolidated
+commit retained a legacy PID-dispatcher credential from the upstream source;
+it must be treated as exposed and revoked by its owner. Removing it from the
+current tree does not make the old credential safe.
 
 Start with [run readiness](docs/RUN_READINESS.md), then work through the
 [modernisation plan](docs/MODERNISATION_PLAN.md) and the

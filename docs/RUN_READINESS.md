@@ -4,7 +4,10 @@
 
 - The backend and frontend are consolidated in this repository and traceable to
   immutable public-source revisions.
-- Historic secrets have been removed from the imported configuration.
+- Runtime secrets are externalised. The legacy PID credential in the first
+  consolidated commit still requires revocation by its owner; see
+  [security notes](SECURITY.md).
+- Remote PID lookup is opt-in and disabled by default.
 - The backend specifies Java 11 and Spring Boot 2.5.4; the frontend specifies
   Angular 16.2 and uses its committed npm lockfile.
 - The API expects PostgreSQL and the frontend's local development API base URL

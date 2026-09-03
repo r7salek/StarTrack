@@ -6,11 +6,13 @@ import com.star_track.star_track.starTrack.registration.dto.SocialProvider;
 import com.star_track.star_track.starTrack.repo.RoleRepo;
 import com.star_track.star_track.starTrack.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +33,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${startrack.bootstrap.admin.enabled:false}")
+    private boolean bootstrapAdminEnabled;
+
+    @Value("${startrack.bootstrap.admin.email:}")
+    private String bootstrapAdminEmail;
+
+    @Value("${startrack.bootstrap.admin.password:}")
+    private String bootstrapAdminPassword;
+
     @Override
     @Transactional
     public void onApplicationEvent(final ContextRefreshedEvent event) {
@@ -44,19 +55,24 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             add(userRole);
             add(adminRole);
         }};
-        createUserIfNotFound("zaheer@hotmail.com",set);
+        if (bootstrapAdminEnabled) {
+            if (!StringUtils.hasText(bootstrapAdminEmail) || !StringUtils.hasText(bootstrapAdminPassword)) {
+                throw new IllegalStateException("Bootstrap admin email and password are required when bootstrap is enabled");
+            }
+            createUserIfNotFound(bootstrapAdminEmail, bootstrapAdminPassword, set);
+        }
         alreadySetup = true;
     }
 
     @Transactional
-    User createUserIfNotFound(final String email, Set<Role> roles) {
+    User createUserIfNotFound(final String email, final String password, Set<Role> roles) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             user = new User();
             user.setFirstName("Admin");
             user.setLastName("Admin");
             user.setEmail(email);
-            user.setPassword(passwordEncoder.encode("admin@"));
+            user.setPassword(passwordEncoder.encode(password));
             user.setRoles(roles);
             user.setProvider(SocialProvider.LOCAL.getProviderType());
             user.setEnabled(true);
