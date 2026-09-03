@@ -1,0 +1,46 @@
+<div fxFlex fxFlexAlign="center" class="example-container">
+  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+    <span class="custom-font-size-Heading">Modify Proposal Permissions</span>
+  </mat-toolbar>
+  <div fxLayoutAlign="space-around center">
+    <form [formGroup]="service.form">
+      <mat-grid-list cols="1" rowHeight="90px" rowWidth="180px" class="content">
+        <mat-form-field appearance="outline">
+          <mat-label class="custom-font-size">Actions</mat-label>
+          <mat-select formControlName="applyValue" placeholder="applyValue">
+            <ng-container>
+              <mat-option value="SUBMITTED">SUBMITTED</mat-option>
+              <mat-option value="ACCEPTED">ACCEPTED</mat-option>
+              <mat-option value="REJECTED">REJECTED</mat-option>
+              <mat-option value="CLOSED">CLOSED</mat-option>
+            </ng-container>
+          </mat-select>
+          <mat-icon matSuffix>supervised_user_circle</mat-icon>
+        </mat-form-field>
+      </mat-grid-list>
+      <mat-grid-list
+        cols="1"
+        rowHeight="50px"
+        fxLayoutAlign="space-around center"
+      >
+        <div class="example-button-row">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="
+              onUpdateUserPerm(
+                service.form.value.id,
+                service.form.value.applyValue
+              )
+            "
+          >
+            Submit
+          </button>
+          <button mat-raised-button color="warn" (click)="onClose()">
+            Cancel
+          </button>
+        </div>
+      </mat-grid-list>
+    </form>
+  </div>
+</div>

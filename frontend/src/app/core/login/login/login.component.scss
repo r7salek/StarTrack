@@ -1,0 +1,184 @@
+.main-div mat-card {
+  padding: 0px;
+  width: 800px;
+}
+
+.login-form {
+  display: flex 1 1;
+}
+
+.card-container.card {
+  display: flex 1 1;
+  padding: 40px 40px;
+}
+.profile-img-card {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 10px;
+  display: block;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+}
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+.card-container.card {
+  max-width: 500px;
+  padding: 40px 40px;
+}
+
+.card {
+  background-color: #f7f7f7;
+  padding: 20px 25px 30px;
+  margin: 0 auto 25px;
+  margin-top: 50px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.profile-img-card {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 10px;
+  display: block;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+}
+.example-spacer {
+  flex: 1 1 auto;
+  padding: 20px;
+}
+ .mat-mdc-form-field + .mat-form-field {
+  margin-left: 8px;
+  flex: 1 1 auto;
+  padding-top: 15px;
+  width:300px !important;
+}
+.content {
+  padding: 20px;
+  width: 80%;
+}
+.footer {
+  padding: 20px;
+  margin-right: 8px;
+}
+.example-button-row button,
+.example-button-row a {
+  margin-right: 8px;
+  text-align: center;
+  align-content: center;
+  align-self: center;
+
+}
+
+.content {
+  padding: 20px;
+}
+
+div.container{
+  margin: 0px 40px;
+}
+
+.fill-remaining-space {
+  /* This fills the remaining space, by using flexbox.
+     Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+
+form.normal-form{
+  margin: 10px;
+}
+
+.controles-container{
+  width: 100%;
+  padding: 5%;
+}
+
+.controles-container > * {
+  width: 100%;
+  }
+
+  .add-bottom-padding{
+      padding-bottom: 10px;
+  }
+  /* radio group */
+mat-radio-group mat-radio-button{
+  margin-left: 5px;
+}
+
+.button-row button{
+  margin: 5px;
+}
+
+/* notification */
+snack-bar-container.success {
+  background-color: #5cb85c;
+  color : #fff;
+}
+
+snack-bar-container.warn {
+  background-color: #f99157;
+  color : #fff;
+}
+
+
+snack-bar-container.notification simple-snack-bar{
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+
+.hide{
+  display: none;
+}
+
+/* mat-table */
+mat-footer-row mat-footer-cell{
+  justify-content: center;
+  font-style: italic;
+}
+
+/* filter controls */
+.search-div{
+  margin: 10px;
+    }
+    .search-form-field{
+        width: 60%;
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: #f5f5f5;
+       // border-radius: 5px;
+        }
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+        .search-form-field div.mat-form-field-underline {
+            display: none;
+        }
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+        .search-form-field div.mat-form-field-infix{
+            border-top: 0px;
+        }
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+        .search-form-field div.mat-form-field-wrapper{
+          padding-bottom: 0px;
+      }
+      /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+      .search-form-field div.mat-form-field-suffix button{
+          height: 32px;
+          width: 32px;
+      }
+      /* for dialog pop-up */
+.btn-dialog-close{
+  width: 45px;
+  min-width: 0px !important;
+  height: 40px;
+  padding: 0px !important;
+}
+

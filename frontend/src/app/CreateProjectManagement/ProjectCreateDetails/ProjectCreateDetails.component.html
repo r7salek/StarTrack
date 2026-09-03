@@ -1,0 +1,816 @@
+<div fxFlexAlign="stretch">
+  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+    <span style="font-size: 24px">Project Detail View</span>
+  </mat-toolbar>
+  <mat-card-content>
+    <div class="container">
+      <div class="example-container" style="margin: 2em">
+        <div id="contentToConvert">
+          <mat-card>
+            <!--     <mat-divider></mat-divider>
+            <h1 style="text-align: center;"><b>Team information</b></h1>
+            <mat-divider></mat-divider> -->
+            <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+              <span style="font-size: 24px">Team information</span>
+            </mat-toolbar>
+            <mat-grid-list cols="1" rowHeight="100px">
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header">
+                      Project name:
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.projectName }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+            <mat-divider></mat-divider>
+            <h2>PI information</h2>
+            <mat-grid-list cols="3" rowHeight="100px" rowWidth="120px">
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <mat-label class="custom-label-header"
+                    >Last name PI :
+                  </mat-label>
+                  <input
+                    type="text"
+                    value="{{ AddToProjectUpdate.lastNamePI }}"
+                    readonly
+                    class="custom-input"
+                  />
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >First name PI :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.firstNamePI }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Email PI :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.emailPI }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+            <mat-grid-list cols="3" rowHeight="100px" rowWidth="120px">
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Department PI :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.departmentPI }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Crsid PI :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.crsidPI }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Other info PI :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.otherInforPI }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+            <mat-divider></mat-divider>
+            <h2>Group member information</h2>
+            <dx-data-grid
+              id="gridContainer"
+              [dataSource]="groupMember"
+              [showBorders]="true"
+              [remoteOperations]="true"
+              [showRowLines]="true"
+              [rowAlternationEnabled]="true"
+              [height]="calculateGridHeight(groupMember.length)"
+            >
+              <dxi-column
+                dataField="lastNamePostDoc"
+                dataType="string"
+                caption="Last name"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="firstNamePostDoc"
+                caption="First name"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="emailPostDoc"
+                caption="Email"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="departmentPostDoc"
+                caption="Department"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="positionPostDoc"
+                caption="Position"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="crsidPostDoc"
+                caption="Crsid"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="otherInforPostDoc"
+                caption="Other infor"
+                dataType="string"
+              >
+              </dxi-column>
+            </dx-data-grid>
+            <mat-divider></mat-divider>
+            <br />
+            <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+              <span style="font-size: 24px">Funding source</span>
+            </mat-toolbar>
+            <div class="grid-container">
+              <div
+                *ngFor="let item of fundingOverview; let i = index"
+                class="grid-row"
+              >
+                <div class="grid-field" *ngIf="true">
+                  <label>Funder:</label>
+                  <span>{{ item.fundingOverview }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isfundingOverviewOtherVisible()">
+                  <label>Funding other:</label>
+                  <span>{{ item.fundingOverviewOther }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isfundingOverviewNIHRVisible()">
+                  <label>Funder (NIHR):</label>
+                  <span>{{ item.fundingOverviewNIHR }}</span>
+                </div>
+                <div
+                  class="grid-field"
+                  *ngIf="isfundingOverviewNIHROtherVisible()"
+                >
+                  <label>Funder (NIHR Other):</label>
+                  <span>{{ item.fundingOverviewNIHROther }}</span>
+                </div>
+                <div
+                  class="grid-field"
+                  *ngIf="isfundingOverviewUKRIMRCVisible()"
+                >
+                  <label>Funder (UKRI-MRC):</label>
+                  <span>{{ item.fundingOverviewUKRIMRC }}</span>
+                </div>
+                <div
+                  class="grid-field"
+                  *ngIf="isfundingOverviewUKRIMRCOtherVisible()"
+                >
+                  <label>Funder (UKRI-MRC Other):</label>
+                  <span>{{ item.fundingOverviewUKRIMRCOther }}</span>
+                </div>
+                <div
+                  class="grid-field"
+                  *ngIf="isfundingOverviewWellcomeTrustVisible()"
+                >
+                  <label>Funder (Wellcome Trust):</label>
+                  <span>{{ item.fundingOverviewWellcomeTrust }}</span>
+                </div>
+                <div
+                  class="grid-field"
+                  *ngIf="isfundingOverviewWellcomeTrustOtherVisible()"
+                >
+                  <label>Funder (Wellcome Trust Other):</label>
+                  <span>{{ item.fundingOverviewWellcomeTrustOther }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Scheme:</label>
+                  <span>{{ item.schemeOverview }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isschemeOverviewOtherVisible()">
+                  <label>Scheme other:</label>
+                  <span>{{ item.schemeOverviewOther }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Value:</label>
+                  <span>{{ item.valueOverview }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Start Date:</label>
+                  <span>{{ item.fundingOverviewStartDate | date }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>End Date:</label>
+                  <span>{{
+                    item.fundingEfundingOverviewEndDatendDate | date
+                  }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Funder Award Number:</label>
+                  <span>{{ item.grantNumberOverview }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Worktribe Number:</label>
+                  <span>{{ item.worktribeNumberOverview }}</span>
+                </div>
+                <div>
+                  <label class="custom-label-header">Aims:</label>
+                  <div class="text-container_aims">
+                    <mat-label class="custom-label_aims">{{
+                      item.aimsOverview
+                    }}</mat-label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <br />
+            <div style="text-align: center">
+              <h1>Total Grant: {{ sumOverview }}</h1>
+            </div>
+            <br />
+            <mat-divider></mat-divider>
+            <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+              <span style="font-size: 24px">Collaborators</span>
+            </mat-toolbar>
+            <h2>Collaborator</h2>
+            <dx-data-grid
+              id="gridContainer"
+              [dataSource]="collaboration"
+              [showBorders]="true"
+              [remoteOperations]="true"
+              [showRowLines]="true"
+              [rowAlternationEnabled]="true"
+              [height]="calculateGridHeight(collaboration.length)"
+            >
+              <dxi-column
+                dataField="collaboration"
+                dataType="string"
+                caption="Collaborator"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="collaborationName"
+                caption="Collaborator organisation"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="collaborationEmail"
+                caption="Collaborator email"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="collaborationLocation"
+                caption="Collaborator location"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="collaborationOtherInfo"
+                caption="Collaborator other info"
+                dataType="string"
+              >
+              </dxi-column>
+            </dx-data-grid>
+            <mat-divider></mat-divider>
+            <h2>Technology transfer office contact</h2>
+            <mat-grid-list cols="3" rowHeight="100px">
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Contact name:
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.ttoContractName }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Contact email:
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.ttoContractEmail }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Other info :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.ttoContractOtherInfo }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+            <mat-divider></mat-divider>
+            <h2>External advisor</h2>
+            <dx-data-grid
+              id="gridContainer"
+              [dataSource]="advisor"
+              [showBorders]="true"
+              [remoteOperations]="true"
+              [showRowLines]="true"
+              [rowAlternationEnabled]="true"
+              [height]="calculateGridHeight(advisor.length)"
+            >
+              <dxi-column
+                dataField="externalAdvisorsMeeting"
+                caption="External advisors meeting"
+                dataType="date"
+                [format]="{ type: 'custom', formatter: customDateFormatter }"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="externalAdvisorsOrganisation"
+                caption="External advisors organisation"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="externalAdvisorsName"
+                caption="External advisors name"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="externalAdvisorsEmail"
+                caption="External advisors email"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="externalAdvisorsOutcome"
+                caption="External advisors outcome"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="externalAdvisorsExpertise"
+                caption="External advisors expertise"
+                dataType="string"
+              >
+              </dxi-column>
+            </dx-data-grid>
+            <mat-divider></mat-divider>
+            <h2>Subcontractors</h2>
+            <dx-data-grid
+              id="gridContainer"
+              [dataSource]="subcontractor"
+              [showBorders]="true"
+              [remoteOperations]="true"
+              [showRowLines]="true"
+              [rowAlternationEnabled]="true"
+              [height]="calculateGridHeight(subcontractor.length)"
+            >
+              <dxi-column
+                dataField="subContractorsName"
+                caption="SubContractors name"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="subContractorsEmail"
+                caption="SubContractors email"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="subContractorsExpertise"
+                caption="SubContractors Expertise"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="subContractorsOrganisation"
+                caption="SubContractors Organisation"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="subContractorsOtherInfo"
+                caption="SubContractors OtherInfo"
+                dataType="string"
+              >
+              </dxi-column>
+            </dx-data-grid>
+            <mat-divider></mat-divider>
+            <h2>Patient and Public Involvement</h2>
+            <dx-data-grid
+              id="gridContainer"
+              [dataSource]="ppi"
+              [showBorders]="true"
+              [remoteOperations]="true"
+              [showRowLines]="true"
+              [rowAlternationEnabled]="true"
+              [height]="calculateGridHeight(ppi.length)"
+            >
+              <dxi-column
+                dataField="ppiMeeting"
+                caption="PPI meeting"
+                dataType="date"
+                [format]="{ type: 'custom', formatter: customDateFormatter }"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="ppiContact"
+                caption="PPI contact"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="ppiGroup"
+                caption="PPI group"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="ppiOutcome"
+                caption="PPI outcome"
+                dataType="string"
+              >
+              </dxi-column>
+            </dx-data-grid>
+            <mat-divider></mat-divider>
+            <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+              <span style="font-size: 24px">Scope of the project</span>
+            </mat-toolbar>
+            <mat-grid-list cols="2" rowHeight="100px">
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Modality :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.modality }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile
+                *ngIf="modalityOther !== null && modalityOther !== ''"
+              >
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Modality other :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.modalityOther }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+            <mat-grid-list cols="3" rowHeight="100px">
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Research field :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.areaOfExpertise }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile *ngIf="areaOfExpertiseOther !== null">
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Research field other :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.areaOfExpertiseOther }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Readiness :
+                    </mat-label>
+                    <input
+                      type="text"
+                      value="{{ AddToProjectUpdate.readiness }}"
+                      readonly
+                      class="custom-input"
+                    />
+                  </div>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+            <br />
+            <mat-grid-list cols="1" [rowHeight]="dynamicRowHeight">
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container">
+                    <mat-label class="custom-label-header"
+                      >Brief description :
+                    </mat-label>
+                    <textarea
+                      readonly
+                      class="custom-textarea"
+                      [value]="AddToProjectUpdate.briefDescription"
+                      (ngModelChange)="adjustHeight()"
+                      #dynamicTextarea
+                    ></textarea>
+                  </div>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+            <br />
+            <br />
+            <mat-grid-list cols="1" [rowHeight]="dynamicRowHeight2">
+              <mat-grid-tile>
+                <div class="controles-container">
+                  <div class="label-input-container1">
+                    <mat-label class="custom-label-header"
+                      >Project background :
+                    </mat-label>
+                    <textarea
+                      readonly
+                      class="custom-textarea"
+                      [value]="AddToProjectUpdate.projectBackground"
+                      (ngModelChange)="adjustHeight1()"
+                      #dynamicTextarea1
+                    ></textarea>
+                  </div>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+            <br /><br /><br />
+            <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+              <span style="font-size: 24px">Output</span>
+            </mat-toolbar>
+            <h2>Output</h2>
+            <dx-data-grid
+              id="gridContainer"
+              [dataSource]="dataSource"
+              [showBorders]="true"
+              [remoteOperations]="true"
+              [showRowLines]="true"
+              [rowAlternationEnabled]="true"
+              [height]="calculateGridHeight(dataSource.length)"
+            >
+              <dxi-column dataField="output" dataType="string"> </dxi-column>
+              <dxi-column
+                dataField="confirmation"
+                dataType="string"
+              ></dxi-column>
+              <dxi-column
+                dataField="outputQuantity"
+                caption="Output quantity"
+                dataType="string"
+              ></dxi-column>
+              <dxi-column
+                dataField="output_description"
+                caption="Output description"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxo-scrolling mode="none"></dxo-scrolling>
+            </dx-data-grid>
+            <mat-divider></mat-divider>
+            <br />
+            <h2>Acquired funding</h2>
+            <div class="grid-container">
+              <div *ngFor="let item of funding; let i = index" class="grid-row">
+                <div class="grid-field">
+                  <label>Funder:</label>
+                  <span>{{ item.funding }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isfundingOtherVisible()">
+                  <label>Funding other:</label>
+                  <span>{{ item.fundingOther }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isfundingNIHRVisible()">
+                  <label>Funder (NIHR):</label>
+                  <span>{{ item.fundingNIHR }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isfundingNIHROtherVisible()">
+                  <label>Funder (NIHR Other):</label>
+                  <span>{{ item.fundingNIHROther }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isfundingUKRIMRCVisible()">
+                  <label>Funder (UKRI-MRC):</label>
+                  <span>{{ item.fundingUKRIMRC }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isfundingUKRIMRCOtherVisible()">
+                  <label>Funder (UKRI-MRC Other):</label>
+                  <span>{{ item.fundingUKRIMRCOther }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isfundingWellcomeTrustVisible()">
+                  <label>Funder (Wellcome Trust):</label>
+                  <span>{{ item.fundingWellcomeTrust }}</span>
+                </div>
+                <div
+                  class="grid-field"
+                  *ngIf="isfundingWellcomeTrustOtherVisible()"
+                >
+                  <label>Funder (Wellcome Trust Other):</label>
+                  <span>{{ item.fundingWellcomeTrustOther }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Scheme:</label>
+                  <span>{{ item.scheme }}</span>
+                </div>
+                <div class="grid-field" *ngIf="isschemeOtherVisible()">
+                  <label>Scheme other:</label>
+                  <span>{{ item.schemeOther }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Value:</label>
+                  <span>{{ item.value }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Start Date:</label>
+                  <span>{{ item.fundingStartDate | date }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>End Date:</label>
+                  <span>{{ item.fundingEndDate | date }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Funder Award Number:</label>
+                  <span>{{ item.grantNumber }}</span>
+                </div>
+                <div class="grid-field">
+                  <label>Worktribe Number:</label>
+                  <span>{{ item.worktribeNumber }}</span>
+                </div>
+
+                <div>
+                  <label class="custom-label-header">Aims:</label>
+                  <div class="text-container_aims">
+                    <mat-label class="custom-label_aims">{{
+                      item.aims
+                    }}</mat-label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <br />
+            <div style="text-align: center">
+              <h1>Total Grant: {{ sum }}</h1>
+            </div>
+            <br />
+            <mat-divider></mat-divider><br />
+            <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+              <span style="font-size: 24px">OTR Team Member</span>
+            </mat-toolbar>
+            <dx-data-grid
+              id="gridContainer"
+              [dataSource]="otr"
+              [showBorders]="true"
+              [remoteOperations]="true"
+              [showRowLines]="true"
+              [rowAlternationEnabled]="true"
+              [height]="calculateGridHeight(otr.length)"
+            >
+              <dxi-column
+                dataField="otrTeamMember"
+                caption="OTR team member"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="otrRole"
+                caption="OTR team member role"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="otrFunding"
+                caption="OTR funding"
+                dataType="string"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="otrDate"
+                caption="OTR date"
+                dataType="date"
+                [format]="{ type: 'custom', formatter: customDateFormatter }"
+              >
+              </dxi-column>
+              <dxi-column
+                dataField="otrOtherInfo"
+                caption="OTR other info"
+                dataType="string"
+              >
+              </dxi-column>
+            </dx-data-grid>
+          </mat-card>
+          <mat-divider></mat-divider><br />
+          <br />
+        </div>
+
+        <mat-divider></mat-divider>
+        <br />
+        <br />
+        <div class="example-button-row">
+          <button
+            fxFlexAlign="center"
+            mat-raised-button
+            color="warn"
+            (click)="onClose()"
+          >
+            Close
+          </button>
+          <button mat-raised-button color="primary" (click)="makePDF()">
+            Export To PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</div>

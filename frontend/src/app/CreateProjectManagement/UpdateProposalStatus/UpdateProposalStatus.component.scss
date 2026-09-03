@@ -1,0 +1,10 @@
+.example-spacer {
+  flex: 1 1 auto;
+  padding: 20px;
+  overflow-x: hidden;
+}
+.scroll-x-container {
+  width: 100%; /* Set the desired width */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent content from wrapping */
+}

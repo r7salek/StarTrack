@@ -1,0 +1,23 @@
+::ng-deep #gridContainer {
+  height: 800px;
+  font-size: 16px;
+  overflow: auto;
+}
+
+::ng-deep .dx-datagrid .dx-data-row > td.bullet {
+  padding-top: 0;
+  padding-bottom: 0;
+
+}
+/* YourComponent.component.css */
+
+:host ::ng-deep #gridContainer .dx-datagrid-headers .dx-header-row,
+:host ::ng-deep #gridContainer .dx-datagrid-headers .dx-header-row .dx-header-cell,
+:host ::ng-deep #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row {
+  background-color: #3f51b5;
+  color: white;
+  font-size: 18px;
+}
+.my-container {
+  overflow: auto;
+}

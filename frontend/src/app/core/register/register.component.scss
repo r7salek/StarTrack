@@ -1,0 +1,136 @@
+.example-spacer {
+  flex: 1 1 auto;
+}
+.example-container .mat-mdc-form-field + .mat-form-field {
+  margin-left: 15px;
+  flex: 1 1 auto;
+  padding-top: 15px;
+  height: 600px;
+}
+.content {
+  padding: 20px;
+  width: 95%;
+}
+.footer {
+  padding: 20px;
+  margin-right: 8px;
+}
+.example-button-row button,
+.example-button-row a {
+  margin-right: 8px;
+  text-align: center;
+  align-content: center;
+  align-self: center;
+
+}
+
+.content {
+  padding: 20px;
+}
+
+div.container{
+  margin: 0px 40px;
+
+}
+.fill-remaining-space {
+  /* This fills the remaining space, by using flexbox.
+     Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+  align-content: center;
+  text-align: center;
+}
+
+form.normal-form{
+  margin: 5px;
+  overflow: hidden!important;
+}
+
+.controles-container{
+  width: 80%;
+  padding: 10%;
+}
+
+.controles-container > * {
+  width: 80%;
+  }
+
+  .add-bottom-padding{
+      padding-bottom: 10px;
+  }
+  /* radio group */
+mat-radio-group mat-radio-button{
+  margin-left: 5px;
+}
+
+.button-row button{
+  margin: 5px;
+}
+
+/* notification */
+snack-bar-container.success {
+  background-color: #5cb85c;
+  color : #fff;
+}
+
+snack-bar-container.warn {
+  background-color: #f99157;
+  color : #fff;
+}
+
+
+snack-bar-container.notification simple-snack-bar{
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+
+.hide{
+  display: none;
+}
+
+/* mat-table */
+mat-footer-row mat-footer-cell{
+  justify-content: center;
+  font-style: italic;
+}
+
+/* filter controls */
+.search-div{
+  margin: 10px;
+    }
+    .search-form-field{
+        width: 60%;
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: #f5f5f5;
+       // border-radius: 5px;
+        }
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+        .search-form-field div.mat-form-field-underline {
+            display: none;
+        }
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+        .search-form-field div.mat-form-field-infix{
+            border-top: 0px;
+        }
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+        .search-form-field div.mat-form-field-wrapper{
+          padding-bottom: 0px;
+      }
+      /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+      .search-form-field div.mat-form-field-suffix button{
+          height: 32px;
+          width: 32px;
+      }
+
+      /* for dialog pop-up */
+.btn-dialog-close{
+  align-items: center;
+  width: 45px;
+  min-width: 0px !important;
+  height: 40px;
+  padding: 0px !important;
+}
+mat-form-field {
+  margin-right: 12px;
+}

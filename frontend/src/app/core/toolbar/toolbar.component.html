@@ -1,0 +1,78 @@
+<nav class="navbar navbar-fixed-top navbar-expand-md">
+  <div class="container">
+    <mat-toolbar color="primary" class="mat-elevation-z8">
+      <button mat-icon-button [routerLink]="'home'">
+        <mat-icon>home</mat-icon>
+      </button>
+      <span autosize>STAR TRACK PROJECT</span>
+      <ng-container>
+        <div fxFlex fxLayoutAlign="flex-end center">
+          <button mat-button [routerLink]="'createProject'" *ngIf="isUser">
+            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
+              >supervisor_account</mat-icon
+            >
+            <span style="font-size: 18px">Create Project</span>
+          </button>
+          <button
+            mat-button
+            [routerLink]="'CreateProjectManagement'"
+            *ngIf="isAdmin"
+          >
+            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
+              >supervisor_account</mat-icon
+            >
+            <span style="font-size: 18px">Create Project Management</span>
+          </button>
+          <button mat-button [routerLink]="'user-management'" *ngIf="isAdmin">
+            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
+              >supervisor_account</mat-icon
+            >
+            <span style="font-size: 18px">User Management</span>
+          </button>
+          <button mat-button *ngIf="!isLoggedIn" (click)="openDialog()">
+            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
+              >Login</mat-icon
+            >
+            <span style="font-size: 18px">Sign up</span>
+          </button>
+          <button mat-button *ngIf="!isLoggedIn" (click)="openLoginDialog()">
+            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
+              >Login</mat-icon
+            >
+            <span style="font-size: 18px">login</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-button [matMenuTriggerFor]="menu1" *ngIf="isLoggedIn">
+            <mat-icon
+              mat-list-icon
+              class="material-icons mat-elevation-z8 mr"
+              style="font-size: 18px"
+              >airplay</mat-icon
+            >
+            <span style="font-size: 16px">{{ firstName }} {{ lastName }}</span>
+          </button>
+          <mat-menu #menu1="matMenu" class="menu-item mat-elevation-z8 mr">
+            <a [routerLink]="'user'" *ngIf="isLoggedIn">
+              <button mat-menu-item>
+                <mat-icon mat-list-icon class="material-icons"
+                  >accessibility</mat-icon
+                >
+                <span style="font-size: 18px">Profile</span>
+              </button>
+            </a>
+            <mat-divider></mat-divider>
+            <a [routerLink]="'profile'" *ngIf="isLoggedIn" (click)="logout()">
+              <button mat-menu-item>
+                <mat-icon mat-list-icon class="material-icons mr"
+                  >done</mat-icon
+                >
+                <span style="font-size: 18px">Logout</span>
+              </button>
+            </a>
+            <mat-divider></mat-divider>
+          </mat-menu>
+        </div>
+      </ng-container>
+    </mat-toolbar>
+  </div>
+</nav>

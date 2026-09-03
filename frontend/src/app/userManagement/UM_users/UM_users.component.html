@@ -1,0 +1,88 @@
+<div class="container">
+  <div class="example-container" style="margin:2em;">
+    <mat-card appearance="outlined" fxFlexAlign="stretch">
+      <div>
+        <mat-form-field class="header">
+          <mat-label>Filter</mat-label>
+          <input matInput (keyup)="applyFilter2($event)" placeholder="Search.." #input>
+        </mat-form-field>
+
+        <table mat-table [dataSource]="dataSource2" matSort #TableTwoSort="matSort">
+
+          <ng-container matColumnDef="firstName">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by First Name"> First Name
+            </th>
+            <td mat-mdc-cell *matCellDef="let row"> {{row.firstName}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastName">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by last Name"> Last Name
+            </th>
+            <td mat-mdc-cell *matCellDef="let row"> {{row.lastName}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by email"> Email </th>
+            <td mat-mdc-cell *matCellDef="let row"> {{row.email}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="createdDate">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by Created Date"> Created
+            </th>
+            <td mat-mdc-cell *matCellDef="let row"> {{row.createdDate | date}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="modifiedDate">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by Modified Date"> Modified
+            </th>
+            <td mat-mdc-cell *matCellDef="let row"> {{row.modifiedDate | date}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="role">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by Role"> Role </th>
+            <td mat-mdc-cell *matCellDef="let row"> {{row.role}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="update">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Update</th>
+            <td mat-mdc-cell *matCellDef="let row">
+              <button mat-raised-button color="primary" type="button" (click)="onEdit(row)"
+                matTooltip="Update User Role">
+                <mat-icon>launch</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="deleteUser">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Delete </th>
+            <td mat-mdc-cell *matCellDef="let row">
+              <button mat-raised-button type="button" color="accent" matTooltip="Delete"
+                (click)="um_HelperService.delete(row?.email)" matTooltip="Delete User">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="resetPassword">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Reset Password </th>
+            <td mat-mdc-cell *matCellDef="let row">
+              <button mat-raised-button type="button" color="accent" matTooltip="Password Reset"
+                (click)="um_HelperService.onResetPassword(row?.email)" >
+                <mat-icon>lock_reset</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-mdc-cell" colspan="4">No data Found"{{input.value}}"</td>
+          </tr>
+        </table>
+        <mat-paginator #TableTwoPaginator="matPaginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </mat-card>
+
+  </div>
+</div>

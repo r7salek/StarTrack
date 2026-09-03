@@ -1,0 +1,43 @@
+<div fxFlex fxFlexAlign="center" class="example-container">
+  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+    <span>Modify User Role</span>
+  </mat-toolbar>
+  <div fxLayoutAlign="space-around center">
+    <form [formGroup]="service.form">
+      <mat-grid-list cols="1" rowHeight="50px" rowWidth="150px" class="content">
+        <div class="controles-container">
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input formControlName="email" readonly matInput placeholder="Email">
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+
+        </div>
+
+      </mat-grid-list>
+      <mat-grid-list cols="1" rowHeight="50px" rowWidth="150px" class="content">
+        <div class="controles-container">
+          <mat-form-field appearance="outline">
+            <mat-label>Role</mat-label>
+            <mat-select formControlName="role" required multiple>
+              <mat-option *ngFor="let role of roleList" [value]="role.description">
+                {{role.description}}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>supervised_user_circle</mat-icon>
+          </mat-form-field>
+        </div>
+      </mat-grid-list>
+      <br>
+      <div class="controles-container">
+        <div class="example-button-row">
+          <p style="align:center">
+            <button mat-raised-button color="primary"
+              (click)="onUpdateUserRole(service.form.value.email, service.form.value.role)">Submit</button>
+            <button mat-raised-button color="warn" (click)="onClose()">Cancel</button>
+          </p>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

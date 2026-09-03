@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="example-container" style="margin:2em;">
+    <mat-card appearance="outlined" fxFlexAlign="stretch">
+      <div>
+        <mat-form-field class="header">
+          <mat-label>Filter</mat-label>
+          <input matInput (keyup)="applyFilter1($event)" placeholder="Search.." #input>
+        </mat-form-field>
+
+        <table mat-table [dataSource]="dataSource1" matSort #TableOneSort="matSort" class="mat-elevation-z8">
+
+          <ng-container matColumnDef="firstName">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by First Name"> First Name </th>
+            <td mat-mdc-cell *matCellDef="let row2"> {{row2?.firstName}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastName">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by Last Name"> Last Name </th>
+            <td mat-mdc-cell *matCellDef="let row2"> {{row2?.lastName}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by First Email"> Email </th>
+            <td mat-mdc-cell *matCellDef="let row2"> {{row2.email}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="createdDate">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header matTooltip="sorting by Created Date"> Created </th>
+            <td mat-mdc-cell *matCellDef="let row2"> {{row2?.createdDate | date}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="accept">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Accept</th>
+            <td mat-mdc-cell *matCellDef="let row2">
+              <button mat-raised-button color="primary" type="button"
+                (click)="um_HelperService.onUpdateUser(row2?.email)"  matTooltip="Accept user Account request">
+                <mat-icon>done</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="deny">
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Reject </th>
+            <td mat-mdc-cell *matCellDef="let row2">
+              <button mat-raised-button type="button" color="accent" matTooltip="Delete"
+                (click)="um_HelperService.delete(row2?.email)"  matTooltip="Reject user Account request">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
+          <tr mat-row *matRowDef="let row2; columns: displayedColumns1;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-mdc-cell" colspan="4">No data Found "{{input.value}}"</td>
+          </tr>
+        </table>
+        <mat-paginator #TableOnePaginator="matPaginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </mat-card>
+  </div>
+</div>

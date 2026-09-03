@@ -1,0 +1,3776 @@
+<mat-card appearance="outlined" fxFlex>
+  <mat-card-title>
+    <span style="font-size: 24px">Create Project</span>
+  </mat-card-title>
+  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+    <span style="font-size: 24px">Create New Project</span>
+  </mat-toolbar>
+  <div class="container">
+    <mat-card-content>
+      <mat-card appearance="outlined">
+        <mat-stepper [linear]="true" #stepper>
+          <mat-step [stepControl]="form">
+            <br />
+            <mat-divider></mat-divider>
+            <br />
+            <ng-template matStepLabel
+              ><span style="font-size: 20px"
+                >Team information</span
+              ></ng-template
+            >
+            <form [formGroup]="form" class="normal-form">
+              <mat-grid-list cols="1" rowHeight="100px" rowWidth="150px">
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Project name</mat-label
+                      >
+                      <input
+                        matInput
+                        formControlName="projectName"
+                        required
+                        placeholder="Project name"
+                      />
+                      <mat-error
+                        style="font-size: 16px"
+                        *ngIf="form.get('projectName').hasError('required')"
+                        >You must enter project name
+                      </mat-error>
+                      <mat-hint style="font-size: 16px"
+                        >Enter project name*
+                        <span
+                          *ngIf="
+                            form.get('projectName').valid &&
+                            !form.get('projectName').hasError('required')
+                          "
+                          class="material-icons green-icon valid-hint"
+                          >check_circle</span
+                        ></mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+              </mat-grid-list>
+              <mat-divider></mat-divider><br />
+              <h1>PI information</h1>
+              <mat-grid-list cols="6" rowHeight="100px" rowWidth="120px">
+                <mat-grid-tile>
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >First name PI</mat-label
+                      >
+                      <input
+                        matInput
+                        formControlName="firstNamePI"
+                        required
+                        placeholder="First name PI"
+                      />
+                      <mat-error
+                        style="font-size: 16px"
+                        *ngIf="form.get('firstNamePI').hasError('required')"
+                        >You must enter first name PI
+                      </mat-error>
+                      <mat-hint style="font-size: 16px"
+                        >Enter first name of PI*
+                        <span
+                          *ngIf="
+                            form.get('firstNamePI').valid &&
+                            !form.get('firstNamePI').hasError('required')
+                          "
+                          class="material-icons green-icon valid-hint"
+                          >check_circle</span
+                        ></mat-hint
+                      >
+                      <mat-icon matSuffix>account_box</mat-icon>
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Last name PI</mat-label
+                      >
+                      <input
+                        matInput
+                        formControlName="lastNamePI"
+                        required
+                        matInput
+                        placeholder="Last name PI"
+                      />
+                      <mat-error
+                        style="font-size: 16px"
+                        *ngIf="form.get('lastNamePI').hasError('required')"
+                        >You must enter last name PI
+                      </mat-error>
+                      <mat-hint style="font-size: 16px"
+                        >Enter last name of PI*
+                        <span
+                          *ngIf="
+                            form.get('lastNamePI').valid &&
+                            !form.get('lastNamePI').hasError('required')
+                          "
+                          class="material-icons green-icon valid-hint"
+                          >check_circle</span
+                        ></mat-hint
+                      >
+                      <mat-icon matSuffix>account_box</mat-icon>
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px">Email PI</mat-label>
+                      <input
+                        matInput
+                        formControlName="emailPI"
+                        required
+                        matInput
+                        placeholder="Email PI"
+                      />
+                      <mat-error
+                        style="font-size: 16px"
+                        *ngIf="form.get('emailPI').hasError('required')"
+                        >You must enter email PI
+                      </mat-error>
+                      <mat-hint style="font-size: 16px"
+                        >Enter email of PI*
+                        <span
+                          *ngIf="
+                            form.get('emailPI').valid &&
+                            !form.get('emailPI').hasError('required')
+                          "
+                          class="material-icons green-icon valid-hint"
+                          >check_circle</span
+                        ></mat-hint
+                      >
+                      <mat-icon matSuffix>email</mat-icon>
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px">Department</mat-label>
+                      <input
+                        matInput
+                        formControlName="departmentPI"
+                        required
+                        matInput
+                        placeholder="Department PI"
+                      />
+                      <mat-error
+                        style="font-size: 16px"
+                        *ngIf="form.get('departmentPI').hasError('required')"
+                        >You must enter department
+                      </mat-error>
+                      <mat-hint style="font-size: 16px"
+                        >Enter PI department name*<span
+                          *ngIf="
+                            form.get('departmentPI').valid &&
+                            !form.get('departmentPI').hasError('required')
+                          "
+                          class="material-icons green-icon valid-hint"
+                          >check_circle</span
+                        ></mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px">CRSid</mat-label>
+                      <input
+                        matInput
+                        formControlName="crsidPI"
+                        required
+                        matInput
+                        placeholder="CRSid PI"
+                        required
+                      />
+                      <mat-error
+                        style="font-size: 16px"
+                        *ngIf="form.get('crsidPI').hasError('required')"
+                        >You must enter crsid
+                      </mat-error>
+                      <mat-hint style="font-size: 16px"
+                        >Enter PI CRSid*<span
+                          *ngIf="
+                            form.get('crsidPI').valid &&
+                            !form.get('crsidPI').hasError('required')
+                          "
+                          class="material-icons green-icon valid-hint"
+                          >check_circle</span
+                        ></mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Other info PI</mat-label
+                      >
+                      <input
+                        matInput
+                        formControlName="otherInforPI"
+                        matInput
+                        placeholder="Other info PI"
+                      />
+                      <mat-hint style="font-size: 16px"
+                        >Enter Other Info PI</mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+              </mat-grid-list>
+              <mat-divider></mat-divider><br />
+              <h1>Group member information</h1>
+              <div formArrayName="groupMemberRows">
+                <div
+                  *ngFor="
+                    let groupMemberRows of form.controls.groupMemberRows
+                      .controls;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                >
+                  <mat-grid-list cols="7" rowHeight="100px" rowWidth="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >First name</mat-label
+                          >
+                          <input
+                            matInput
+                            id="firstNamePostDoc{{ i }}"
+                            formControlName="firstNamePostDoc"
+                            placeholder="First name"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter first name</mat-hint
+                          >
+                          <mat-icon matSuffix>account_box</mat-icon>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Last name</mat-label
+                          >
+                          <input
+                            matInput
+                            id="lastNamePostDoc{{ i }}"
+                            formControlName="lastNamePostDoc"
+                            matInput
+                            placeholder="Last name"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter last name</mat-hint
+                          >
+                          <mat-icon matSuffix>account_box</mat-icon>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">Email</mat-label>
+                          <input
+                            matInput
+                            id="emailPostDoc{{ i }}"
+                            formControlName="emailPostDoc"
+                            matInput
+                            placeholder="Email"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter email</mat-hint
+                          >
+                          <mat-icon matSuffix>email</mat-icon>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Department</mat-label
+                          >
+                          <input
+                            matInput
+                            id="departmentPostDoc{{ i }}"
+                            formControlName="departmentPostDoc"
+                            matInput
+                            placeholder="Department"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter department name</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Position</mat-label
+                          >
+                          <mat-select
+                            id="positionPostDoc{{ i }}"
+                            formControlName="positionPostDoc"
+                          >
+                            <mat-option
+                              *ngFor="let positionValue of positionValue"
+                              [value]="positionValue"
+                              >{{ positionValue }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-hint style="font-size: 16px"
+                            >Please select Position</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">CRSid</mat-label>
+                          <input
+                            matInput
+                            id="crsidPostDoc{{ i }}"
+                            formControlName="crsidPostDoc"
+                            matInput
+                            placeholder="CRSid"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter CRSid</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Other info</mat-label
+                          >
+                          <input
+                            matInput
+                            id="otherInforPostDoc{{ i }}"
+                            formControlName="otherInforPostDoc"
+                            matInput
+                            placeholder="Other info"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter other info</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <div class="container">
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="primary"
+                      aria-label="Add"
+                      (click)="addgroupMember()"
+                      matTooltip="Add"
+                    >
+                      <mat-icon>add box</mat-icon>Add Group Member
+                    </button>
+                    &nbsp;
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="warn"
+                      aria-label="Remove/clear"
+                      *ngIf="form.controls.groupMemberRows.controls.length > 1"
+                      (click)="deletegroupMember(i)"
+                      matTooltip="Remove"
+                    >
+                      <mat-icon>remove_circle</mat-icon>Remove Group Member
+                    </button>
+                  </div>
+                  <br />
+                  <mat-divider></mat-divider><br />
+                </div>
+              </div>
+              <br />
+              <div class="example-button-row" fxFlexAlign="stretch">
+                <p>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="!form.valid"
+                    matTooltip="Go to next"
+                    class="example-button"
+                    matStepperNext
+                  >
+                    Next
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="warn"
+                    (click)="form.reset()"
+                    matTooltip="Cancel Update"
+                  >
+                    Reset
+                  </button>
+                </p>
+              </div>
+            </form>
+          </mat-step>
+          <mat-step>
+            <br />
+            <mat-divider></mat-divider>
+            <br />
+            <ng-template matStepLabel
+              ><span style="font-size: 20px">Funding source</span></ng-template
+            >
+            <mat-card>
+              <!--     <mat-divider></mat-divider>
+              <h1 style="text-align: center;"><b>Team information</b></h1>
+              <mat-divider></mat-divider> -->
+              <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+                <span style="font-size: 24px">Funding source</span>
+              </mat-toolbar>
+              <form [formGroup]="form5" class="normal-form">
+                <h1>Primary funding information</h1>
+                <div formArrayName="fundingOverviewRows">
+                  <div
+                    *ngFor="
+                      let fundingOverviewRows of form5.controls
+                        .fundingOverviewRows.controls;
+                      let i = index
+                    "
+                    [formGroupName]="i"
+                  >
+                    <mat-grid-list cols="5" rowHeight="100px">
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              Funder</mat-label
+                            >
+                            <mat-select
+                              id="fundingOverview{{ i }}"
+                              formControlName="fundingOverview"
+                              required
+                              [(ngModel)]="selectedfundingGrantsOverview[i]"
+                              multiple
+                              (selectionChange)="
+                                onSelectFundingGrantsFunderOverview(
+                                  i,
+                                  $event.value
+                                )
+                              "
+                            >
+                              <mat-option
+                                *ngFor="let funding of fundingValue"
+                                [value]="funding"
+                                >{{ funding }}</mat-option
+                              >
+                            </mat-select>
+                            <mat-error
+                              style="font-size: 16px"
+                              *ngIf="
+                                form5.controls.fundingOverviewRows.controls[i]
+                                  .get('fundingOverview')
+                                  .hasError('required')
+                              "
+                              >You must select funding
+                            </mat-error>
+                            <mat-hint style="font-size: 16px"
+                              >Please select funding<span
+                                *ngIf="
+                                  form5.controls.fundingOverviewRows.controls[
+                                    i
+                                  ].get('fundingOverview').valid &&
+                                  !form5.controls.fundingOverviewRows.controls[
+                                    i
+                                  ]
+                                    .get('fundingOverview')
+                                    .hasError('required')
+                                "
+                                class="material-icons green-icon valid-hint"
+                                >check_circle</span
+                              ></mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile
+                        [style.width.px]="450"
+                        *ngIf="
+                          selectedfundingGrantsOverview[i] &&
+                          selectedfundingGrantsOverview[i].includes(
+                            'Other (please specify)'
+                          )
+                        "
+                      >
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >Which funder Other (please specify)</mat-label
+                            >
+                            <input
+                              matInput
+                              id="fundingOverviewOther{{ i }}"
+                              formControlName="fundingOverviewOther"
+                              placeholder="Other (please specify)"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter Other (please specify)</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile
+                        [style.width.px]="450"
+                        *ngIf="
+                          selectedfundingGrantsOverview[i] &&
+                          selectedfundingGrantsOverview[i].includes('NIHR')
+                        "
+                      >
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >Funder (NIHR)</mat-label
+                            >
+                            <mat-select
+                              id="fundingOverviewNIHR{{ i }}"
+                              formControlName="fundingOverviewNIHR"
+                              [(ngModel)]="selectedfundingGrantsOverviewNIHR[i]"
+                              (selectionChange)="
+                                onSelectFundingGrantsFunderOverviewNIHR(
+                                  i,
+                                  $event.value
+                                )
+                              "
+                            >
+                              <mat-option
+                                *ngFor="let fundingNIHR of fundingNIHRValue"
+                                [value]="fundingNIHR"
+                                >{{ fundingNIHR }}</mat-option
+                              >
+                            </mat-select>
+                            <mat-hint style="font-size: 16px"
+                              >Select funder (NIHR)</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile
+                        [style.width.px]="450"
+                        *ngIf="
+                          selectedfundingGrantsOverviewNIHR[i] &&
+                          selectedfundingGrantsOverviewNIHR[i].includes(
+                            'Other (please specify)'
+                          )
+                        "
+                      >
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >NIHR other (please specify)</mat-label
+                            >
+                            <input
+                              matInput
+                              id="fundingOverviewNIHROther{{ i }}"
+                              formControlName="fundingOverviewNIHROther"
+                              placeholder="NIHR Other (please specify)"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter other (please specify)</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile
+                        [style.width.px]="450"
+                        *ngIf="
+                          selectedfundingGrantsOverview[i] &&
+                          selectedfundingGrantsOverview[i].includes('UKRI-MRC')
+                        "
+                      >
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >Funder (UKRI-MRC)</mat-label
+                            >
+                            <mat-select
+                              id="fundingOverviewUKRIMRC{{ i }}"
+                              formControlName="fundingOverviewUKRIMRC"
+                              [(ngModel)]="
+                                selectedfundingGrantsOverviewUKRIMRC[i]
+                              "
+                              (selectionChange)="
+                                onSelectFundingGrantsFunderOverviewUKRIMRC(
+                                  i,
+                                  $event.value
+                                )
+                              "
+                            >
+                              <mat-option
+                                *ngFor="
+                                  let fundingUKRIMRC of fundingUKRIMRCValue
+                                "
+                                [value]="fundingUKRIMRC"
+                                >{{ fundingUKRIMRC }}</mat-option
+                              >
+                            </mat-select>
+                            <mat-hint style="font-size: 16px"
+                              >Select funder (UKRI-MRC)</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile
+                        [style.width.px]="450"
+                        *ngIf="
+                          selectedfundingGrantsOverviewUKRIMRC[i] &&
+                          selectedfundingGrantsOverviewUKRIMRC[i].includes(
+                            'Other (please specify)'
+                          )
+                        "
+                      >
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >(UKRI-MRC) other (please specify)</mat-label
+                            >
+                            <input
+                              matInput
+                              id="fundingOverviewUKRIMRCOther{{ i }}"
+                              formControlName="fundingOverviewUKRIMRCOther"
+                              placeholder="NIHR Other (please specify)"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter other (please specify)</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile
+                        [style.width.px]="450"
+                        *ngIf="
+                          selectedfundingGrantsOverview[i] &&
+                          selectedfundingGrantsOverview[i].includes(
+                            'Wellcome Trust'
+                          )
+                        "
+                      >
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >Funder (Wellcome Trust)</mat-label
+                            >
+                            <mat-select
+                              id="fundingOverviewWellcomeTrust{{ i }}"
+                              formControlName="fundingOverviewWellcomeTrust"
+                              [(ngModel)]="
+                                selectedfundingGrantsOverviewWellcomeTrust[i]
+                              "
+                              (selectionChange)="
+                                onSelectFundingGrantsOverviewFunderWellcomeTrust(
+                                  i,
+                                  $event.value
+                                )
+                              "
+                            >
+                              <mat-option
+                                *ngFor="
+                                  let fundingWellcomeTrust of fundingWellcomeTrustValue
+                                "
+                                [value]="fundingWellcomeTrust"
+                                >{{ fundingWellcomeTrust }}</mat-option
+                              >
+                            </mat-select>
+                            <mat-hint style="font-size: 16px"
+                              >Select Funder (Wellcome Trust)</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile
+                        [style.width.px]="450"
+                        *ngIf="
+                          selectedfundingGrantsOverviewWellcomeTrust[i] &&
+                          selectedfundingGrantsOverviewWellcomeTrust[
+                            i
+                          ].includes('Other (please specify)')
+                        "
+                      >
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >Wellcome trust other (please specify)</mat-label
+                            >
+                            <input
+                              matInput
+                              id="fundingOverviewWellcomeTrustOther{{ i }}"
+                              formControlName="fundingOverviewWellcomeTrustOther"
+                              placeholder="NIHR Other (please specify)"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter Other (please specify)</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                    </mat-grid-list>
+                    <mat-grid-list cols="5" rowHeight="100px">
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              Scheme</mat-label
+                            >
+                            <mat-select
+                              id="schemeOverview{{ i }}"
+                              formControlName="schemeOverview"
+                              required
+                              [(ngModel)]="selectedfundingOverviewscheme[i]"
+                              (selectionChange)="
+                                onSelectFundingOverviewschemeFunder(
+                                  i,
+                                  $event.value
+                                )
+                              "
+                            >
+                              <mat-option
+                                *ngFor="let scheme of schemeValue"
+                                [value]="scheme"
+                                >{{ scheme }}</mat-option
+                              >
+                            </mat-select>
+                            <mat-error
+                              style="font-size: 16px"
+                              *ngIf="
+                                form5.controls.fundingOverviewRows.controls[i]
+                                  .get('schemeOverview')
+                                  .hasError('required')
+                              "
+                              >You must select scheme
+                            </mat-error>
+                            <mat-hint style="font-size: 16px"
+                              >Please select scheme*<span
+                                *ngIf="
+                                  form5.controls.fundingOverviewRows.controls[
+                                    i
+                                  ].get('schemeOverview').valid &&
+                                  !form5.controls.fundingOverviewRows.controls[
+                                    i
+                                  ]
+                                    .get('schemeOverview')
+                                    .hasError('required')
+                                "
+                                class="material-icons green-icon valid-hint"
+                                >check_circle</span
+                              ></mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile
+                        [style.width.px]="450"
+                        *ngIf="
+                          selectedfundingOverviewscheme[i] &&
+                          selectedfundingOverviewscheme[i].includes(
+                            'Other (please specify)'
+                          )
+                        "
+                      >
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >Which scheme other (please specify)</mat-label
+                            >
+                            <input
+                              matInput
+                              id="schemeOverviewOther{{ i }}"
+                              formControlName="schemeOverviewOther"
+                              placeholder="Other (please specify)"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter other (please specify)</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              Value</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="valueOverview{{ i }}"
+                              formControlName="valueOverview"
+                              matInput
+                              type="number"
+                              placeholder="Enter External advisor Outcome"
+                            />
+
+                            <mat-hint style="font-size: 16px"
+                              >Enter value
+                            </mat-hint>
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              Funding start date</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="fundingOverviewStartDate{{ i }}"
+                              readonly
+                              [matDatepicker]="picker1"
+                              formControlName="fundingOverviewStartDate"
+                              placeholder="Enter funding start date"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >DD/MM/YYYY</mat-hint
+                            >
+                            <mat-datepicker-toggle
+                              matIconSuffix
+                              [for]="picker1"
+                            >
+                              <mat-icon matDatepickerToggleIcon
+                                >keyboard_arrow_down</mat-icon
+                              >
+                            </mat-datepicker-toggle>
+                            <mat-datepicker #picker1></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              Funding end date</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="fundingOverviewEndDate{{ i }}"
+                              readonly
+                              [matDatepicker]="picker2"
+                              formControlName="fundingOverviewEndDate"
+                              placeholder="Enter funding end date"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >DD/MM/YYYY</mat-hint
+                            >
+                            <mat-datepicker-toggle
+                              matIconSuffix
+                              [for]="picker2"
+                            >
+                              <mat-icon matDatepickerToggleIcon
+                                >keyboard_arrow_down</mat-icon
+                              >
+                            </mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px"
+                              >Funder award number</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="grantNumberOverview{{ i }}"
+                              formControlName="grantNumberOverview"
+                              matInput
+                              placeholder="Funder award number"
+                            />
+
+                            <mat-hint style="font-size: 16px"
+                              >Enter Funder award number</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                    </mat-grid-list>
+                    <mat-grid-list cols="5" rowHeight="100px"> </mat-grid-list>
+                    <mat-grid-list cols="2" rowHeight="200px">
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              Worktribe number</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="worktribeNumberOverview{{ i }}"
+                              formControlName="worktribeNumberOverview"
+                              matInput
+                              placeholder="worktribe Number"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter worktribe Number</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">Aims</mat-label>
+                            <textarea
+                              class="custom-font-size-row"
+                              matInput
+                              id="aimsOverview{{ i }}"
+                              formControlName="aimsOverview"
+                              cdkTextareaAutosize
+                              #myInput6
+                              [maxlength]="maxChars3"
+                              #autosize="cdkTextareaAutosize"
+                              cdkAutosizeMinRows="1"
+                              cdkAutosizeMaxRows="5"
+                            ></textarea>
+                            <mat-hint class="custom-font-size-hint"
+                              >Enter text here...</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                    </mat-grid-list>
+                    <div class="container">
+                      <button
+                        class="float-left"
+                        mat-raised-button
+                        color="primary"
+                        aria-label="Add"
+                        (click)="addFundingOverview()"
+                        matTooltip="Add"
+                      >
+                        <mat-icon>add box</mat-icon>Secondary funding source
+                      </button>
+                      &nbsp;
+                      <button
+                        class="float-left"
+                        mat-raised-button
+                        color="warn"
+                        aria-label="Remove/clear"
+                        *ngIf="
+                          form5.controls.fundingOverviewRows.controls.length > 1
+                        "
+                        (click)="deleteFundingOverview(i)"
+                        matTooltip="Remove"
+                      >
+                        <mat-icon>remove_circle</mat-icon>Remove Secondary
+                        funding source
+                      </button>
+                    </div>
+                    <br />
+                    <mat-divider></mat-divider><br />
+                  </div>
+                </div>
+                <br />
+                <div class="example-button-row" fxFlexAlign="stretch">
+                  <p>
+                    <button
+                      mat-raised-button
+                      color="accent"
+                      matTooltip="Got to back"
+                      class="example-button"
+                      matStepperPrevious
+                    >
+                      Back
+                    </button>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      [disabled]="!form5.valid"
+                      matTooltip="Go to next"
+                      class="example-button"
+                      matStepperNext
+                    >
+                      Next
+                    </button>
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="form5.reset()"
+                      matTooltip="Cancel Update"
+                    >
+                      Reset
+                    </button>
+                  </p>
+                </div>
+              </form>
+            </mat-card>
+          </mat-step>
+          <mat-step>
+            <br />-
+            <mat-divider></mat-divider>
+            <br />
+            <ng-template matStepLabel
+              ><span style="font-size: 20px"
+                >Scope of the project</span
+              ></ng-template
+            >
+            <form [formGroup]="form3" class="normal-form">
+              <mat-grid-list cols="5" rowHeight="380px" rowWidth="120px">
+                <mat-grid-tile [style.width.px]="450" class="align-top">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px">Modality</mat-label>
+                      <mat-select
+                        formControlName="modality"
+                        [(ngModel)]="selectedModality"
+                        required
+                        (selectionChange)="onSelectModality($event.value)"
+                        multiple
+                      >
+                        <mat-option value="Cell therapy"
+                          >Cell therapy</mat-option
+                        >
+                        <mat-option value="Diagnostic">Diagnostic</mat-option>
+                        <mat-option
+                          value="Digital health technology for ultimate NHS use"
+                          >Digital health technology for ultimate NHS
+                          use</mat-option
+                        >
+                        <mat-option value="Drug repurposing"
+                          >Drug repurposing</mat-option
+                        >
+                        <mat-option value="Drug discovery"
+                          >Drug discovery</mat-option
+                        >
+                        <mat-option value="Gene therapy"
+                          >Gene therapy</mat-option
+                        >
+                        <mat-option value="Medical device"
+                          >Medical device</mat-option
+                        >
+                        <mat-option value="Prognostic">Prognostic</mat-option>
+                        <mat-option value="Research tool"
+                          >Research tool</mat-option
+                        >
+                        <mat-option value="Other (please specify)"
+                          >Other (please specify)</mat-option
+                        >
+                      </mat-select>
+                      <mat-error
+                        style="font-size: 16px"
+                        *ngIf="form3.get('modality').hasError('required')"
+                      >
+                        You must make a selection
+                      </mat-error>
+                      <mat-hint style="font-size: 16px"
+                        >Select modality*<span
+                          *ngIf="
+                            form3.get('modality').valid &&
+                            !form3.get('modality').hasError('required')
+                          "
+                          class="material-icons green-icon valid-hint"
+                          >check_circle</span
+                        ></mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile
+                  [style.width.px]="450"
+                  *ngIf="
+                    selectedModality &&
+                    selectedModality.includes('Other (please specify)')
+                  "
+                >
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Modality other (please specify)</mat-label
+                      >
+                      <input
+                        matInput
+                        formControlName="modality1"
+                        placeholder="Other (please specify)"
+                      />
+                      <mat-hint style="font-size: 16px"
+                        >Enter other (please specify)*</mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Research field</mat-label
+                      >
+                      <mat-select
+                        formControlName="areaOfExpertise"
+                        required
+                        [(ngModel)]="selectedareaOfExpertise"
+                        (selectionChange)="
+                          onSelectAreaOfExpertise($event.value)
+                        "
+                        multiple
+                      >
+                        <mat-option value="Oncology">Oncology</mat-option>
+                        <mat-option value="Neurology">Neurology</mat-option>
+                        <mat-option value="Gastroenterology"
+                          >Gastroenterology</mat-option
+                        >
+                        <mat-option value="Family medicine"
+                          >Family medicine</mat-option
+                        >
+                        <mat-option value="Pediatrics">Pediatrics</mat-option>
+                        <mat-option value="Clinical neurophysiology"
+                          >Clinical neurophysiology</mat-option
+                        >
+                        <mat-option value="Hospice and palliative medicine"
+                          >Hospice and palliative medicine</mat-option
+                        >
+                        <mat-option value="Psychiatry">Psychiatry</mat-option>
+                        <mat-option value="Dermatology">Dermatology</mat-option>
+                        <mat-option value="Immunology">Immunology</mat-option>
+                        <mat-option value="Ophthalmology"
+                          >Ophthalmology</mat-option
+                        >
+                        <mat-option value="Anesthesiology"
+                          >Anesthesiology</mat-option
+                        >
+                        <mat-option value="Endocrinology and diabetes"
+                          >Endocrinology and diabetes</mat-option
+                        >
+                        <mat-option value="Internal medicine"
+                          >Internal medicine</mat-option
+                        >
+                        <mat-option value="General surgery"
+                          >General surgery</mat-option
+                        >
+                        <mat-option value="Emergency medicine"
+                          >Emergency medicine</mat-option
+                        >
+                        <mat-option value="Obstetrics and gynaecology"
+                          >Obstetrics and gynaecology</mat-option
+                        >
+                        <mat-option value="Pathology">Pathology</mat-option>
+                        <mat-option value="Clinical Genetics"
+                          >Clinical Genetics</mat-option
+                        >
+                        <mat-option value="Geriatrics">Geriatrics</mat-option>
+                        <mat-option value="Pain Medicine"
+                          >Pain Medicine</mat-option
+                        >
+                        <mat-option value="Cardiovascular disease"
+                          >Cardiovascular disease</mat-option
+                        >
+                        <mat-option value="Other (please specify)"
+                          >Other (please specify)</mat-option
+                        >
+                      </mat-select>
+                      <mat-error
+                        style="font-size: 16px"
+                        *ngIf="
+                          form3.get('areaOfExpertise').hasError('required')
+                        "
+                        >You must make a selection
+                      </mat-error>
+                      <mat-hint style="font-size: 16px"
+                        >Select Research field*<span
+                          *ngIf="
+                            form3.get('areaOfExpertise').valid &&
+                            !form3.get('areaOfExpertise').hasError('required')
+                          "
+                          class="material-icons green-icon valid-hint"
+                          >check_circle</span
+                        ></mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile
+                  [style.width.px]="450"
+                  *ngIf="
+                    selectedareaOfExpertise &&
+                    selectedareaOfExpertise.includes('Other (please specify)')
+                  "
+                >
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Research field other (please specify)</mat-label
+                      >
+                      <input
+                        matInput
+                        formControlName="areaOfExpertise1"
+                        placeholder="Other (please specify)"
+                      />
+                      <mat-hint style="font-size: 16px"
+                        >Enter other (please specify)*</mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <!-- Readiness Dropdown -->
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px">Readiness</mat-label>
+                      <mat-select formControlName="readiness">
+                        <mat-option value="TRL1">TRL1</mat-option>
+                        <mat-option value="TRL2">TRL2</mat-option>
+                        <mat-option value="TRL3">TRL3</mat-option>
+                        <mat-option value="TRL4">TRL4</mat-option>
+                        <mat-option value="TRL5">TRL5</mat-option>
+                        <mat-option value="TRL6">TRL6</mat-option>
+                        <mat-option value="TRL7">TRL7</mat-option>
+                        <mat-option value="TRL8">TRL8</mat-option>
+                        <mat-option value="TRL9">TRL9</mat-option>
+                        <mat-option value="Prototype">Prototype</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <!-- Hover Image -->
+                    <div class="hover-image">
+                      <img
+                        src="assets/images/TRL-diagram.png"
+                        alt="TRL Diagram"
+                      />
+                    </div>
+                  </div>
+                </mat-grid-tile>
+              </mat-grid-list>
+              <mat-grid-list cols="1" rowHeight="10px"> </mat-grid-list>
+
+              <mat-grid-list cols="2" rowHeight="290px">
+                <mat-grid-tile>
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Brief description
+                      </mat-label>
+                      <textarea
+                        class="custom-font-size-row"
+                        matInput
+                        formControlName="briefDescription"
+                        cdkTextareaAutosize
+                        #myInput8
+                        [maxlength]="maxChars1"
+                        #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="1"
+                        cdkAutosizeMaxRows="5"
+                      ></textarea>
+                      <mat-hint style="font-size: 16px"
+                        >Enter text here...</mat-hint
+                      >
+                      <mat-label style="font-size: 20px">
+                        (Characters Remaining: {{ myInput8.value.length }} /{{
+                          maxChars1
+                        }})</mat-label
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Project background
+                      </mat-label>
+                      <textarea
+                        class="custom-font-size-row"
+                        matInput
+                        formControlName="projectBackground"
+                        cdkTextareaAutosize
+                        #myInput7
+                        [maxlength]="maxChars1"
+                        #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="1"
+                        cdkAutosizeMaxRows="5"
+                      ></textarea>
+                      <mat-hint style="font-size: 16px"
+                        >Enter text here...</mat-hint
+                      >
+                      <mat-label style="font-size: 20px">
+                        (Characters Remaining: {{ myInput7.value.length }} /{{
+                          maxChars1
+                        }})</mat-label
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+              </mat-grid-list>
+              <div class="example-button-row" fxFlexAlign="stretch">
+                <p>
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    matTooltip="Got to back"
+                    class="example-button"
+                    matStepperPrevious
+                  >
+                    Back
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="!form3.valid"
+                    matTooltip="Go to next"
+                    class="example-button"
+                    matStepperNext
+                  >
+                    Next
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="warn"
+                    (click)="form3.reset()"
+                    matTooltip="Cancel Update"
+                  >
+                    Reset
+                  </button>
+                </p>
+              </div>
+            </form>
+          </mat-step>
+          <mat-step>
+            <br />
+            <mat-divider></mat-divider>
+            <ng-template matStepLabel
+              ><span style="font-size: 20px">Collaborators</span></ng-template
+            >
+            <form [formGroup]="form1" class="normal-form">
+              <h1>Collaborator</h1>
+              <div formArrayName="collaborationRows">
+                <div
+                  *ngFor="
+                    let collaborationRows of form1.controls.collaborationRows
+                      .controls;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                >
+                  <mat-grid-list cols="5" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Collaborator</mat-label
+                          >
+                          <mat-select
+                            id="collaboration{{ i }}"
+                            formControlName="collaboration"
+                            required
+                          >
+                            <mat-option
+                              *ngFor="let collaboration of collaborationValue"
+                              [value]="collaboration"
+                              >{{ collaboration }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-hint style="font-size: 16px"
+                            >Please select Collaborator<span
+                              *ngIf="
+                                form1.controls.collaborationRows.controls[
+                                  i
+                                ].get('collaboration').valid &&
+                                !form1.controls.collaborationRows.controls[i]
+                                  .get('collaboration')
+                                  .hasError('required')
+                              "
+                              class="material-icons green-icon valid-hint"
+                              >check_circle</span
+                            ></mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Collaborator organisation</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="collaborationName{{ i }}"
+                            formControlName="collaborationName"
+                            matInput
+                            placeholder="Enter Collaborator organisation"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter Collaborator organisation</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Collaborator email</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="collaborationEmail{{ i }}"
+                            formControlName="collaborationEmail"
+                            matInput
+                            placeholder="Enter collaboration Email"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter Collaborator email</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Collaborator location</mat-label
+                          >
+                          <mat-select
+                            id="collaborationLocation{{ i }}"
+                            formControlName="collaborationLocation"
+                          >
+                            <mat-option
+                              *ngFor="
+                                let collaborationLocationValue of collaborationLocationValue
+                              "
+                              [value]="collaborationLocationValue"
+                              >{{ collaborationLocationValue }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-hint style="font-size: 16px"
+                            >Please select Collaborator</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Other info Collaborator</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="collaborationOtherInfo{{ i }}"
+                            formControlName="collaborationOtherInfo"
+                            matInput
+                            placeholder="Enter Other Info Collaborator"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter other info Collaborator</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <div class="container">
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="primary"
+                      aria-label="Add"
+                      (click)="addNewCollaboration()"
+                      matTooltip="Add"
+                    >
+                      <mat-icon>add box</mat-icon>Add Collaborator
+                    </button>
+                    &nbsp;
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="warn"
+                      aria-label="Remove/clear"
+                      *ngIf="
+                        form1.controls.collaborationRows.controls.length > 1
+                      "
+                      (click)="deleteCollaboration(i)"
+                      matTooltip="Remove"
+                    >
+                      <mat-icon>remove_circle</mat-icon>Remove Collaborator
+                    </button>
+                  </div>
+                  <br />
+                  <mat-divider></mat-divider><br />
+                </div>
+              </div>
+              <h1>Technology transfer office contact</h1>
+              <mat-grid-list cols="3" rowHeight="100px" rowWidth="80px">
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Technology transfer office contact name</mat-label
+                      >
+                      <input
+                        matInput
+                        formControlName="ttoContractName"
+                        matInput
+                        placeholder="Technology transfer office contact name"
+                      />
+                      <mat-hint style="font-size: 16px"
+                        >Enter Technology transfer office contact name</mat-hint
+                      >
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Technology transfer office contact email</mat-label
+                      >
+                      <input
+                        matInput
+                        formControlName="ttoContractEmail"
+                        matInput
+                        placeholder="Technology transfer office contact email"
+                      />
+                      <mat-hint style="font-size: 16px"
+                        >Enter Technology transfer office contact
+                        email</mat-hint
+                      >
+                      <mat-icon matSuffix>email</mat-icon>
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+                <mat-grid-tile [style.width.px]="450">
+                  <div class="controles-container">
+                    <mat-form-field appearance="outline">
+                      <mat-label style="font-size: 20px"
+                        >Other info Technology transfer office
+                      </mat-label>
+                      <input
+                        matInput
+                        formControlName="ttoContractOtherInfo"
+                        matInput
+                        placeholder="other info Technology transfer office "
+                      />
+                      <mat-hint style="font-size: 16px"
+                        >Enter other info Technology transfer office
+                      </mat-hint>
+                    </mat-form-field>
+                  </div>
+                </mat-grid-tile>
+              </mat-grid-list>
+              <mat-divider></mat-divider><br />
+              <h1>External advisor</h1>
+              <div formArrayName="externalAdvisorRows">
+                <div
+                  *ngFor="
+                    let externalAdvisorRows of form1.controls
+                      .externalAdvisorRows.controls;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                >
+                  <mat-grid-list cols="6" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            External advisor meeting</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="externalAdvisorsMeeting{{ i }}"
+                            readonly
+                            [matDatepicker]="picker"
+                            formControlName="externalAdvisorsMeeting"
+                            placeholder="Enter external advisor meeting"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >DD/MM/YYYY</mat-hint
+                          >
+                          <mat-datepicker-toggle matIconSuffix [for]="picker">
+                            <mat-icon matDatepickerToggleIcon
+                              >keyboard_arrow_down</mat-icon
+                            >
+                          </mat-datepicker-toggle>
+                          <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            External advisor organisation</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="externalAdvisorsOrganisation{{ i }}"
+                            formControlName="externalAdvisorsOrganisation"
+                            matInput
+                            placeholder="Enter external advisor organisation"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter external advisor organisation</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            External advisor name</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="externalAdvisorsName{{ i }}"
+                            formControlName="externalAdvisorsName"
+                            matInput
+                            placeholder="Enter External advisor name"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter external advisor name</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            External advisor email</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="externalAdvisorsEmail{{ i }}"
+                            formControlName="externalAdvisorsEmail"
+                            matInput
+                            placeholder="Enter External advisor Email"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter external advisor email</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            External advisor outcome</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="externalAdvisorsOutcome{{ i }}"
+                            formControlName="externalAdvisorsOutcome"
+                            matInput
+                            placeholder="Enter External advisor Outcome"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter external advisor outcome</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            External advisor expertise</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="externalAdvisorsExpertise{{ i }}"
+                            formControlName="externalAdvisorsExpertise"
+                            matInput
+                            placeholder="Enter External advisor expertise"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter external advisor expertise</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <div class="container">
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="primary"
+                      aria-label="Add"
+                      (click)="addExternalAdvisor()"
+                      matTooltip="Add"
+                    >
+                      <mat-icon>add box</mat-icon>Add External Advisor
+                    </button>
+                    &nbsp;
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="warn"
+                      aria-label="Remove/clear"
+                      *ngIf="
+                        form1.controls.externalAdvisorRows.controls.length > 1
+                      "
+                      (click)="deleteExternalAdvisor(i)"
+                      matTooltip="Remove"
+                    >
+                      <mat-icon>remove_circle</mat-icon>Remove External advisor
+                    </button>
+                  </div>
+                  <br />
+                  <mat-divider></mat-divider><br />
+                </div>
+              </div>
+              <h1>SubContractors</h1>
+              <div formArrayName="subContractorsRows">
+                <div
+                  *ngFor="
+                    let subContractorsRows of form1.controls.subContractorsRows
+                      .controls;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                >
+                  <mat-grid-list cols="5" rowHeight="100px" rowWidth="80px">
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >SubContractors organisation</mat-label
+                          >
+                          <input
+                            matInput
+                            id="subContractorsOrganisation{{ i }}"
+                            formControlName="subContractorsOrganisation"
+                            matInput
+                            placeholder="SubContractors organisation"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter subcontractors organisation</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Subcontractors name</mat-label
+                          >
+                          <input
+                            matInput
+                            id="subContractorsName{{ i }}"
+                            formControlName="subContractorsName"
+                            matInput
+                            placeholder="Subcontractors name"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter subcontractors name</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Subcontractors email</mat-label
+                          >
+                          <input
+                            matInput
+                            id="subContractorsEmail{{ i }}"
+                            formControlName="subContractorsEmail"
+                            matInput
+                            placeholder="Subcontractors email"
+                          />
+
+                          <mat-hint style="font-size: 16px"
+                            >Enter subcontractors email</mat-hint
+                          >
+                          <mat-icon matSuffix>email</mat-icon>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Subcontractors expertise</mat-label
+                          >
+                          <input
+                            matInput
+                            id="subContractorsExpertise{{ i }}"
+                            formControlName="subContractorsExpertise"
+                            matInput
+                            placeholder="Subcontractors expertise"
+                          />
+
+                          <mat-hint style="font-size: 16px"
+                            >Enter subcontractors expertise</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Other info subcontractors
+                          </mat-label>
+                          <input
+                            matInput
+                            id="subContractorsOtherInfo{{ i }}"
+                            formControlName="subContractorsOtherInfo"
+                            matInput
+                            placeholder="other Info Subcontractors "
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter other info subcontractors
+                          </mat-hint>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <div class="container">
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="primary"
+                      aria-label="Add"
+                      (click)="addNewSubContractors()"
+                      matTooltip="Add"
+                    >
+                      <mat-icon>add box</mat-icon>Add Subcontractors
+                    </button>
+                    &nbsp;
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="warn"
+                      aria-label="Remove/clear"
+                      *ngIf="
+                        form1.controls.subContractorsRows.controls.length > 1
+                      "
+                      (click)="deleteSubContractors(i)"
+                      matTooltip="Remove"
+                    >
+                      <mat-icon>remove_circle</mat-icon>Remove Subcontractors
+                    </button>
+                  </div>
+                  <br />
+                  <mat-divider></mat-divider><br />
+                </div>
+              </div>
+              <mat-divider></mat-divider><br />
+              <h1>Patient and Public Involvement</h1>
+              <div formArrayName="ppiRows">
+                <div
+                  *ngFor="
+                    let ppiRows of form1.controls.ppiRows.controls;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                >
+                  <mat-grid-list cols="4" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            PPI meeting</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="ppiMeeting{{ i }}"
+                            readonly
+                            [matDatepicker]="picker"
+                            formControlName="ppiMeeting"
+                            placeholder="PPI meeting"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >DD/MM/YYYY</mat-hint
+                          >
+                          <mat-datepicker-toggle matIconSuffix [for]="picker">
+                            <mat-icon matDatepickerToggleIcon
+                              >keyboard_arrow_down</mat-icon
+                            >
+                          </mat-datepicker-toggle>
+                          <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            PPI contact</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="ppiContact{{ i }}"
+                            formControlName="ppiContact"
+                            matInput
+                            placeholder="PPI contact"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter PPI contact</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            PPI group</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="ppiGroup{{ i }}"
+                            formControlName="ppiGroup"
+                            matInput
+                            placeholder="PPI group"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter PPI group</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            PPI outcome</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="ppiOutcome{{ i }}"
+                            formControlName="ppiOutcome"
+                            matInput
+                            placeholder="Enter PPI outcome"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter PPI outcome</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <div class="container">
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="primary"
+                      aria-label="Add"
+                      (click)="addinitPPI()"
+                      matTooltip="Add"
+                    >
+                      <mat-icon>add box</mat-icon>Add PPI
+                    </button>
+                    &nbsp;
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="warn"
+                      aria-label="Remove/clear"
+                      *ngIf="form1.controls.ppiRows.controls.length > 1"
+                      (click)="deleteinitPPI(i)"
+                      matTooltip="Remove"
+                    >
+                      <mat-icon>remove_circle</mat-icon>Remove PPI
+                    </button>
+                  </div>
+                  <br />
+                  <mat-divider></mat-divider><br />
+                </div>
+              </div>
+              <br />
+              <div class="example-button-row" fxFlexAlign="stretch">
+                <p>
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    matTooltip="Got to back"
+                    class="example-button"
+                    matStepperPrevious
+                  >
+                    Back
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="!form1.valid"
+                    matTooltip="Go to next"
+                    class="example-button"
+                    matStepperNext
+                  >
+                    Next
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="warn"
+                    (click)="form1.reset()"
+                    matTooltip="Cancel Update"
+                  >
+                    Reset
+                  </button>
+                </p>
+              </div>
+            </form>
+          </mat-step>
+
+          <mat-step>
+            <br />
+            <mat-divider></mat-divider>
+            <br />
+            <ng-template matStepLabel
+              ><span style="font-size: 20px">Output</span></ng-template
+            >
+            <form [formGroup]="form2" class="normal-form">
+              <h1>Output</h1>
+              <div formArrayName="outputRows">
+                <div
+                  *ngFor="
+                    let outputRows of form2.controls.outputRows.controls;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                >
+                  <mat-grid-list cols="4" rowHeight="90px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">Output</mat-label>
+                          <input
+                            matInput
+                            [value]="
+                              form2.controls.outputRows.controls[i].get(
+                                'output'
+                              ).value
+                            "
+                            readonly
+                            style="font-size: 16px"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Confirmation</mat-label
+                          >
+                          <mat-select
+                            id="confirmation{{ i }}"
+                            formControlName="confirmation"
+                            required
+                          >
+                            <mat-option
+                              *ngFor="
+                                let confirmationValue of confirmationValue
+                              "
+                              [value]="confirmationValue"
+                              >{{ confirmationValue }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-hint style="font-size: 16px"
+                            >Please select confirmation</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Output quantity</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="outputQuantity{{ i }}"
+                            formControlName="outputQuantity"
+                            type="number"
+                            placeholder="Output quantity"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter output quantity</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Output description</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            id="output_description{{ i }}"
+                            formControlName="output_description"
+                            matInput
+                            placeholder="Output Description"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter output description</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <br />
+                  <mat-divider></mat-divider><br />
+                </div>
+              </div>
+              <br />
+              <mat-divider></mat-divider><br />
+              <h1>Acquired funding</h1>
+              <div formArrayName="fundingRows">
+                <div
+                  *ngFor="
+                    let fundingRows of form2.controls.fundingRows.controls;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                >
+                  <mat-grid-list cols="5" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"> Funder</mat-label>
+                          <mat-select
+                            id="funding{{ i }}"
+                            formControlName="funding"
+                            required
+                            [(ngModel)]="selectedfundingGrants[i]"
+                            multiple
+                            (selectionChange)="
+                              onSelectFundingGrantsFunder(i, $event.value)
+                            "
+                          >
+                            <mat-option
+                              *ngFor="let funding of fundingValue"
+                              [value]="funding"
+                              >{{ funding }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-error
+                            style="font-size: 16px"
+                            *ngIf="
+                              form2.controls.fundingRows.controls[i]
+                                .get('funding')
+                                .hasError('required')
+                            "
+                            >You must select funding
+                          </mat-error>
+                          <mat-hint style="font-size: 16px"
+                            >Please select funding<span
+                              *ngIf="
+                                form2.controls.fundingRows.controls[i].get(
+                                  'funding'
+                                ).valid &&
+                                !form2.controls.fundingRows.controls[i]
+                                  .get('funding')
+                                  .hasError('required')
+                              "
+                              class="material-icons green-icon valid-hint"
+                              >check_circle</span
+                            ></mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      [style.width.px]="450"
+                      *ngIf="
+                        selectedfundingGrants[i] &&
+                        selectedfundingGrants[i].includes(
+                          'Other (please specify)'
+                        )
+                      "
+                    >
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Which funder Other (please specify)</mat-label
+                          >
+                          <input
+                            matInput
+                            id="fundingOther{{ i }}"
+                            formControlName="fundingOther"
+                            placeholder="Other (please specify)"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter Other (please specify)</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      [style.width.px]="450"
+                      *ngIf="
+                        selectedfundingGrants[i] &&
+                        selectedfundingGrants[i].includes('NIHR')
+                      "
+                    >
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Funder (NIHR)</mat-label
+                          >
+                          <mat-select
+                            id="fundingNIHR{{ i }}"
+                            formControlName="fundingNIHR"
+                            [(ngModel)]="selectedfundingGrantsNIHR[i]"
+                            (selectionChange)="
+                              onSelectFundingGrantsFunderNIHR(i, $event.value)
+                            "
+                          >
+                            <mat-option
+                              *ngFor="let fundingNIHR of fundingNIHRValue"
+                              [value]="fundingNIHR"
+                              >{{ fundingNIHR }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-hint style="font-size: 16px"
+                            >Select funder (NIHR)</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      [style.width.px]="450"
+                      *ngIf="
+                        selectedfundingGrantsNIHR[i] &&
+                        selectedfundingGrantsNIHR[i].includes(
+                          'Other (please specify)'
+                        )
+                      "
+                    >
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >NIHR other (please specify)</mat-label
+                          >
+                          <input
+                            matInput
+                            id="fundingNIHROther{{ i }}"
+                            formControlName="fundingNIHROther"
+                            placeholder="NIHR Other (please specify)"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter other (please specify)</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      [style.width.px]="450"
+                      *ngIf="
+                        selectedfundingGrants[i] &&
+                        selectedfundingGrants[i].includes('UKRI-MRC')
+                      "
+                    >
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Funder (UKRI-MRC)</mat-label
+                          >
+                          <mat-select
+                            id="fundingUKRIMRC{{ i }}"
+                            formControlName="fundingUKRIMRC"
+                            [(ngModel)]="selectedfundingGrantsUKRIMRC[i]"
+                            (selectionChange)="
+                              onSelectFundingGrantsFunderUKRIMRC(
+                                i,
+                                $event.value
+                              )
+                            "
+                          >
+                            <mat-option
+                              *ngFor="let fundingUKRIMRC of fundingUKRIMRCValue"
+                              [value]="fundingUKRIMRC"
+                              >{{ fundingUKRIMRC }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-hint style="font-size: 16px"
+                            >Select funder (UKRI-MRC)</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      [style.width.px]="450"
+                      *ngIf="
+                        selectedfundingGrantsUKRIMRC[i] &&
+                        selectedfundingGrantsUKRIMRC[i].includes(
+                          'Other (please specify)'
+                        )
+                      "
+                    >
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >(UKRI-MRC) other (please specify)</mat-label
+                          >
+                          <input
+                            matInput
+                            id="fundingUKRIMRCOther{{ i }}"
+                            formControlName="fundingUKRIMRCOther"
+                            placeholder="NIHR Other (please specify)"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter other (please specify)</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      [style.width.px]="450"
+                      *ngIf="
+                        selectedfundingGrants[i] &&
+                        selectedfundingGrants[i].includes('Wellcome Trust')
+                      "
+                    >
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Funder (Wellcome Trust)</mat-label
+                          >
+                          <mat-select
+                            id="fundingWellcomeTrust{{ i }}"
+                            formControlName="fundingWellcomeTrust"
+                            [(ngModel)]="selectedfundingGrantsWellcomeTrust[i]"
+                            (selectionChange)="
+                              onSelectFundingGrantsFunderWellcomeTrust(
+                                i,
+                                $event.value
+                              )
+                            "
+                          >
+                            <mat-option
+                              *ngFor="
+                                let fundingWellcomeTrust of fundingWellcomeTrustValue
+                              "
+                              [value]="fundingWellcomeTrust"
+                              >{{ fundingWellcomeTrust }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-hint style="font-size: 16px"
+                            >Select Funder (Wellcome Trust)</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      [style.width.px]="450"
+                      *ngIf="
+                        selectedfundingGrantsWellcomeTrust[i] &&
+                        selectedfundingGrantsWellcomeTrust[i].includes(
+                          'Other (please specify)'
+                        )
+                      "
+                    >
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Wellcome trust other (please specify)</mat-label
+                          >
+                          <input
+                            matInput
+                            id="fundingWellcomeTrustOther{{ i }}"
+                            formControlName="fundingWellcomeTrustOther"
+                            placeholder="NIHR Other (please specify)"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter Other (please specify)</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <mat-grid-list cols="5" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"> Scheme</mat-label>
+                          <mat-select
+                            id="scheme{{ i }}"
+                            formControlName="scheme"
+                            required
+                            [(ngModel)]="selectedfundingscheme[i]"
+                            (selectionChange)="
+                              onSelectFundingschemeFunder(i, $event.value)
+                            "
+                          >
+                            <mat-option
+                              *ngFor="let scheme of schemeValue"
+                              [value]="scheme"
+                              >{{ scheme }}</mat-option
+                            >
+                          </mat-select>
+                          <mat-error
+                            style="font-size: 16px"
+                            *ngIf="
+                              form2.controls.fundingRows.controls[i]
+                                .get('scheme')
+                                .hasError('required')
+                            "
+                            >You must select scheme
+                          </mat-error>
+                          <mat-hint style="font-size: 16px"
+                            >Please select scheme*<span
+                              *ngIf="
+                                form2.controls.fundingRows.controls[i].get(
+                                  'scheme'
+                                ).valid &&
+                                !form2.controls.fundingRows.controls[i]
+                                  .get('scheme')
+                                  .hasError('required')
+                              "
+                              class="material-icons green-icon valid-hint"
+                              >check_circle</span
+                            ></mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      [style.width.px]="450"
+                      *ngIf="
+                        selectedfundingscheme[i] &&
+                        selectedfundingscheme[i].includes(
+                          'Other (please specify)'
+                        )
+                      "
+                    >
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Which scheme other (please specify)</mat-label
+                          >
+                          <input
+                            matInput
+                            id="schemeOther{{ i }}"
+                            formControlName="schemeOther"
+                            placeholder="Other (please specify)"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >Enter other (please specify)</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"> Value</mat-label>
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="value{{ i }}"
+                            formControlName="value"
+                            matInput
+                            type="number"
+                            placeholder="Enter External advisor Outcome"
+                          />
+
+                          <mat-hint style="font-size: 16px"
+                            >Enter value
+                          </mat-hint>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Funding start date</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="fundingStartDate{{ i }}"
+                            readonly
+                            [matDatepicker]="picker1"
+                            formControlName="fundingStartDate"
+                            placeholder="Enter funding start date"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >DD/MM/YYYY</mat-hint
+                          >
+                          <mat-datepicker-toggle matIconSuffix [for]="picker1">
+                            <mat-icon matDatepickerToggleIcon
+                              >keyboard_arrow_down</mat-icon
+                            >
+                          </mat-datepicker-toggle>
+                          <mat-datepicker #picker1></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">
+                            Funding end date</mat-label
+                          >
+                          <input
+                            class="custom-font-size-row"
+                            matInput
+                            id="fundingEndDate{{ i }}"
+                            readonly
+                            [matDatepicker]="picker2"
+                            formControlName="fundingEndDate"
+                            placeholder="Enter funding end date"
+                          />
+                          <mat-hint style="font-size: 16px"
+                            >DD/MM/YYYY</mat-hint
+                          >
+                          <mat-datepicker-toggle matIconSuffix [for]="picker2">
+                            <mat-icon matDatepickerToggleIcon
+                              >keyboard_arrow_down</mat-icon
+                            >
+                          </mat-datepicker-toggle>
+                          <mat-datepicker #picker2></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Funder award number</mat-label
+                          >
+                          <input
+                            matInput
+                            id="grantNumber{{ i }}"
+                            formControlName="grantNumber"
+                            matInput
+                            placeholder="Funder award number"
+                          />
+
+                          <mat-hint style="font-size: 16px"
+                            >Enter Funder award number</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <mat-grid-list cols="5" rowHeight="100px"> </mat-grid-list>
+                  <mat-grid-list cols="2" rowHeight="200px">
+                    <mat-grid-tile [style.width.px]="450">
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px"
+                            >Worktribe number</mat-label
+                          >
+                          <input
+                            matInput
+                            id="worktribeNumber{{ i }}"
+                            formControlName="worktribeNumber"
+                            matInput
+                            placeholder="worktribe Number"
+                          />
+
+                          <mat-hint style="font-size: 16px"
+                            >Enter worktribe Number</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-form-field appearance="outline">
+                          <mat-label style="font-size: 20px">Aims</mat-label>
+                          <textarea
+                            class="custom-font-size-row"
+                            matInput
+                            id="aims{{ i }}"
+                            formControlName="aims"
+                            cdkTextareaAutosize
+                            #myInput6
+                            [maxlength]="maxChars3"
+                            #autosize="cdkTextareaAutosize"
+                            cdkAutosizeMinRows="1"
+                            cdkAutosizeMaxRows="5"
+                          ></textarea>
+                          <mat-hint class="custom-font-size-hint"
+                            >Enter text here...</mat-hint
+                          >
+                        </mat-form-field>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <div class="container">
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="primary"
+                      aria-label="Add"
+                      (click)="addFunding()"
+                      matTooltip="Add"
+                    >
+                      <mat-icon>add box</mat-icon>Add Funding
+                    </button>
+                    &nbsp;
+                    <button
+                      class="float-left"
+                      mat-raised-button
+                      color="warn"
+                      aria-label="Remove/clear"
+                      *ngIf="form2.controls.fundingRows.controls.length > 1"
+                      (click)="deleteFunding(i)"
+                      matTooltip="Remove"
+                    >
+                      <mat-icon>remove_circle</mat-icon>Remove Funding
+                    </button>
+                  </div>
+                  <br />
+                  <mat-divider></mat-divider><br />
+                </div>
+              </div>
+              <br />
+              <div class="example-button-row" fxFlexAlign="stretch">
+                <p>
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    matTooltip="Got to back"
+                    class="example-button"
+                    matStepperPrevious
+                  >
+                    Back
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="!form2.valid"
+                    matTooltip="Go to next"
+                    class="example-button"
+                    matStepperNext
+                  >
+                    Next
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="warn"
+                    (click)="form2.reset()"
+                    matTooltip="Cancel Update"
+                  >
+                    Reset
+                  </button>
+                </p>
+              </div>
+            </form>
+          </mat-step>
+          <mat-step>
+            <br />
+            <mat-divider></mat-divider>
+            <br />
+            <ng-template matStepLabel
+              ><span style="font-size: 20px">OTR</span></ng-template
+            >
+            <mat-card>
+              <!--     <mat-divider></mat-divider>
+              <h1 style="text-align: center;"><b>Team information</b></h1>
+              <mat-divider></mat-divider> -->
+              <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+                <span style="font-size: 24px">OTR team</span>
+              </mat-toolbar>
+              <form [formGroup]="form4" class="normal-form">
+                <h1>OTR Team Information</h1>
+                <div formArrayName="otrRows">
+                  <div
+                    *ngFor="
+                      let otrRows of form4.controls.otrRows.controls;
+                      let i = index
+                    "
+                    [formGroupName]="i"
+                  >
+                    <mat-grid-list cols="5" rowHeight="100px">
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              OTR team member</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="otrTeamMember{{ i }}"
+                              formControlName="otrTeamMember"
+                              matInput
+                              placeholder="Enter OTR team member"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter OTR team member</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              OTR team member role</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="otrRole{{ i }}"
+                              formControlName="otrRole"
+                              matInput
+                              placeholder="Enter OTR team member role"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter OTR team member role</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              OTR funding</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="otrFunding{{ i }}"
+                              formControlName="otrFunding"
+                              matInput
+                              placeholder="Enter OTR funding"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter OTR funding</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              OTR Date</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="otrDate{{ i }}"
+                              readonly
+                              [matDatepicker]="picker"
+                              formControlName="otrDate"
+                              placeholder="OTR Date"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >DD/MM/YYYY</mat-hint
+                            >
+                            <mat-datepicker-toggle matIconSuffix [for]="picker">
+                              <mat-icon matDatepickerToggleIcon
+                                >keyboard_arrow_down</mat-icon
+                              >
+                            </mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                      <mat-grid-tile>
+                        <div class="controles-container">
+                          <mat-form-field appearance="outline">
+                            <mat-label style="font-size: 20px">
+                              OTR other info</mat-label
+                            >
+                            <input
+                              class="custom-font-size-row"
+                              matInput
+                              id="otrOtherInfo{{ i }}"
+                              formControlName="otrOtherInfo"
+                              matInput
+                              placeholder="Enter OTR other info"
+                            />
+                            <mat-hint style="font-size: 16px"
+                              >Enter OTR other info</mat-hint
+                            >
+                          </mat-form-field>
+                        </div>
+                      </mat-grid-tile>
+                    </mat-grid-list>
+                    <div class="container">
+                      <button
+                        class="float-left"
+                        mat-raised-button
+                        color="primary"
+                        aria-label="Add"
+                        (click)="addOTR()"
+                        matTooltip="Add"
+                      >
+                        <mat-icon>add box</mat-icon>Add OTR Member
+                      </button>
+                      &nbsp;
+                      <button
+                        class="float-left"
+                        mat-raised-button
+                        color="warn"
+                        aria-label="Remove/clear"
+                        *ngIf="form4.controls.otrRows.controls.length > 1"
+                        (click)="deleteOTR(i)"
+                        matTooltip="Remove"
+                      >
+                        <mat-icon>remove_circle</mat-icon>Remove OTR Member
+                      </button>
+                    </div>
+                    <br />
+                    <mat-divider></mat-divider><br />
+                  </div>
+                </div>
+                <br />
+                <div class="example-button-row" fxFlexAlign="stretch">
+                  <p>
+                    <button
+                      mat-raised-button
+                      color="accent"
+                      matTooltip="Got to back"
+                      class="example-button"
+                      matStepperPrevious
+                    >
+                      Back
+                    </button>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      [disabled]="!form4.valid"
+                      matTooltip="Go to next"
+                      class="example-button"
+                      matStepperNext
+                      (click)="combineData()"
+                    >
+                      Next
+                    </button>
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="form4.reset()"
+                      matTooltip="Cancel Update"
+                    >
+                      Reset
+                    </button>
+                  </p>
+                </div>
+              </form>
+            </mat-card>
+          </mat-step>
+          <mat-step>
+            <div id="contentToConvert">
+              <ng-template matStepLabel
+                ><span style="font-size: 20px">Data overview</span></ng-template
+              >
+
+              <mat-card>
+                <mat-card-content>
+                  <mat-toolbar
+                    color="primary"
+                    fxLayoutAlign="space-around center"
+                  >
+                    <span style="font-size: 24px">Team information</span>
+                  </mat-toolbar>
+                  <mat-grid-list cols="1" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container1">
+                          <mat-label class="custom-label-header">
+                            Project name:
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.projectName }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <mat-divider></mat-divider>
+                  <h2>PI information</h2>
+                  <mat-grid-list cols="3" rowHeight="100px" rowWidth="120px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <mat-label class="custom-label-header"
+                          >Last name PI :
+                        </mat-label>
+                        <input
+                          type="text"
+                          value="{{ AddToProjectUpdate.lastNamePI }}"
+                          readonly
+                          class="custom-input"
+                        />
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >First name PI :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.firstNamePI }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Email PI :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.emailPI }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <mat-grid-list cols="3" rowHeight="100px" rowWidth="120px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Department PI :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.departmentPI }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Crsid PI :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.crsidPI }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Other info PI :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.otherInforPI }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <mat-divider></mat-divider>
+                  <h2>Group member information</h2>
+                  <dx-data-grid
+                    id="gridContainer"
+                    [dataSource]="groupMember"
+                    [showBorders]="true"
+                    [remoteOperations]="true"
+                    [showRowLines]="true"
+                    [rowAlternationEnabled]="true"
+                    [height]="calculateGridHeight(groupMember.length)"
+                  >
+                    <dxi-column
+                      dataField="lastNamePostDoc"
+                      dataType="string"
+                      caption="Last name"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="firstNamePostDoc"
+                      caption="First name"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="emailPostDoc"
+                      caption="Email"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="departmentPostDoc"
+                      caption="Department"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="positionPostDoc"
+                      caption="Position"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="crsidPostDoc"
+                      caption="Crsid"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="otherInforPostDoc"
+                      caption="Other infor"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                  </dx-data-grid>
+                  <mat-divider></mat-divider>
+                  <br />
+                  <mat-toolbar
+                    color="primary"
+                    fxLayoutAlign="space-around center"
+                  >
+                    <span style="font-size: 24px">Funding source</span>
+                  </mat-toolbar>
+                  <div class="grid-container">
+                    <div
+                      *ngFor="let item of fundingOverview; let i = index"
+                      class="grid-row"
+                    >
+                      <div class="grid-field" *ngIf="true">
+                        <label>Funder:</label>
+                        <span>{{ item.fundingOverview }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingOverviewOtherVisible()"
+                      >
+                        <label>Funding other:</label>
+                        <span>{{ item.fundingOverviewOther }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingOverviewNIHRVisible()"
+                      >
+                        <label>Funder (NIHR):</label>
+                        <span>{{ item.fundingOverviewNIHR }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingOverviewNIHROtherVisible()"
+                      >
+                        <label>Funder (NIHR Other):</label>
+                        <span>{{ item.fundingOverviewNIHROther }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingOverviewUKRIMRCVisible()"
+                      >
+                        <label>Funder (UKRI-MRC):</label>
+                        <span>{{ item.fundingOverviewUKRIMRC }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingOverviewUKRIMRCOtherVisible()"
+                      >
+                        <label>Funder (UKRI-MRC Other):</label>
+                        <span>{{ item.fundingOverviewUKRIMRCOther }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingOverviewWellcomeTrustVisible()"
+                      >
+                        <label>Funder (Wellcome Trust):</label>
+                        <span>{{ item.fundingOverviewWellcomeTrust }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingOverviewWellcomeTrustOtherVisible()"
+                      >
+                        <label>Funder (Wellcome Trust Other):</label>
+                        <span>{{
+                          item.fundingOverviewWellcomeTrustOther
+                        }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Scheme:</label>
+                        <span>{{ item.schemeOverview }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isschemeOverviewOtherVisible()"
+                      >
+                        <label>Scheme other:</label>
+                        <span>{{ item.schemeOverviewOther }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Value:</label>
+                        <span>{{ item.valueOverview }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Start Date:</label>
+                        <span>{{ item.fundingOverviewStartDate | date }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>End Date:</label>
+                        <span>{{
+                          item.fundingEfundingOverviewEndDatendDate | date
+                        }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Funder Award Number:</label>
+                        <span>{{ item.grantNumberOverview }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Worktribe Number:</label>
+                        <span>{{ item.worktribeNumberOverview }}</span>
+                      </div>
+                      <div>
+                        <label class="custom-label-header">Aims:</label>
+                        <div class="text-container_aims">
+                          <mat-label class="custom-label_aims">{{
+                            item.aimsOverview
+                          }}</mat-label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <br />
+                  <div style="text-align: center">
+                    <h1>Total Grant: {{ sumOverview }}</h1>
+                  </div>
+                  <br />
+                  <mat-divider></mat-divider>
+
+                  <mat-toolbar
+                    color="primary"
+                    fxLayoutAlign="space-around center"
+                  >
+                    <span style="font-size: 24px">Collaborators</span>
+                  </mat-toolbar>
+                  <h2>Collaborator</h2>
+                  <dx-data-grid
+                    id="gridContainer"
+                    [dataSource]="collaboration"
+                    [showBorders]="true"
+                    [remoteOperations]="true"
+                    [showRowLines]="true"
+                    [rowAlternationEnabled]="true"
+                    [height]="calculateGridHeight(collaboration.length)"
+                  >
+                    <dxi-column
+                      dataField="collaboration"
+                      dataType="string"
+                      caption="Collaborator"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="collaborationName"
+                      caption="Collaborator organisation"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="collaborationEmail"
+                      caption="Collaborator email"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="collaborationLocation"
+                      caption="Collaborator location"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="collaborationOtherInfo"
+                      caption="Collaborator other info"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                  </dx-data-grid>
+                  <mat-divider></mat-divider>
+                  <h2>Technology transfer office contact</h2>
+                  <mat-grid-list cols="3" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Contact name:
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.ttoContractName }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Contact email:
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.ttoContractEmail }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Other info :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{
+                              AddToProjectUpdate.ttoContractOtherInfo
+                            }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <mat-divider></mat-divider>
+                  <h2>External advisor</h2>
+                  <dx-data-grid
+                    id="gridContainer"
+                    [dataSource]="advisor"
+                    [showBorders]="true"
+                    [remoteOperations]="true"
+                    [showRowLines]="true"
+                    [rowAlternationEnabled]="true"
+                    [height]="calculateGridHeight(advisor.length)"
+                  >
+                    <dxi-column
+                      dataField="externalAdvisorsMeeting"
+                      caption="External advisors meeting"
+                      dataType="date"
+                      [format]="{
+                        type: 'custom',
+                        formatter: customDateFormatter
+                      }"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="externalAdvisorsOrganisation"
+                      caption="External advisors organisation"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="externalAdvisorsName"
+                      caption="External advisors name"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="externalAdvisorsEmail"
+                      caption="External advisors email"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="externalAdvisorsOutcome"
+                      caption="External advisors outcome"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="externalAdvisorsExpertise"
+                      caption="External advisors expertise"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                  </dx-data-grid>
+                  <mat-divider></mat-divider>
+                  <h2>SubContractors</h2>
+                  <dx-data-grid
+                    id="gridContainer"
+                    [dataSource]="subContractor"
+                    [showBorders]="true"
+                    [remoteOperations]="true"
+                    [showRowLines]="true"
+                    [rowAlternationEnabled]="true"
+                    [height]="calculateGridHeight(subContractor.length)"
+                  >
+                    <dxi-column
+                      dataField="subContractorsName"
+                      caption="SubContractors name"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="subContractorsEmail"
+                      caption="SubContractors email"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="subContractorsExpertise"
+                      caption="SubContractors Expertise"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="subContractorsOrganisation"
+                      caption="SubContractors Organisation"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="subContractorsOtherInfo"
+                      caption="SubContractors OtherInfo"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                  </dx-data-grid>
+                  <mat-divider></mat-divider>
+                  <h2>Patient and Public Involvement</h2>
+                  <dx-data-grid
+                    id="gridContainer"
+                    [dataSource]="ppi"
+                    [showBorders]="true"
+                    [remoteOperations]="true"
+                    [showRowLines]="true"
+                    [rowAlternationEnabled]="true"
+                    [height]="calculateGridHeight(ppi.length)"
+                  >
+                    <dxi-column
+                      dataField="ppiMeeting"
+                      caption="PPI meeting"
+                      dataType="date"
+                      [format]="{
+                        type: 'custom',
+                        formatter: customDateFormatter
+                      }"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="ppiContact"
+                      caption="PPI contact"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="ppiGroup"
+                      caption="PPI group"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="ppiOutcome"
+                      caption="PPI outcome"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                  </dx-data-grid>
+                  <mat-divider></mat-divider>
+                  <mat-toolbar
+                    color="primary"
+                    fxLayoutAlign="space-around center"
+                  >
+                    <span style="font-size: 24px">Scope of the project</span>
+                  </mat-toolbar>
+                  <mat-grid-list cols="2" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Modality :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.modality }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile
+                      *ngIf="modalityOther !== null && modalityOther !== ''"
+                    >
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Modality other :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.modalityOther }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <mat-grid-list cols="3" rowHeight="100px">
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Research field :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.areaOfExpertise }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile *ngIf="areaOfExpertiseOther !== null">
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Research field other :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{
+                              AddToProjectUpdate.areaOfExpertiseOther
+                            }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                    <mat-grid-tile>
+                      <div class="controles-container">
+                        <div class="label-input-container">
+                          <mat-label class="custom-label-header"
+                            >Readiness :
+                          </mat-label>
+                          <input
+                            type="text"
+                            value="{{ AddToProjectUpdate.readiness }}"
+                            readonly
+                            class="custom-input"
+                          />
+                        </div>
+                      </div>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                  <br />
+                  <div class="container">
+                    <div class="label-input-container">
+                      <mat-label class="custom-label-header"
+                        >Brief description:</mat-label
+                      >
+                      <div class="text-container">
+                        <mat-label class="custom-label">
+                          {{ AddToProjectUpdate.briefDescription }}
+                        </mat-label>
+                      </div>
+                    </div>
+                    <br /><br />
+                    <div class="label-input-container">
+                      <mat-label class="custom-label-header"
+                        >Project background:</mat-label
+                      >
+                      <div class="text-container">
+                        <mat-label class="custom-label">
+                          {{ AddToProjectUpdate.projectBackground }}</mat-label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <br /><br /><br />
+                  <mat-divider></mat-divider>
+                  <mat-toolbar
+                    color="primary"
+                    fxLayoutAlign="space-around center"
+                  >
+                    <span style="font-size: 24px">Output</span>
+                  </mat-toolbar>
+                  <h2>Output</h2>
+                  <dx-data-grid
+                    id="gridContainer"
+                    [dataSource]="dataSource"
+                    [showBorders]="true"
+                    [remoteOperations]="true"
+                    [showRowLines]="true"
+                    [rowAlternationEnabled]="true"
+                    [height]="calculateGridHeight(dataSource.length)"
+                  >
+                    <dxi-column dataField="output" dataType="string">
+                    </dxi-column>
+                    <dxi-column dataField="confirmation" dataType="string">
+                    </dxi-column>
+                    <dxi-column
+                      dataField="outputQuantity"
+                      dataType="string"
+                      caption="Output Quantity"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="output_description"
+                      dataType="string"
+                      caption="Output description"
+                    >
+                    </dxi-column>
+
+                    <dxo-scrolling mode="none"></dxo-scrolling>
+                  </dx-data-grid>
+                  <mat-divider></mat-divider>
+
+                  <br />
+                  <h2>Acquired funding</h2>
+                  <div class="grid-container">
+                    <div
+                      *ngFor="let item of funding; let i = index"
+                      class="grid-row"
+                    >
+                      <div class="grid-field">
+                        <label>Funder:</label>
+                        <span>{{ item.funding }}</span>
+                      </div>
+                      <div class="grid-field" *ngIf="isfundingOtherVisible()">
+                        <label>Funding other:</label>
+                        <span>{{ item.fundingOther }}</span>
+                      </div>
+                      <div class="grid-field" *ngIf="isfundingNIHRVisible()">
+                        <label>Funder (NIHR):</label>
+                        <span>{{ item.fundingNIHR }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingNIHROtherVisible()"
+                      >
+                        <label>Funder (NIHR Other):</label>
+                        <span>{{ item.fundingNIHROther }}</span>
+                      </div>
+                      <div class="grid-field" *ngIf="isfundingUKRIMRCVisible()">
+                        <label>Funder (UKRI-MRC):</label>
+                        <span>{{ item.fundingUKRIMRC }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingUKRIMRCOtherVisible()"
+                      >
+                        <label>Funder (UKRI-MRC Other):</label>
+                        <span>{{ item.fundingUKRIMRCOther }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingWellcomeTrustVisible()"
+                      >
+                        <label>Funder (Wellcome Trust):</label>
+                        <span>{{ item.fundingWellcomeTrust }}</span>
+                      </div>
+                      <div
+                        class="grid-field"
+                        *ngIf="isfundingWellcomeTrustOtherVisible()"
+                      >
+                        <label>Funder (Wellcome Trust Other):</label>
+                        <span>{{ item.fundingWellcomeTrustOther }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Scheme:</label>
+                        <span>{{ item.scheme }}</span>
+                      </div>
+                      <div class="grid-field" *ngIf="isschemeOtherVisible()">
+                        <label>Scheme other:</label>
+                        <span>{{ item.schemeOther }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Value:</label>
+                        <span>{{ item.value }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Start Date:</label>
+                        <span>{{ item.fundingStartDate | date }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>End Date:</label>
+                        <span>{{ item.fundingEndDate | date }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Funder Award Number:</label>
+                        <span>{{ item.grantNumber }}</span>
+                      </div>
+                      <div class="grid-field">
+                        <label>Worktribe Number:</label>
+                        <span>{{ item.worktribeNumber }}</span>
+                      </div>
+
+                      <div>
+                        <label class="custom-label-header">Aims:</label>
+                        <div class="text-container_aims">
+                          <mat-label class="custom-label_aims">{{
+                            item.aims
+                          }}</mat-label>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                    <div style="text-align: center">
+                      <h1>Total Grant: {{ sum }}</h1>
+                    </div>
+                    <br />
+                  </div>
+                  <mat-toolbar
+                    color="primary"
+                    fxLayoutAlign="space-around center"
+                  >
+                    <span style="font-size: 24px">OTR Team Member</span>
+                  </mat-toolbar>
+                  <dx-data-grid
+                    id="gridContainer"
+                    [dataSource]="otr"
+                    [showBorders]="true"
+                    [remoteOperations]="true"
+                    [showRowLines]="true"
+                    [rowAlternationEnabled]="true"
+                    [height]="calculateGridHeight(otr.length)"
+                  >
+                    <dxi-column
+                      dataField="otrTeamMember"
+                      caption="OTR team member"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="otrRole"
+                      caption="OTR team member role"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="otrFunding"
+                      caption="OTR funding"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="otrDate"
+                      caption="OTR date"
+                      dataType="date"
+                      [format]="{
+                        type: 'custom',
+                        formatter: customDateFormatter
+                      }"
+                    >
+                    </dxi-column>
+                    <dxi-column
+                      dataField="otrOtherInfo"
+                      caption="OTR other info"
+                      dataType="string"
+                    >
+                    </dxi-column>
+                  </dx-data-grid>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <mat-divider></mat-divider><br />
+            <br />
+            <div class="example-button-row" fxFlexAlign="stretch">
+              <p>
+                <button
+                  mat-raised-button
+                  color="accent"
+                  matTooltip="Got to back"
+                  class="example-button"
+                  matStepperPrevious
+                >
+                  Back
+                </button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="storeData()"
+                  matTooltip="Go to next"
+                  class="example-button"
+                  matStepperNext
+                >
+                  Next
+                </button>
+                <button mat-raised-button color="primary" (click)="makePDF()">
+                  Export To PDF
+                </button>
+              </p>
+            </div>
+          </mat-step>
+          <mat-step>
+            <br />
+            <mat-divider></mat-divider>
+            <br />
+
+            <ng-template matStepLabel
+              ><span style="font-size: 20px">Done</span></ng-template
+            >
+            <p>Data is inserted into database successfully</p>
+            <div class="example-button-row">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="onClose()"
+                class="example-button"
+              >
+                Close
+              </button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </mat-card>
+    </mat-card-content>
+  </div>
+</mat-card>

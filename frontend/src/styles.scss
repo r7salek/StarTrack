@@ -1,0 +1,354 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+html,
+body {
+  height: 100%;
+  overflow: auto;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  // overflow-x: hidden;
+}
+
+* {
+  font-family: montserrat;
+}
+
+snack-bar-container.success {
+  background-color: green;
+}
+
+snack-bar-container.error {
+  background-color: #f44336;
+}
+
+snack-bar-container.notification {
+  font-size: 24px !important;
+  color: white;
+  font-weight: bold;
+}
+
+.cdk-global-overlay-wrapper {
+  display: flex;
+  position: absolute;
+  z-index: 1000;
+  overflow: hidden !important;
+  pointer-events: auto;
+}
+@import "src/scss/_variables";
+.example-spacer {
+  flex: 1 1 auto;
+  width: 100%;
+  overflow: hidden !important;
+}
+.mr {
+  margin-right: 10px;
+}
+::ng-deep .mat-mdc-card {
+  // border-radius: 30px !important;
+  border: #000 !important;
+  overflow-x: hidden;
+  align-items: center;
+}
+.example-container .mat-mdc-form-field + .mat-form-field {
+  margin-left: 8px;
+  flex: 1 1 auto;
+  align-items: flex-start;
+}
+/* Page title */
+/* ---------------------------------------------------------- */
+
+.table-holder {
+  background-color: white;
+
+  padding: 15px;
+  padding-top: 5px;
+  border-radius: 5px;
+  margin-left: 45px;
+  margin-right: 45px;
+}
+.list-title {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: normal;
+  letter-spacing: 0.5px;
+  margin: 5px;
+}
+/* ---------------------------------------------------------- */
+
+/* Table styles */
+/* ---------------------------------------------------------- */
+.mat-mdc-table {
+  width: 100%;
+  padding: 15px;
+}
+
+.float-right {
+  float: right;
+}
+/* ---------------------------------------------------------- */
+
+/* Header styles */
+/* ---------------------------------------------------------- */
+.mat-mdc-header-cell {
+  background-color: #3f51b5;
+  color: white;
+  font-size: 20px;
+}
+.mat-mdc-header-cell:not(:first-child) {
+  padding-left: 0;
+}
+
+/* Style just the text in the header */
+.mat-mdc-header-cell span {
+  font-weight: 600;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0.5px;
+}
+/* Round the top table corners */
+.mat-mdc-header-cell:first-child {
+  border-top-left-radius: 5px;
+}
+.mat-mdc-header-cell:last-child {
+  border-top-right-radius: 5px;
+}
+
+.mat-mdc-header-row {
+  height: 3em;
+}
+
+.btn-icon {
+  height: 17px;
+  width: 17px;
+  background-color: #393939;
+  border: none;
+}
+
+.sort-icon {
+  height: 17px;
+  width: 17px;
+  color: white;
+}
+
+::ng-deep .mat-sort-header-arrow {
+  position: relative;
+  left: -1.5rem;
+  display: none !important;
+  opacity: 0;
+}
+
+.header {
+  padding: 10px;
+  width: 95%;
+}
+
+.mat-mdc-header-cell {
+  /* color: red!important; */
+  /* display: flex; */
+  /* align-content: center; */
+}
+/* ---------------------------------------------------------- */
+
+/* Column styles */
+/* ---------------------------------------------------------- */
+.type-column {
+  width: 15%;
+  padding-right: 3rem;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.name-column {
+  width: 30%;
+  padding-right: 3rem;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.amount-column {
+  width: 15%;
+  padding-right: 3rem;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.status-column {
+  width: 15%;
+  padding-right: 3rem;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.date-column {
+  width: 20%;
+  padding-right: 3rem;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.state-column {
+  width: 5%;
+}
+/* ---------------------------------------------------------- */
+
+/* Row styles */
+/* ---------------------------------------------------------- */
+.mat-mdc-row:nth-child(2n) {
+  background-color: #f2f2f2;
+}
+/* ---------------------------------------------------------- */
+
+/* Cell styles */
+/* ---------------------------------------------------------- */
+.state-cell {
+  text-align: right;
+}
+.mat-mdc-cell {
+  border: none;
+}
+
+.green-svg {
+  fill: #6dd400;
+}
+.gray-svg {
+  fill: #b2b4b6;
+}
+/* ---------------------------------------------------------- */
+
+.content {
+  padding: 5px;
+  width: 100%;
+}
+
+.fill-remaining-space {
+  /* This fills the remaining space, by using flexbox.
+     Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+
+form.normal-form {
+  margin: 10px;
+}
+
+.controles-container {
+  width: 100%;
+  padding: 5%;
+  font-size: large;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.controles-container > * {
+  width: 100%;
+  font-size: large;
+}
+
+.add-bottom-padding {
+  padding-bottom: 10px;
+}
+/* radio group */
+mat-radio-group mat-radio-button {
+  margin-left: 5px;
+}
+
+.button-row button {
+  margin: 5px;
+}
+
+.hide {
+  display: none;
+}
+
+/* mat-table */
+mat-footer-row mat-footer-cell {
+  justify-content: center;
+  font-style: italic;
+}
+
+/* filter controls */
+.search-div {
+  margin: 10px;
+}
+.search-form-field {
+  width: 60%;
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
+.search-form-field div.mat-form-field-underline {
+  display: none;
+}
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
+.search-form-field div.mat-form-field-infix {
+  border-top: 0px;
+}
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
+.search-form-field div.mat-form-field-wrapper {
+  padding-bottom: 0px;
+}
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
+.search-form-field div.mat-form-field-suffix button {
+  height: 32px;
+  width: 32px;
+}
+
+/* for dialog pop-up */
+.btn-dialog-close {
+  width: 45px;
+  min-width: 0px !important;
+  height: 40px;
+  padding: 0px !important;
+}
+
+.example-button-row button,
+.example-button-row a {
+  margin-right: 8px;
+  text-align: center;
+  align-content: center;
+  align-self: center;
+}
+
+.containerheight {
+  width: 80vw;
+  height: 35vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+.child-div {
+  height: 100%;
+  background-color: red;
+  margin: 0 20px;
+}
+.hidden {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+table tr th {
+  border-bottom: 1px solid #000;
+  background-color: #3f51b5;
+  color: #f5f5f5;
+  font-size: large;
+}
+#contentToConvert {
+  font-size: 20px; /* Increase font size */
+  line-height: 1.5; /* Optional: Adjust line spacing for better readability */
+}
+@media print {
+  #contentToConvert {
+    font-size: 20px; /* Adjust for print */
+  }
+}

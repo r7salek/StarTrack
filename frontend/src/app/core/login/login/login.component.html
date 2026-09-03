@@ -1,0 +1,93 @@
+<div fxFlex fxFlexAlign="center" class="example-container">
+  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+    <span>Login Page</span>
+  </mat-toolbar>
+  <div fxLayoutAlign="space-around center">
+    <form
+      *ngIf="!isLoggedIn"
+      name="form"
+      (ngSubmit)="f.form.valid && onSubmit()"
+      #f="ngForm"
+      novalidate
+      class="normal-form"
+    >
+      <mat-grid-list cols="1" rowHeight="2:1">
+        <div mat-dialog-content>
+          <img
+            id="profile-img"
+            src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+            class="profile-img-card"
+          />
+        </div>
+      </mat-grid-list>
+      <mat-grid-list cols="1">
+        <mat-form-field appearance="outline" class="content" rowHeight="70px">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            class="form-control"
+            type="email"
+            name="username"
+            [(ngModel)]="form.username"
+            required
+            #username="ngModel"
+            placeholder="Email"
+          />
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-hint>Please Enter valid format</mat-hint>
+        </mat-form-field>
+      </mat-grid-list>
+      <mat-grid-list cols="1">
+        <mat-form-field appearance="outline" class="content" rowHeight="70px">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            class="form-control"
+            name="password"
+            [(ngModel)]="form.password"
+            required
+            minlength="6"
+            #password="ngModel"
+            placeholder="Password"
+            [type]="hide ? 'password' : 'text'"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hide = !hide"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide"
+          >
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+          <mat-hint>Must be atleast 6 characters </mat-hint>
+        </mat-form-field>
+      </mat-grid-list>
+      <mat-grid-list
+        cols="1"
+        rowHeight="60px"
+        fxLayoutAlign="space-around center"
+      >
+        <div class="button-row">
+          <button
+            mat-raised-button
+            color="primary"
+            matTooltip="Click on Login after giving credentials"
+            [matTooltipPosition]="'right'"
+            (click)="(form)"
+          >
+            Login</button
+          ><button
+            mat-raised-button
+            color="warn"
+            (click)="onClose()"
+            matTooltip="Cancel Login"
+          >
+            Cancel
+          </button>
+        </div>
+      </mat-grid-list>
+    </form>
+  </div>
+</div>

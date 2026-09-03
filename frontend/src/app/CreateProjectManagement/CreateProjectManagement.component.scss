@@ -1,0 +1,157 @@
+.example-h2 {
+  margin: 4px;
+  font-size: 16px;
+}
+.example-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-flow: column;
+}
+.example-margin {
+  margin: 2px;
+  margin-left: 20px;
+  margin-right: 45px;
+}
+td,
+th {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+::ng-deep .container {
+  position: relative;
+  margin-top: 20px;
+}
+
+::ng-deep .options {
+  padding: 20px;
+  background-color: rgba(191, 191, 191, 0.15);
+  position: absolute;
+  top: 29px;
+  bottom: 5px;
+  left: 420px;
+  width: 100%;
+}
+
+::ng-deep .caption {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+::ng-deep .option {
+  margin-top: 10px;
+}
+
+::ng-deep .bottom-bar {
+  width: 396px;
+  text-align: right;
+  margin-top: 5px;
+  scroll-behavior: auto;
+}
+
+::ng-deep #applyButton {
+  margin-right: 10px;
+}
+
+::ng-deep .option-editor {
+  margin-top: 5px;
+}
+
+.example-container {
+  height: 800px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.mat-row-patient_id {
+  padding-left: 16px;
+  font-size: 2000px;
+}
+
+::ng-deep #gridContainer {
+  height: 800px;
+  font-size: 16px;
+  overflow: auto;
+}
+
+::ng-deep .dx-datagrid .dx-data-row > td.bullet {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+/* YourComponent.component.css */
+
+:host ::ng-deep #gridContainer .dx-datagrid-headers .dx-header-row,
+:host
+  ::ng-deep
+  #gridContainer
+  .dx-datagrid-headers
+  .dx-header-row
+  .dx-header-cell,
+:host ::ng-deep #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row {
+  background-color: #3f51b5;
+  color: white;
+  font-size: 18px;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
+mat-table {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border: 1px;
+}
+
+mat-row,
+mat-header-row {
+  flex-direction: column;
+  border: 1px;
+}
+.child-1 {
+  background-color: white;
+}
+.child-2 {
+  background-color: white;
+}
+
+.mat-stepper-horizontal {
+  margin-top: 8px;
+}
+mat-form-field {
+  margin-right: 12px;
+}
+.cdk-global-overlay-wrapper {
+  overflow: auto;
+  pointer-events: auto;
+}
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+::ng-deep .mat-chip-list-wrapper {
+  flex-wrap: unset !important;
+  width: 100%;
+  overflow-x: scroll;
+}
+.mat-raised-button ~ .mat-mdc-raised-button {
+  margin-left: 10px;
+}
+.example-container {
+  height: 800px;
+  width: 90%;
+  max-width: 100%;
+}
+.new-row {
+  background-color: aquamarine !important;
+  color: white;
+  font-weight: bold;
+}
+.select-all {
+  margin: 5px 17px;
+}
+.example-button-row button,
+.example-button-row a {
+  margin-right: 8px;
+}
+.my-container {
+  overflow: auto;
+}

@@ -1,0 +1,16 @@
+# StarTrack attribution and provenance
+
+This repository consolidates the public StarTrack backend and frontend from
+the SchubertLab GitHub organisation:
+
+- Backend: `SchubertLab/star-track` at `a67efded0eb9881425d7c15c9546906f0f755401`.
+- Frontend: `SchubertLab/star-track-webfrontend` at `21e612f6daf5e23174d22d8fb69200f8bdd4d5f4`.
+
+The upstream material is attributed to CPC-M bioArchive Munich and carries the
+MIT licence reproduced in `LICENSE`. The initial uploader is the public GitHub
+account `zaheer004`. See `docs/UPSTREAM_PROVENANCE.md` for the import evidence
+and the deliberate configuration redactions.
+
+This repository is an independent maintenance baseline. It does not imply an
+operational handover, access to the upstream hosting environment, database, or
+identity-provider accounts.

@@ -1,0 +1,47 @@
+<mat-card appearance="outlined" fxFlexAlign="stretch">
+  <!-- Create Profile  -->
+  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+    <span>User Profile Update</span>
+  </mat-toolbar>
+  <mat-card-content>
+    <form [formGroup]="service.form" class="normal-form">
+      <mat-grid-list cols="1" rowHeight="400px">
+        <mat-grid-tile>
+          <div class="controles-container">
+            <!--  <input type="hidden" formControlName="$key"> -->
+            <input matInput readonly hidden name="id" value={{idValue}} matInput placeholder="this.currentUser.id">
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" matInput required placeholder="First Name" required
+                minlength="3" maxlength="20">
+              <mat-icon matSuffix>account_box</mat-icon>
+              <mat-hint>Must be atleast 3 characters and atmost 20 characters
+              </mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" matInput placeholder="Last Name" required minlength="3"
+                maxlength="20">
+              <mat-icon matSuffix>account_box</mat-icon>
+              <mat-hint>Must be atleast 3 characters and atmost 20 characters
+              </mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" matInput placeholder="Email" required
+                pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$">
+              <mat-icon matSuffix>email</mat-icon>
+              <mat-hint>Please Enter valid format</mat-hint>
+            </mat-form-field>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+      <div class="example-button-row">
+        <p> <button mat-raised-button color="primary" matTooltip="Update User Profile" class="example-button"
+            (click)="updateUserProfile(service.form.value)">Update
+            Profile</button><button mat-raised-button color="warn" (click)="onClose()"
+            matTooltip="Cancel Update">Cancel</button> </p>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

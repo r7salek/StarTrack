@@ -1,0 +1,193 @@
+<mat-card
+  appearance="outlined"
+  fxFlex
+  style="overflow: hidden"
+  class="my-container"
+>
+  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
+    <span style="font-size: 24px">Project History</span>
+  </mat-toolbar>
+  <div class="container">
+    <mat-card-content>
+      <mat-card appearance="outlined" style="overflow: hidden">
+        <!--         <div class="buttons-column">
+          <dx-button stylingMode="contained" type="default" [text]="this.expanded ? 'Collapse All' : 'Expand All'"
+            width="136" (onClick)="collapseAllClick()">
+          </dx-button>
+        </div> -->
+        <div align="right" class="buttons-column" class="my-container">
+          <dx-button
+            icon="check"
+            type="success"
+            text=" View Details"
+            (onClick)="viewDetails()"
+          ></dx-button>
+          &nbsp;
+          <dx-button
+            icon="check"
+            type="success"
+            text=" Update Status"
+            (onClick)="updateStatus()"
+          ></dx-button>
+          &nbsp;
+          <dx-button
+            icon="check"
+            type="danger"
+            text="Delete"
+            (onClick)="onDelete()"
+          ></dx-button>
+        </div>
+        <br />
+        <br />
+        <div>
+          <dx-data-grid
+            #dataGridInstance
+            id="gridContainer"
+            [dataSource]="dataSource"
+            [showRowLines]="true"
+            [filterValue]="filterValue"
+            [rowAlternationEnabled]="true"
+            [columnAutoWidth]="true"
+            [allowColumnReordering]="true"
+            [showColumnLines]="true"
+            [allowColumnResizing]="true"
+            [columnResizingMode]="columnResizingMode"
+            [dxo-header]="{ background: 'blue' }"
+            [height]="calculateGridHeight(dataSource?.length || 0)"
+          >
+            <dxo-selection mode="single"></dxo-selection>
+            <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+            <dxo-filter-builder
+              [customOperations]="customOperations"
+              [allowHierarchicalFields]="true"
+            >
+            </dxo-filter-builder>
+            <dxo-filter-builder-popup [position]="popupPosition">
+            </dxo-filter-builder-popup>
+            <dxo-grouping [autoExpandAll]="expanded"></dxo-grouping>
+            <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+            <dxi-column dataField="id" [visible]="false"></dxi-column>
+            <dxi-column
+              dataField="projectName"
+              caption="Project name"
+              [width]="180"
+              [fixed]="true"
+            ></dxi-column>
+            <dxi-column
+              dataField="lastNamePI"
+              caption="Last name PI"
+              [width]="180"
+            ></dxi-column>
+            <dxi-column
+              dataField="firstNamePI"
+              caption="First name PI"
+              [width]="180"
+            ></dxi-column>
+            <dxi-column
+              dataField="fundingOverview"
+              caption="Funder"
+              [width]="230"
+            ></dxi-column>
+            <dxi-column
+              dataField="schemeOverview"
+              caption="Scheme"
+              [width]="180"
+            ></dxi-column>
+            <dxi-column
+              dataField="valueOverview"
+              caption="Value"
+              [width]="80"
+            ></dxi-column>
+            <dxi-column
+              dataField="fundingOverviewStartDate"
+              caption="Funding Start Date"
+              [width]="180"
+              dataType="date"
+              [format]="{ type: 'custom', formatter: customDateFormatter }"
+            ></dxi-column>
+            <dxi-column
+              dataField="fundingOverviewEndDate"
+              caption="Funding End Date"
+              [width]="180"
+              dataType="date"
+              [format]="{ type: 'custom', formatter: customDateFormatter }"
+            ></dxi-column>
+            <dxi-column
+              dataField="grantNumberOverview"
+              caption="Funder Award Number"
+              [width]="180"
+            ></dxi-column>
+            <dxi-column
+              dataField="worktribeNumberOverview"
+              caption="Worktribe Number"
+              [width]="180"
+            ></dxi-column>
+            <dxi-column
+              dataField="ttoContractName"
+              caption="TTO contact name"
+              [width]="180"
+            ></dxi-column>
+            <dxi-column dataField="modality" [width]="180"></dxi-column>
+            <dxi-column
+              dataField="areaOfExpertise"
+              caption="Research field"
+              [width]="280"
+            ></dxi-column>
+            <dxi-column dataField="readiness" [width]="120"></dxi-column>
+            <dxi-column
+              dataField="createdDate"
+              caption="Created date"
+              dataType="date"
+              [width]="120"
+              [format]="{ type: 'custom', formatter: customDateFormatter }"
+            ></dxi-column>
+            <dxi-column
+              dataField="applyValue"
+              caption="Status"
+              [width]="150"
+            ></dxi-column>
+            <dxo-load-panel [enabled]="true"></dxo-load-panel>
+            <dxo-search-panel [visible]="true"></dxo-search-panel>
+            <dxo-field-chooser [allowSearch]="true"></dxo-field-chooser>
+            <dxo-scrolling
+              mode="virtual"
+              rowRenderingMode="virtual"
+            ></dxo-scrolling>
+            <dxo-header-filter
+              [visible]="true"
+              search="true"
+            ></dxo-header-filter>
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-scrolling rowRenderingMode="virtual"> </dxo-scrolling>
+            <dxo-paging [pageSize]="20"> </dxo-paging>
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-editing mode="popup">
+              <dxo-texts confirmDeleteMessage=""></dxo-texts>
+            </dxo-editing>
+            <dxo-grouping #expand [autoExpandAll]="false"></dxo-grouping>
+            <dxo-pager
+              [visible]="true"
+              [allowedPageSizes]="allowedPageSizes"
+              [displayMode]="displayMode"
+              [showPageSizeSelector]="showPageSizeSelector"
+              [showInfo]="showInfo"
+              [showNavigationButtons]="showNavButtons"
+            >
+            </dxo-pager>
+          </dx-data-grid>
+        </div>
+      </mat-card>
+      <br />
+      <div class="example-button-row">
+        <button
+          fxFlexAlign="center"
+          mat-raised-button
+          color="warn"
+          (click)="onClose()"
+        >
+          Close
+        </button>
+      </div>
+    </mat-card-content>
+  </div>
+</mat-card>

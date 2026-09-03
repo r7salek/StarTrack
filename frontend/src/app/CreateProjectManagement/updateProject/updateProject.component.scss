@@ -1,0 +1,265 @@
+.mat-stepper-horizontal {
+  margin-top: 8px;
+}
+mat-form-field {
+  margin-right: 12px;
+}
+.cdk-global-overlay-wrapper {
+  overflow: hidden !important;
+  pointer-events: auto;
+}
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
+::ng-deep .mat-chip-list-wrapper {
+  flex-wrap: unset !important;
+  width: 100%;
+  overflow: hidden !important;
+}
+.mat-raised-button ~ .mat-mdc-raised-button {
+  margin-left: 10px;
+}
+.example-container {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden !important;
+}
+.new-row {
+  background-color: aquamarine !important;
+  color: white;
+  font-weight: bold;
+}
+/* .example-chip-list {
+  width: 100%;
+}
+ */
+mat-form-field {
+  margin-right: 10px;
+}
+.cdk-global-overlay-wrapper {
+  overflow: auto;
+  pointer-events: auto;
+}
+::ng-deep .mat-chip-list-wrapper {
+  flex-wrap: unset !important;
+  width: 100%;
+  overflow-x: scroll;
+}
+.mat-raised-button ~ .mat-raised-button {
+  margin-left: 10px;
+}
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+::ng-deep {
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: white;
+  }
+  mat-form-field {
+    .mat-hint,
+    input,
+    ::placeholder,
+    .mat-form-field-label {
+      color: white;
+    }
+  }
+}
+.mat-grid-tile .mat-figure {
+  justify-content: flex-start !important ;
+  align-items: flex-start !important;
+}
+
+.bold-heading {
+  font-weight: bold;
+}
+::ng-deep #gauge {
+  text-align: center;
+  font-size: 30px;
+  padding-top: 10px;
+  height: 100%;
+}
+.green-icon {
+  color: green;
+}
+:host ::ng-deep #gridContainer .dx-datagrid-headers .dx-header-row,
+:host
+  ::ng-deep
+  #gridContainer
+  .dx-datagrid-headers
+  .dx-header-row
+  .dx-header-cell,
+:host ::ng-deep #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row {
+  // background-color: #3f51b5;
+  //color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+::ng-deep #gridContainer {
+  height: 260px;
+  font-size: 18px;
+}
+:host ::ng-deep .custom-label {
+  font-size: 18px;
+}
+.custom-label-header {
+  font-size: 18px;
+  font-weight: bold;
+}
+.hover-image {
+  display: none;
+  position: absolute;
+  top: 70%; /* Adjusts position below the dropdown */
+  left: 0; /* Aligns with the dropdown */
+  z-index: 1000;
+  width: 400px; /* Adjust based on your image size */
+  max-width: 440vw; /* Ensures responsiveness */
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 0px;
+}
+
+.hover-image img {
+  width: 100%; /* Ensures the image fits within the container */
+  height: 100%;
+}
+
+div:hover .hover-image {
+  display: block; /* Shows the image on hover */
+}
+
+.custom-label-header {
+  font-size: 18px;
+  font-weight: bold;
+}
+.controles-container {
+  width: 100%;
+  word-wrap: break-word; /* Ensures long text wraps to the next line */
+  white-space: normal; /* Allows multiline text */
+}
+.label-input-container {
+  display: flex;
+  align-items: center; /* Aligns label and input vertically */
+  gap: 4px; /* Adds spacing between the label and input */
+  margin: 10px 0;
+}
+
+.custom-input {
+  flex-grow: 1; /* Ensures the input grows to fill available space if needed */
+  padding: 8px 12px; /* Increases the padding for better height */
+  font-size: 18px;
+  height: 40px; /* Set a specific height for the input field */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9; /* Light background for better visibility */
+}
+// text field auto height adjustment
+.custom-textarea {
+  width: 100%; /* Full width of the container */
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none; /* Prevent manual resizing */
+  overflow: hidden; /* Avoid scrollbars */
+  white-space: pre-wrap; /* Preserve line breaks */
+  line-height: 1.5; /* Adjust spacing between lines for readability */
+  box-sizing: border-box;
+}
+.mat-grid-list {
+  width: 100%;
+  margin: 0; /* Remove any default margins */
+  padding: 0; /* Remove any default paddings */
+}
+
+.mat-grid-tile {
+  padding: 0; /* Remove padding inside the grid tile */
+}
+.label-input-container1 {
+  display: flex;
+  flex-direction: column; /* Stack the label and textarea */
+  gap: 4px; /* Small gap between the label and textarea */
+}
+.dx-datagrid-rowsview .dx-cell {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+.no-wrap-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Optional: If the text is too long, show ellipsis */
+}
+// label container border
+.text-container {
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px; /* Padding inside the border */
+  background-color: #f9f9f9; /* Optional: Light background for better visibility */
+  width: 100%; /* Ensure it spans the container */
+  box-sizing: border-box; /* Includes padding in width calculations */
+  white-space: pre-wrap; /* Ensure line breaks are respected */
+  overflow: hidden; /* Prevent content overflow */
+}
+
+.custom-label {
+  display: block; /* Ensures the label behaves like a block element */
+  font-size: 14px; /* Adjust font size as needed */
+  line-height: 1.5; /* Spacing between lines */
+}
+.grid-container {
+  height: auto;
+  overflow: hidden; /* Prevent scrollbars if dynamic height works properly */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.grid-row {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.grid-field {
+  display: flex;
+  flex-direction: column;
+  flex-basis: calc(33.333% - 10px); /* 3 fields per row */
+  min-width: 200px;
+}
+
+.grid-field label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.grid-field span {
+  font-size: 14px;
+  color: #333;
+}
+.custom-label_aims {
+  display: block; /* Ensures the label behaves like a block element */
+  font-size: 14px; /* Adjust font size as needed */
+  line-height: 1.5; /* Spacing between lines */
+}
+.text-container_aims {
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px; /* Padding inside the border */
+  background-color: #f9f9f9; /* Optional: Light background for better visibility */
+  width: 100%; /* Ensure it spans the container */
+  box-sizing: border-box; /* Includes padding in width calculations */
+  white-space: pre-wrap; /* Ensure line breaks are respected */
+  overflow: hidden; /* Prevent content overflow */
+}

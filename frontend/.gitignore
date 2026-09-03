@@ -1,0 +1,72 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+# Only exists if Bazel was run
+/bazel-out
+
+# dependencies
+/node_modules
+node_modules
+StarTrack/node_modules
+# dependencies
+StarTrack/node_modules
+StarTrack/.angular
+# profiling files
+chrome-profiler-events*.json
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+/.angular/cache/16.2.0/babel-webpack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/0.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/3.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/4.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/9.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/10.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/12.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/13.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/14.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/17.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/20.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/23.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/index.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/index.pack.old
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/0.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/3.pack
+.angular/cache/16.2.0/angular-webpack/2d978efea66bab673e374228dad1f4a8b87e55c0/4.pack
+/.angular
+*.angular/
+.angular/cache/*
+/.angular/cache/
+/.angular/cache/16.2.0/angular-webpack/
+.angular/cache/
