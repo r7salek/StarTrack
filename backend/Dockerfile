@@ -5,7 +5,7 @@ COPY pom.xml ./
 RUN mvn --batch-mode --no-transfer-progress -DskipTests dependency:go-offline
 
 COPY src ./src
-RUN mvn --batch-mode --no-transfer-progress -DskipTests package
+RUN mvn --batch-mode --no-transfer-progress package
 
 FROM eclipse-temurin:11-jre-jammy
 

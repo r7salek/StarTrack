@@ -60,6 +60,7 @@ public class User implements Serializable {
     private String email;
 
     @Column(name = "password") // Maps to the 'password' column
+    @JsonIgnore
     private String password;
 
     @Column(name = "delete") // Indicates whether the user is marked for deletion

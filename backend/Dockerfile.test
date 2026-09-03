@@ -1,0 +1,9 @@
+FROM maven:3.9.9-eclipse-temurin-11
+
+WORKDIR /workspace
+COPY pom.xml ./
+RUN mvn --batch-mode --no-transfer-progress -DskipTests dependency:go-offline
+
+COPY src ./src
+
+CMD ["mvn", "--batch-mode", "--no-transfer-progress", "test"]

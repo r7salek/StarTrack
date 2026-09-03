@@ -1,7 +1,7 @@
 /**
  * UserService
  * Provides business logic for managing users and their roles.
- * Handles CRUD operations, role updates, password resets, and more.
+ * Handles CRUD operations, role updates, password changes, and more.
  */
 
 package com.star_track.star_track.starTrack.service;
@@ -76,19 +76,6 @@ public class UserService {
     public User activateUser(String email) {
         User user = userRepo.findByEmail(email);
         user.setEnabled(true);
-        user.setModifiedDate(new Date());
-        return userRepo.save(user);
-    }
-
-    /**
-     * Reset a user's password.
-     *
-     * @param email The email of the user.
-     * @return The updated user with the reset password.
-     */
-    public User resetPassword(String email) {
-        User user = userRepo.findByEmail(email);
-        user.setPassword(passwordEncoder.encode("123456")); // Default reset password
         user.setModifiedDate(new Date());
         return userRepo.save(user);
     }
