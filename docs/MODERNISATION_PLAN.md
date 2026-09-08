@@ -38,16 +38,18 @@ quality gate.
 The local gate has passed. The remote workflow remains unverified until this
 branch is deliberately pushed.
 
-## Phase 3 — versioned data model and API inventory (started; checkpoint 1)
+## Phase 3 — versioned data model and API inventory (verified locally)
 
 **Outcome:** database changes become explicit and reviewable before runtime
 framework upgrades.
 
-The [API inventory](API_INVENTORY.md), [observed data model](DATA_MODEL.md) and
-[schema-only evidence](database/observed-schema.sql) start this phase. They do
-not mark it complete: formal field contracts, PostgreSQL integration tests,
-migration-tool integration and recovery rehearsals remain outstanding.
-Automatic Hibernate schema updates are intentionally unchanged at this checkpoint.
+The inventory checkpoint has been extended with [field contracts](API_CONTRACTS.md),
+PostgreSQL characterization, pinned Flyway migrations and a tested recovery path.
+The local gate passed before automatic Hibernate updates were replaced with
+schema validation. Final clean CI-style verification also passed. The foundation
+checkpoint and Phase 3 are recorded separately in local signed commits. Exact
+results are in [Phase 3 progress](PHASE3_PROGRESS.md);
+no push, merge or migration of the normal developer database is implied.
 
 - Document the current API routes, request/response contracts, entities,
   relationships, PostgreSQL catalog/schema assumptions and data ownership.

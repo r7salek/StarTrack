@@ -58,7 +58,7 @@ cleanup() {
       status=1
     fi
     docker image rm "$backend_test_image" "$frontend_test_image" \
-      "$STARTRACK_BACKEND_IMAGE" "$STARTRACK_FRONTEND_IMAGE" >/dev/null 2>&1 || true
+      "$STARTRACK_BACKEND_IMAGE" "$STARTRACK_FRONTEND_IMAGE" "$STARTRACK_MIGRATION_IMAGE" >/dev/null 2>&1 || true
   fi
 
   if [ "$developer_frontend_was_running" = true ]; then
@@ -104,6 +104,7 @@ export STARTRACK_FRONTEND_PORT=${STARTRACK_VERIFY_FRONTEND_PORT:-$default_verify
 export STARTRACK_CORS_ALLOWED_ORIGINS="http://127.0.0.1:$STARTRACK_FRONTEND_PORT"
 export STARTRACK_BACKEND_IMAGE="startrack-backend:verify-$verify_tag"
 export STARTRACK_FRONTEND_IMAGE="startrack-frontend:verify-$verify_tag"
+export STARTRACK_MIGRATION_IMAGE="startrack-migrations:verify-$verify_tag"
 backend_test_image="startrack-backend-test:verify-$verify_tag"
 frontend_test_image="startrack-frontend-test:verify-$verify_tag"
 frontend_test_container="$verify_project-frontend-test"
@@ -141,6 +142,8 @@ sh -n "$project_root/scripts/init-local-env.sh" \
   "$project_root/scripts/test-local.sh"
 node --check "$project_root/scripts/smoke-local.mjs"
 node --check "$project_root/scripts/security-smoke-local.mjs"
+node --check "$project_root/scripts/test-database-local.mjs"
+node --test "$project_root/scripts/test-database-schema.mjs"
 node --test "$project_root/scripts/test-verification-gate.mjs"
 verify_compose config --quiet
 
@@ -182,6 +185,11 @@ STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \
   node "$project_root/scripts/smoke-local.mjs"
 STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \
   node "$project_root/scripts/security-smoke-local.mjs"
+
+echo "Characterizing PostgreSQL and rehearsing migrations and recovery..."
+node "$project_root/scripts/test-postgres-baseline.mjs"
+STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \
+  node "$project_root/scripts/test-database-local.mjs" "$verify_project" "$env_file"
 
 echo "Restarting the backend and proving persistence..."
 verify_compose restart backend

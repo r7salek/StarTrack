@@ -1,5 +1,13 @@
 # Observed PostgreSQL model — Phase 3 checkpoint 1
 
+Later checkpoint (2026-09-08): the migration baseline and recovery rehearsal are
+implemented; see [Phase 3 evidence](PHASE3_PROGRESS.md). The 22 application tables
+and 22 sequences are retained; managed databases add Flyway's separate history
+table. Actual JPA deletion was characterized: it removes a project and its join
+rows but retains the child records, including shared children. Project deletion
+is therefore not full removal of associated records. This behavior is preserved,
+not redesigned, by the baseline.
+
 Recorded 2026-09-07 from the running local synthetic baseline and current Java
 entities. The read-only catalog inspection found **22 tables and 22 sequences**.
 The accompanying [schema-only snapshot](database/observed-schema.sql) records

@@ -136,7 +136,9 @@ function runGate({ mode = '--ci', failure = '', running = true, existingEnv = tr
     }
     for (const record of records.filter((record) => record.tool === 'node' && !record.args.includes('--check') && !record.args.includes('--test'))) {
       assert.ok(record.syntheticCredentials, 'Smoke tests must use synthetic credentials, not developer .env');
-      assert.match(record.apiUrl, /^http:\/\/127\.0\.0\.1:\d+$/);
+      if (!record.args[0].endsWith('test-postgres-baseline.mjs')) {
+        assert.match(record.apiUrl, /^http:\/\/127\.0\.0\.1:\d+$/);
+      }
       assert.ok(record.args[0].endsWith('.mjs'));
     }
     assert.equal(existsSync(developerEnv), existingEnv, 'Do not create/delete the developer .env');
@@ -153,7 +155,7 @@ test('CI ignores hostile project/env/cwd overrides and uses fresh synthetic cred
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Local verification and cleanup passed/);
   assert.equal(result.compose.filter((record) => record.args.includes('down')).length, 1);
-  assert.equal(result.records.filter((record) => record.tool === 'node' && !record.args.includes('--check') && !record.args.includes('--test')).length, 3);
+    assert.equal(result.records.filter((record) => record.tool === 'node' && !record.args.includes('--check') && !record.args.includes('--test')).length, 5);
 });
 
 test('CI does not create a developer .env and generates unique projects for successive runs', () => {

@@ -42,10 +42,16 @@ Run the complete test, build and isolated runtime gate with
 `./scripts/test-local.sh`. Account-management permissions are documented in the
 [authorization matrix](docs/AUTHORIZATION_MATRIX.md).
 
-Phase 3 has started with the [current API inventory](docs/API_INVENTORY.md) and
-[observed PostgreSQL model](docs/DATA_MODEL.md). These record the inherited
-behaviour before introducing migrations; they are not a completed migration
-system or approval to change a live database.
+Phase 3 builds on the [API inventory](docs/API_INVENTORY.md) and
+[observed PostgreSQL model](docs/DATA_MODEL.md) with versioned migrations and
+schema validation. Fresh initialization and populated-copy recovery have passed
+locally. Existing unmanaged volumes require explicit, reviewed adoption;
+verification does not change the normal developer database.
+
+The Phase 3 implementation now has [field-level API contracts](docs/API_CONTRACTS.md),
+a [database operations runbook](docs/DATABASE_OPERATIONS.md), and an explicit
+[checkpoint and verification record](docs/PHASE3_PROGRESS.md). Consult that record
+for what has actually passed before using migrations on any existing database.
 
 ## Licence and attribution
 

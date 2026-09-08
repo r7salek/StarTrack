@@ -37,6 +37,18 @@ services:
       db:
         condition: service_healthy
 
+  migrate:
+    image: ${STARTRACK_MIGRATION_IMAGE:-startrack-migrations:local}
+    build:
+      context: ./database
+    environment:
+      FLYWAY_URL: jdbc:postgresql://db:5432/starTrack
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: ${STARTRACK_DB_PASSWORD:?Run scripts/init-local-env.sh first}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+
   backend:
     image: ${STARTRACK_BACKEND_IMAGE:-startrack-backend:local}
     build:
@@ -58,7 +70,7 @@ services:
     ports:
       - "127.0.0.1:${STARTRACK_BACKEND_PORT:-8080}:8080"
     depends_on:
-      db-init:
+      migrate:
         condition: service_completed_successfully
 
   frontend:

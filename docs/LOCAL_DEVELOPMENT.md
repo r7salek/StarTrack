@@ -5,6 +5,12 @@ It does not require a native Java, Maven or PostgreSQL installation.
 
 ## Start
 
+These commands initialize an empty database through versioned migrations.
+If you already have the pre-migration local volume, stop here and follow the
+[existing-database adoption requirements](DATABASE_OPERATIONS.md#existing-database-adoption-separate-approval-required).
+Ordinary startup deliberately refuses to silently adopt that database. The Phase
+3 verification runs did not change your existing volume or running images.
+
 ```sh
 ./scripts/init-local-env.sh
 ./scripts/build-local-images.sh
@@ -26,8 +32,9 @@ the existing `frontend/node_modules` tree from this Documents workspace.
 ./scripts/test-local.sh
 ```
 
-This runs backend and frontend tests, a production frontend build and a fresh
-end-to-end Docker smoke test. It uses an isolated Compose project on alternate
+This runs backend and frontend tests, a production frontend build, PostgreSQL
+characterization and migration/recovery rehearsals, plus API-level Docker smoke
+tests. It is not a browser click-through. It uses an isolated Compose project on alternate
 loopback ports and removes its temporary database afterward. On memory-limited
 local machines it temporarily pauses a running developer frontend and restores
 it during cleanup; the developer backend and persistent database are not
@@ -49,6 +56,12 @@ Failed cleanup or restoration produces a nonzero exit; success is printed only
 after cleanup. Local mode targets the standard `startrack` developer Compose
 project and restores only its previously running frontend. CI mode does not
 pause developer services and is intended for a clean runner.
+
+Phase 3 adds eight schema/adoption guard tests, 17 native PostgreSQL checks and
+11 real migration/recovery checks. The latter cover all nine child collections,
+schema comparison, checksum/failure handling, populated-copy adoption, recovery,
+history/deletion behavior and new IDs. See [database operations](DATABASE_OPERATIONS.md)
+and the [exact verification checkpoint](PHASE3_PROGRESS.md).
 
 ## Inspect and stop
 
