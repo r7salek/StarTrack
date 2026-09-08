@@ -16,8 +16,12 @@
   tests, builds and a fresh isolated runtime stack.
 - Critical account operations have explicit administrator or self-only rules;
   see [the authorization matrix](AUTHORIZATION_MATRIX.md).
+- Phase 3 adds field-level [API contracts](API_CONTRACTS.md), a versioned
+  PostgreSQL baseline and tested adoption/backup/restore procedures. Compose runs
+  migrations before the backend; Hibernate now validates the schema rather than
+  changing it automatically. See [Phase 3 evidence](PHASE3_PROGRESS.md).
 
-## What is not established
+## Local verification and remaining limits
 
 The Docker baseline has now been proven to start end-to-end using PostgreSQL
 15, Java 11 and Node 18 images. Native Java, Maven and PostgreSQL installations
@@ -26,16 +30,32 @@ local credentials plus synthetic data.
 
 The source now has a local Docker Compose definition and a GitHub Actions
 workflow, but the remote workflow has not run because this branch is unpushed.
-There is still no database migration tool or production-ready test coverage.
-Project-level permission rules and dependency upgrades remain unresolved; do
-not expose it publicly.
+The migration runner and synthetic recovery checks are implemented and verified
+locally; this is not evidence of production readiness. Project-level permission
+rules, dependency upgrades and production backup/retention arrangements remain
+unresolved. Do not expose it publicly.
+
+The normal developer database has not been adopted into migration management.
+Ordinary startup is expected to reject an existing unmanaged schema. Do not
+delete its volume, enable automatic baselining or disable validation to bypass
+that refusal. Adoption requires separate approval and the checks in
+[database operations](DATABASE_OPERATIONS.md#existing-database-adoption-separate-approval-required).
 
 ## Safe verification order
 
-1. Generate local synthetic values with `./scripts/init-local-env.sh`.
-2. Run `./scripts/test-local.sh`; it uses a separate Compose project and
-   temporary PostgreSQL volume.
-3. Review the test, build and smoke results before accepting a change.
-4. Capture the API contract and schema before changing database behaviour.
+1. Run `./scripts/test-local.sh`; it generates its own private synthetic values
+   and uses a separate Compose project and temporary PostgreSQL volume. It does
+   not require or replace the developer `.env`.
+2. Review tests, builds, migration/recovery checks and restart persistence before
+   accepting a change. Use `--ci` for CI-style isolation without pausing the
+   developer frontend.
+3. For a separately approved new developer installation, generate local values
+   with `./scripts/init-local-env.sh` and follow [local setup](LOCAL_DEVELOPMENT.md).
+   For an existing volume, follow the adoption procedure instead of treating it
+   as a fresh installation.
+4. Keep the API contracts and schema baseline current when approving later
+   changes; never edit an already-applied migration.
 
-Only after those steps should database migrations or runtime upgrades begin.
+Framework modernization is the next phase, not part of this local Phase 3
+completion. No deployment, existing-volume adoption or remote integration is
+implied by the verification results.

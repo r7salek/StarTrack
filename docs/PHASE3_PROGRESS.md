@@ -58,3 +58,23 @@ Phase 3's implementation and technical verification are complete. This completio
 record closes the phase when saved in its signed local commit. See
 [database operations](DATABASE_OPERATIONS.md) for the tested procedure and its
 limits. No framework modernization has started.
+
+## Completion refresh — 2026-09-08
+
+A subsequent completion request found the implementation already saved in local
+commit `a09cd4f` on `codex/data-api-foundation`, with a clean working tree before
+this documentation refresh. The five checkpoints above were not reimplemented.
+
+Fresh checks in this refresh passed:
+
+- 8 schema/adoption guard tests and 9 verification-script regressions.
+- 17 native PostgreSQL checks, including complete synthetic backup/restore,
+  constraints, grants, sequence state and subsequent inserts. The disposable
+  network-isolated container and temporary storage were removed successfully.
+
+The full application/build/migration gate was not repeated for these
+documentation-only changes; its results remain the implementation evidence
+recorded above. The outdated readiness statement that migrations were absent
+was corrected in [run readiness](RUN_READINESS.md), including the distinction
+between isolated verification and separately approved existing-volume adoption.
+No developer container was started or migrated during this refresh.
