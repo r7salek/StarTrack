@@ -40,6 +40,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    @Qualifier("cookieAuthorizationRequestRepository")
+    private HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository;
+
+    @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
 
     @Autowired
@@ -58,9 +65,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${startrack.oauth.enabled:false}")
     private boolean oauthEnabled;
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -88,7 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         if (oauthEnabled) {
             http.oauth2Login()
                     .authorizationEndpoint()
-                    .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                    .authorizationRequestRepository(authorizationRequestRepository)
                     .and()
                     .redirectionEndpoint()
                     .and()
@@ -118,7 +125,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * session. We'll save the request in a Base64 encoded cookie instead.
      */
     @Bean
-    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+    public static HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
         return new HttpCookieOAuth2AuthorizationRequestRepository();
     }
 
@@ -129,7 +136,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 

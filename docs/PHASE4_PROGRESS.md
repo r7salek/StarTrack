@@ -80,3 +80,22 @@ migration steps, not completed modernization. Target versions were verified
 against [Spring's current requirements](https://docs.spring.io/spring-boot/system-requirements.html)
 and [migration guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
 on 2026-09-08. No schema redesign begins until this runtime gate passes.
+
+### Boot 2.7 / Java 11 checkpoint
+
+The first run passed the 8 schema and 14 gate tests, then executed all 37 backend
+tests. Seven production-security tests failed during context initialization:
+the legacy security configuration has a circular bean dependency that newer
+Spring rejects by default. No runtime database checks ran. Correct the bean
+dependency rather than enabling circular references, then repeat the gate.
+
+Build cleanup removes the unused endorsed Java EE copy step, unused javatuples
+and javax.json dependencies, unused custom repositories and the mismatched
+Tomcat version override. Java remains 11 for this first framework checkpoint.
+
+The repeated backend-only gate passed: 37 backend tests, 8 schema guards,
+14 gate tests, 17 native PostgreSQL checks and all 11 migration/recovery checks.
+Restart persistence and cleanup passed, with the original schema fingerprint
+unchanged. The fix moves authentication setup to its framework lifecycle hook
+and makes independent encoder/cookie-repository factories static; circular
+references remain disabled. Boot 2.7 is an intermediate checkpoint only.

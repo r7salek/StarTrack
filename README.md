@@ -11,7 +11,7 @@ copied operational data. Runtime credentials must be supplied outside Git.
 
 | Path | Contents | Baseline stack |
 | --- | --- | --- |
-| `backend/` | API, user management and project-tracking persistence | Java 11, Spring Boot 2.5.4, JPA, PostgreSQL |
+| `backend/` | API, user management and project-tracking persistence | Java 11, Spring Boot 2.7.18 (upgrade checkpoint), JPA, PostgreSQL |
 | `frontend/` | Browser interface | Angular 16.2, TypeScript, Angular Material and DevExtreme |
 | `docs/` | Provenance, run readiness and staged modernisation plan | — |
 
