@@ -1,14 +1,15 @@
 #!/bin/sh
 set -eu
 
-mode=${1:-local}
-case "$mode" in
-  local|--ci) ;;
-  *)
-    echo "Usage: $0 [--ci]" >&2
-    exit 2
-    ;;
-esac
+mode=local
+backend_only=false
+for option in "$@"; do
+  case "$option" in
+    local|--ci) mode=$option ;;
+    --backend-only) backend_only=true ;;
+    *) echo "Usage: $0 [--ci] [--backend-only]" >&2; exit 2 ;;
+  esac
+done
 
 project_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 umask 077
@@ -40,7 +41,11 @@ cleanup() {
   if [ "$status" -ne 0 ] && [ -n "$verify_project" ] && [ -f "$env_file" ]; then
     echo "Verification failed; showing synthetic local service diagnostics." >&2
     verify_compose ps -a >&2 || true
-    verify_compose logs --tail=120 db backend frontend >&2 || true
+    if [ "$backend_only" = true ]; then
+      verify_compose logs --tail=120 db backend >&2 || true
+    else
+      verify_compose logs --tail=120 db backend frontend >&2 || true
+    fi
   fi
 
   for container in $test_containers; do
@@ -57,8 +62,13 @@ cleanup() {
       echo "Could not remove the isolated verification stack and volume: $verify_project" >&2
       status=1
     fi
-    docker image rm "$backend_test_image" "$frontend_test_image" \
-      "$STARTRACK_BACKEND_IMAGE" "$STARTRACK_FRONTEND_IMAGE" "$STARTRACK_MIGRATION_IMAGE" >/dev/null 2>&1 || true
+    if [ "$backend_only" = true ]; then
+      docker image rm "$backend_test_image" "$STARTRACK_BACKEND_IMAGE" \
+        "$STARTRACK_MIGRATION_IMAGE" >/dev/null 2>&1 || true
+    else
+      docker image rm "$backend_test_image" "$frontend_test_image" \
+        "$STARTRACK_BACKEND_IMAGE" "$STARTRACK_FRONTEND_IMAGE" "$STARTRACK_MIGRATION_IMAGE" >/dev/null 2>&1 || true
+    fi
   fi
 
   if [ "$developer_frontend_was_running" = true ]; then
@@ -74,7 +84,11 @@ cleanup() {
     status=1
   fi
   if [ "$status" -eq 0 ] && [ "$verification_completed" = true ]; then
-    echo "Local verification and cleanup passed."
+    if [ "$backend_only" = true ]; then
+      echo "Backend-only verification and cleanup passed; frontend checks were not run."
+    else
+      echo "Local verification and cleanup passed."
+    fi
   fi
 
   exit "$status"
@@ -111,6 +125,9 @@ frontend_test_container="$verify_project-frontend-test"
 frontend_build_container="$verify_project-frontend-build"
 backend_test_container="$verify_project-backend-test"
 test_containers="$frontend_test_container $frontend_build_container $backend_test_container"
+if [ "$backend_only" = true ]; then
+  test_containers="$backend_test_container"
+fi
 
 {
   printf 'STARTRACK_DB_PASSWORD=%s\n' "$STARTRACK_DB_PASSWORD"
@@ -118,7 +135,10 @@ test_containers="$frontend_test_container $frontend_build_container $backend_tes
   printf 'STARTRACK_BOOTSTRAP_ADMIN_EMAIL=%s\n' "$STARTRACK_BOOTSTRAP_ADMIN_EMAIL"
   printf 'STARTRACK_BOOTSTRAP_ADMIN_PASSWORD=%s\n' "$STARTRACK_BOOTSTRAP_ADMIN_PASSWORD"
 } > "$env_file"
-mkdir -p "$frontend_test_context" "$backend_test_context"
+mkdir -p "$backend_test_context"
+if [ "$backend_only" = false ]; then
+  mkdir -p "$frontend_test_context"
+fi
 
 wait_for_url() {
   label=$1
@@ -147,7 +167,7 @@ node --test "$project_root/scripts/test-database-schema.mjs"
 node --test "$project_root/scripts/test-verification-gate.mjs"
 verify_compose config --quiet
 
-if [ "$mode" = "local" ]; then
+if [ "$mode" = "local" ] && [ "$backend_only" = false ]; then
   developer_services=$(developer_compose ps --status running --services)
   if printf '%s\n' "$developer_services" | grep -qx frontend; then
     developer_frontend_was_running=true
@@ -156,13 +176,15 @@ if [ "$mode" = "local" ]; then
   fi
 fi
 
-echo "Building and running frontend tests in Node 18 with Chromium..."
-rsync -a --exclude node_modules --exclude dist --exclude .angular --exclude .git \
-  "$project_root/frontend/" "$frontend_test_context/"
-docker build --progress=plain -t "$frontend_test_image" \
-  -f "$frontend_test_context/Dockerfile.test" "$frontend_test_context"
-docker run --rm --network none --name "$frontend_test_container" "$frontend_test_image"
-docker run --rm --name "$frontend_build_container" "$frontend_test_image" npm run build
+if [ "$backend_only" = false ]; then
+  echo "Building and running frontend tests in Node 18 with Chromium..."
+  rsync -a --exclude node_modules --exclude dist --exclude .angular --exclude .git \
+    "$project_root/frontend/" "$frontend_test_context/"
+  docker build --progress=plain -t "$frontend_test_image" \
+    -f "$frontend_test_context/Dockerfile.test" "$frontend_test_context"
+  docker run --rm --network none --name "$frontend_test_container" "$frontend_test_image"
+  docker run --rm --name "$frontend_build_container" "$frontend_test_image" npm run build
+fi
 
 echo "Building and running backend tests..."
 rsync -a --exclude target --exclude .git \
@@ -172,13 +194,24 @@ docker build --progress=plain -t "$backend_test_image" \
 docker run --rm --name "$backend_test_container" "$backend_test_image"
 
 echo "Building runtime images..."
-"$project_root/scripts/build-local-images.sh"
+if [ "$backend_only" = true ]; then
+  "$project_root/scripts/build-local-images.sh" --backend-only
+else
+  "$project_root/scripts/build-local-images.sh"
+fi
 
 echo "Starting an isolated verification stack..."
-echo "Verification ports: database=$STARTRACK_DB_PORT backend=$STARTRACK_BACKEND_PORT frontend=$STARTRACK_FRONTEND_PORT"
-verify_compose up -d --no-build
+if [ "$backend_only" = true ]; then
+  echo "Verification ports: database=$STARTRACK_DB_PORT backend=$STARTRACK_BACKEND_PORT"
+  verify_compose up -d --no-build backend
+else
+  echo "Verification ports: database=$STARTRACK_DB_PORT backend=$STARTRACK_BACKEND_PORT frontend=$STARTRACK_FRONTEND_PORT"
+  verify_compose up -d --no-build
+fi
 wait_for_url "Backend" "http://127.0.0.1:$STARTRACK_BACKEND_PORT/api/all"
-wait_for_url "Frontend" "http://127.0.0.1:$STARTRACK_FRONTEND_PORT/"
+if [ "$backend_only" = false ]; then
+  wait_for_url "Frontend" "http://127.0.0.1:$STARTRACK_FRONTEND_PORT/"
+fi
 
 echo "Running the synthetic API smoke test..."
 STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \

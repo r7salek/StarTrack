@@ -53,7 +53,7 @@ if (tool === 'docker') {
 }
 `;
 
-function runGate({ mode = '--ci', failure = '', running = true, existingEnv = true } = {}) {
+function runGate({ mode = '--ci', backendOnly = false, failure = '', running = true, existingEnv = true } = {}) {
   const fixture = mkdtempSync(path.join(tmpdir(), 'startrack-gate-regression-'));
   const project = path.join(fixture, 'project with spaces');
   const bin = path.join(fixture, 'bin');
@@ -77,8 +77,7 @@ function runGate({ mode = '--ci', failure = '', running = true, existingEnv = tr
     chmodSync(file, 0o755);
   }
   const build = path.join(project, 'scripts/build-local-images.sh');
-  writeFileSync(build, '#!/bin/sh\nset -eu\ndocker build -t "$STARTRACK_BACKEND_IMAGE" .\n' +
-    'docker build -t "$STARTRACK_FRONTEND_IMAGE" .\n');
+  copyFileSync(fileURLToPath(new URL('./build-local-images.sh', import.meta.url)), build);
   chmodSync(build, 0o755);
   for (const name of ['docker', 'node', 'rsync', 'curl', 'sleep']) {
     const file = path.join(bin, name);
@@ -88,7 +87,8 @@ function runGate({ mode = '--ci', failure = '', running = true, existingEnv = tr
   if (existingEnv) writeFileSync(developerEnv, originalEnv, { mode: 0o600 });
 
   try {
-    const result = spawnSync('/bin/sh', [path.join(project, 'scripts/test-local.sh'), mode], {
+    const result = spawnSync('/bin/sh', [path.join(project, 'scripts/test-local.sh'), mode,
+      ...(backendOnly ? ['--backend-only'] : [])], {
       cwd: unrelated,
       env: {
         ...process.env,
@@ -126,6 +126,7 @@ function runGate({ mode = '--ci', failure = '', running = true, existingEnv = tr
         assert.ok(record.args.includes('ps') || record.args.includes('stop') || record.args.includes('start'),
           'Developer project must only be inspected, paused or restored');
         assert.equal(mode, 'local', 'CI must never touch the developer project');
+        assert.equal(backendOnly, false, 'Backend-only must never touch the developer project');
       } else {
         assert.match(record.project, /^startrack_verify_[a-f0-9]{16}$/);
       }
@@ -157,6 +158,54 @@ test('CI ignores hostile project/env/cwd overrides and uses fresh synthetic cred
   assert.equal(result.compose.filter((record) => record.args.includes('down')).length, 1);
     assert.equal(result.records.filter((record) => record.tool === 'node' && !record.args.includes('--check') && !record.args.includes('--test')).length, 5);
 });
+
+for (const mode of ['local', '--ci']) {
+  test(`${mode} backend-only skips every frontend step but retains backend, recovery and persistence checks`, () => {
+    const result = runGate({ mode, backendOnly: true });
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /Backend-only verification and cleanup passed; frontend checks were not run/);
+    assert.doesNotMatch(result.stdout, /Local verification and cleanup passed/);
+    assert.equal(result.compose.some((record) => record.project === 'startrack'), false);
+    assert.equal(result.records.some((record) => record.args.some((arg) => arg.includes('frontend'))), false,
+      'No frontend staging, build, test, inspection, cleanup or service operation');
+    const builds = result.records.filter((record) => record.tool === 'docker' && record.args[0] === 'build');
+    assert.equal(builds.length, 3, 'Build only backend tests, migrations and backend runtime');
+    const runs = result.records.filter((record) => record.tool === 'docker' && record.args[0] === 'run');
+    assert.equal(runs.length, 1);
+    assert.match(runs[0].args.join(' '), /backend-test/);
+    const up = result.compose.find((record) => record.args.includes('up'));
+    assert.deepEqual(up.args.slice(up.args.indexOf('up')), ['up', '-d', '--no-build', 'backend']);
+    const checks = result.records.filter((record) => record.tool === 'node' &&
+      !record.args.includes('--check') && !record.args.includes('--test'));
+    assert.deepEqual(checks.map((record) => path.basename(record.args[0])), [
+      'smoke-local.mjs', 'security-smoke-local.mjs', 'test-postgres-baseline.mjs',
+      'test-database-local.mjs', 'smoke-local.mjs',
+    ]);
+    const restart = result.records.findIndex((record) => record.args.includes('restart'));
+    const smokeRuns = result.records.map((record, index) => ({ record, index }))
+      .filter(({ record }) => record.tool === 'node' && path.basename(record.args[0]) === 'smoke-local.mjs');
+    assert.ok(smokeRuns[0].index < restart && smokeRuns[1].index > restart);
+    const curls = result.records.filter((record) => record.tool === 'curl');
+    assert.equal(curls.length, 2);
+    assert.ok(curls.every((record) => record.args.at(-1).endsWith('/api/all')));
+    assert.equal(result.compose.filter((record) => record.args.includes('down')).length, 1);
+  });
+}
+
+for (const failure of ['test', 'cleanup', 'signal']) {
+  test(`backend-only ${failure} failure cleans up without touching the developer stack`, () => {
+    const result = runGate({ mode: 'local', backendOnly: true, failure });
+    assert.notEqual(result.status, 0);
+    assert.ok(result.compose.some((record) => record.args.includes('down')));
+    assert.equal(result.compose.some((record) => record.project === 'startrack'), false);
+    assert.equal(result.records.some((record) => record.args.some((arg) => arg.includes('frontend'))), false);
+    assert.doesNotMatch(result.stdout, /verification and cleanup passed/);
+    if (failure === 'signal') {
+      assert.equal(result.records.filter((record) => record.tool === 'docker' &&
+        record.args[0] === 'container' && record.args[1] === 'rm').length, 1);
+    }
+  });
+}
 
 test('CI does not create a developer .env and generates unique projects for successive runs', () => {
   const first = runGate({ existingEnv: false });

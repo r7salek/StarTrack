@@ -36,10 +36,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 Long userId = tokenProvider.getUserIdFromToken(jwt);
                 if (userId!= null ) {
                     UserDetails userDetails = customUserDetailsService.loadUserById(userId);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    // A signature does not override current account status. Reloaded
+                    // deactivation must also revoke access for an unexpired token.
+                    if (userDetails.isEnabled() && userDetails.isAccountNonExpired()
+                            && userDetails.isAccountNonLocked() && userDetails.isCredentialsNonExpired()) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    } else {
+                        SecurityContextHolder.clearContext();
+                    }
                 }
             }
         } catch (Exception ex) {

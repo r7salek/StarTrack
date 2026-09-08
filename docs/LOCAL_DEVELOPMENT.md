@@ -41,6 +41,15 @@ it during cleanup; the developer backend and persistent database are not
 stopped or replaced. CI runs the same command with `./scripts/test-local.sh
 --ci`.
 
+For intermediate backend runtime checkpoints, use `./scripts/test-local.sh
+--backend-only` (optionally with `--ci`). This still tests the backend, API/security,
+PostgreSQL, migrations, recovery and restart persistence in a disposable stack.
+It skips all frontend staging, tests, builds and readiness checks, and never
+pauses or starts any developer service. Its success message explicitly reports
+backend-only coverage; it does not replace the complete integration gate.
+`./scripts/build-local-images.sh --backend-only` likewise builds only backend
+and migration images.
+
 Both modes generate fresh synthetic credentials in a private temporary directory.
 Verification never reads, creates or deletes the developer's `.env`. Compose
 paths are explicit, so the script can also be invoked by absolute path from
@@ -50,7 +59,7 @@ selecting and deleting an existing database volume. Optional
 `STARTRACK_VERIFY_DB_PORT`, `STARTRACK_VERIFY_BACKEND_PORT` and
 `STARTRACK_VERIFY_FRONTEND_PORT` still select alternate ports.
 
-The gate includes nine lightweight isolation/cleanup regression tests. Frontend
+The gate includes fourteen lightweight isolation/cleanup regression tests. Frontend
 tests run without network access and have a five-minute process deadline.
 Failed cleanup or restoration produces a nonzero exit; success is printed only
 after cleanup. Local mode targets the standard `startrack` developer Compose

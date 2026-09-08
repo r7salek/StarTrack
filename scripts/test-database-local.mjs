@@ -234,13 +234,17 @@ try {
   assert.notEqual(flyway('starTrack', ['clean'], { allowFailure: true }).status, 0);
   passed('checksum tampering fails, transactional migration failure rolls back, and clean is disabled');
 
-  // Reconcile SQL baseline against an independently Hibernate-generated schema.
+  // V1 is immutable. A newer ORM may generate different DDL even when it can
+  // safely use V1, so verify validation and real writes without schema drift.
   createDatabase('phase3_generated');
-  sql('phase3_generated', 'CREATE SCHEMA startrack;');
-  const generated = await temporaryBackend('phase3_generated', 'schema-generator', 'create');
+  flyway('phase3_generated', ['migrate']);
+  const beforeRuntime = schema('phase3_generated');
+  requireMatchingSchema(beforeRuntime, reference);
+  const generated = await temporaryBackend('phase3_generated', 'schema-validator');
+  await projectRoundTrip(generated.url);
   removeContainer(generated.name);
-  requireMatchingSchema(schema('phase3_generated'), reference);
-  passed('fresh Hibernate schema matches migration baseline');
+  requireMatchingSchema(schema('phase3_generated'), beforeRuntime);
+  passed('runtime validates migration baseline and writes nested records without schema drift');
 
   // Populated legacy copy, deliberately excluding migration history from the dump.
   createDatabase('phase3_legacy');
