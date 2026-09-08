@@ -9,10 +9,12 @@ package com.star_track.star_track.starTrack.resource;
 import com.star_track.star_track.starTrack.dto.UserManagementResponse;
 import com.star_track.star_track.starTrack.dto.UserPasswordResponse;
 import com.star_track.star_track.starTrack.model.User;
+import com.star_track.star_track.starTrack.registration.dto.LocalUser;
 import com.star_track.star_track.starTrack.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -131,9 +133,10 @@ public class UserResource {
      * @return The updated user details after the delete request with HTTP status 200 (OK).
      */
     @PutMapping("/deleteRequest/{email}")
-    @PreAuthorize("#email.equalsIgnoreCase(principal.user.email)")
-    public ResponseEntity<User> deleteUserRequest(@PathVariable(value = "email") String email) {
-        User updateUser = userService.deleteUserRequest(email);
+    @PreAuthorize("#email.equals(principal.user.email)")
+    public ResponseEntity<User> deleteUserRequest(@PathVariable(value = "email") String email,
+                                                  @AuthenticationPrincipal LocalUser principal) {
+        User updateUser = userService.deleteUserRequest(principal.getUser().getId());
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 

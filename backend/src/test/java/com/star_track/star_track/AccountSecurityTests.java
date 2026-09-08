@@ -37,6 +37,8 @@ import java.util.Collections;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -160,6 +162,7 @@ class AccountSecurityTests {
                         .with(authentication(userAuthentication(7L)))
                         .with(csrf()))
                 .andExpect(status().isOk());
+        verify(userService).deleteUserRequest(7L);
     }
 
     @Test
@@ -191,6 +194,15 @@ class AccountSecurityTests {
                         .with(authentication(userAuthentication(7L)))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void deletionRequestCannotTargetAnEmailDifferingOnlyInCase() throws Exception {
+        // Email lookups in PostgreSQL are case-sensitive in the inherited schema.
+        mockMvc.perform(put("/sybeUser/deleteRequest/USER@startrack.test")
+                        .with(authentication(userAuthentication(7L))))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(userService);
     }
 
     @Test

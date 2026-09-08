@@ -11,27 +11,93 @@ case "$mode" in
 esac
 
 project_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-env_file="$project_root/.env"
-created_env=false
+umask 077
+verify_root=$(mktemp -d "${TMPDIR:-/tmp}/startrack-verify.XXXXXXXX")
+env_file="$verify_root/.env"
 developer_frontend_was_running=false
-frontend_test_context=$(mktemp -d "${TMPDIR:-/tmp}/startrack-frontend-test.XXXXXX")
-backend_test_context=$(mktemp -d "${TMPDIR:-/tmp}/startrack-backend-test.XXXXXX")
-verify_tag=${GITHUB_RUN_ID:-$$}
-verify_project=${STARTRACK_VERIFY_PROJECT:-startrack_phase2_verify_$verify_tag}
-verify_port_slot=$((verify_tag % 14000))
+verification_completed=false
+verify_project=
+test_containers=
+frontend_test_context="$verify_root/frontend"
+backend_test_context="$verify_root/backend"
+
+verify_compose() {
+  docker compose --project-directory "$project_root" --env-file "$env_file" \
+    -f "$project_root/compose.yaml" -p "$verify_project" "$@"
+}
+
+developer_compose() {
+  # Only inspect/stop/start existing containers; never recreate them or touch their volume.
+  # The private env satisfies Compose interpolation without reading developer credentials.
+  docker compose --project-directory "$project_root" --env-file "$env_file" \
+    -f "$project_root/compose.yaml" -p startrack "$@"
+}
+
+cleanup() {
+  status=$?
+  trap - EXIT HUP INT TERM
+
+  if [ "$status" -ne 0 ] && [ -n "$verify_project" ] && [ -f "$env_file" ]; then
+    echo "Verification failed; showing synthetic local service diagnostics." >&2
+    verify_compose ps -a >&2 || true
+    verify_compose logs --tail=120 db backend frontend >&2 || true
+  fi
+
+  for container in $test_containers; do
+    if docker container inspect "$container" >/dev/null 2>&1; then
+      if ! docker container rm -f "$container" >/dev/null 2>&1; then
+        echo "Could not remove a verification test container: $container" >&2
+        status=1
+      fi
+    fi
+  done
+
+  if [ -n "$verify_project" ] && [ -f "$env_file" ]; then
+    if ! verify_compose down -v --remove-orphans >/dev/null 2>&1; then
+      echo "Could not remove the isolated verification stack and volume: $verify_project" >&2
+      status=1
+    fi
+    docker image rm "$backend_test_image" "$frontend_test_image" \
+      "$STARTRACK_BACKEND_IMAGE" "$STARTRACK_FRONTEND_IMAGE" >/dev/null 2>&1 || true
+  fi
+
+  if [ "$developer_frontend_was_running" = true ]; then
+    echo "Restoring the developer frontend..."
+    if ! developer_compose start frontend >/dev/null 2>&1; then
+      echo "Could not restore the previously running developer frontend." >&2
+      status=1
+    fi
+  fi
+
+  if ! rm -rf "$verify_root"; then
+    echo "Could not remove the private verification directory: $verify_root" >&2
+    status=1
+  fi
+  if [ "$status" -eq 0 ] && [ "$verification_completed" = true ]; then
+    echo "Local verification and cleanup passed."
+  fi
+
+  exit "$status"
+}
+trap cleanup EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+# Never accept a caller-supplied project name for a workflow that deletes volumes.
+verify_tag=$(openssl rand -hex 8)
+verify_project="startrack_verify_$verify_tag"
+verify_port_slot=$(( $$ % 14000 ))
 default_verify_db_port=$((20000 + verify_port_slot * 3))
 default_verify_backend_port=$((default_verify_db_port + 1))
 default_verify_frontend_port=$((default_verify_db_port + 2))
 
-if [ ! -f "$env_file" ]; then
-  "$project_root/scripts/init-local-env.sh"
-  created_env=true
-fi
-
-set -a
-. "$env_file"
-set +a
-
+STARTRACK_DB_PASSWORD=$(openssl rand -hex 24)
+STARTRACK_TOKEN_SECRET=$(openssl rand -hex 64)
+STARTRACK_BOOTSTRAP_ADMIN_EMAIL="admin@startrack.test"
+STARTRACK_BOOTSTRAP_ADMIN_PASSWORD=$(openssl rand -hex 18)
+export STARTRACK_DB_PASSWORD STARTRACK_TOKEN_SECRET \
+  STARTRACK_BOOTSTRAP_ADMIN_EMAIL STARTRACK_BOOTSTRAP_ADMIN_PASSWORD
 export STARTRACK_DB_PORT=${STARTRACK_VERIFY_DB_PORT:-$default_verify_db_port}
 export STARTRACK_BACKEND_PORT=${STARTRACK_VERIFY_BACKEND_PORT:-$default_verify_backend_port}
 export STARTRACK_FRONTEND_PORT=${STARTRACK_VERIFY_FRONTEND_PORT:-$default_verify_frontend_port}
@@ -40,38 +106,18 @@ export STARTRACK_BACKEND_IMAGE="startrack-backend:verify-$verify_tag"
 export STARTRACK_FRONTEND_IMAGE="startrack-frontend:verify-$verify_tag"
 backend_test_image="startrack-backend-test:verify-$verify_tag"
 frontend_test_image="startrack-frontend-test:verify-$verify_tag"
+frontend_test_container="$verify_project-frontend-test"
+frontend_build_container="$verify_project-frontend-build"
+backend_test_container="$verify_project-backend-test"
+test_containers="$frontend_test_container $frontend_build_container $backend_test_container"
 
-verify_compose() {
-  docker compose -p "$verify_project" "$@"
-}
-
-cleanup() {
-  status=$?
-  trap - EXIT HUP INT TERM
-
-  if [ "$status" -ne 0 ]; then
-    echo "Verification failed; showing synthetic local service diagnostics." >&2
-    verify_compose ps -a >&2 || true
-    verify_compose logs --tail=120 db backend frontend >&2 || true
-  fi
-
-  verify_compose down -v --remove-orphans >/dev/null 2>&1 || true
-  docker image rm "$backend_test_image" "$frontend_test_image" \
-    "$STARTRACK_BACKEND_IMAGE" "$STARTRACK_FRONTEND_IMAGE" >/dev/null 2>&1 || true
-  rm -rf "$frontend_test_context" "$backend_test_context"
-
-  if [ "$developer_frontend_was_running" = true ]; then
-    echo "Restoring the developer frontend..."
-    docker compose start frontend >/dev/null 2>&1 || true
-  fi
-
-  if [ "$mode" = "--ci" ] && [ "$created_env" = true ]; then
-    rm -f "$env_file"
-  fi
-
-  exit "$status"
-}
-trap cleanup EXIT HUP INT TERM
+{
+  printf 'STARTRACK_DB_PASSWORD=%s\n' "$STARTRACK_DB_PASSWORD"
+  printf 'STARTRACK_TOKEN_SECRET=%s\n' "$STARTRACK_TOKEN_SECRET"
+  printf 'STARTRACK_BOOTSTRAP_ADMIN_EMAIL=%s\n' "$STARTRACK_BOOTSTRAP_ADMIN_EMAIL"
+  printf 'STARTRACK_BOOTSTRAP_ADMIN_PASSWORD=%s\n' "$STARTRACK_BOOTSTRAP_ADMIN_PASSWORD"
+} > "$env_file"
+mkdir -p "$frontend_test_context" "$backend_test_context"
 
 wait_for_url() {
   label=$1
@@ -95,12 +141,16 @@ sh -n "$project_root/scripts/init-local-env.sh" \
   "$project_root/scripts/test-local.sh"
 node --check "$project_root/scripts/smoke-local.mjs"
 node --check "$project_root/scripts/security-smoke-local.mjs"
+node --test "$project_root/scripts/test-verification-gate.mjs"
 verify_compose config --quiet
 
-if [ "$mode" = "local" ] && docker compose ps --status running --services 2>/dev/null | grep -qx frontend; then
-  developer_frontend_was_running=true
-  echo "Pausing the developer frontend during resource-intensive verification..."
-  docker compose stop frontend >/dev/null
+if [ "$mode" = "local" ]; then
+  developer_services=$(developer_compose ps --status running --services)
+  if printf '%s\n' "$developer_services" | grep -qx frontend; then
+    developer_frontend_was_running=true
+    echo "Pausing the developer frontend during resource-intensive verification..."
+    developer_compose stop frontend >/dev/null
+  fi
 fi
 
 echo "Building and running frontend tests in Node 18 with Chromium..."
@@ -108,29 +158,28 @@ rsync -a --exclude node_modules --exclude dist --exclude .angular --exclude .git
   "$project_root/frontend/" "$frontend_test_context/"
 docker build --progress=plain -t "$frontend_test_image" \
   -f "$frontend_test_context/Dockerfile.test" "$frontend_test_context"
-docker run --rm "$frontend_test_image"
-docker run --rm "$frontend_test_image" npm run build
+docker run --rm --network none --name "$frontend_test_container" "$frontend_test_image"
+docker run --rm --name "$frontend_build_container" "$frontend_test_image" npm run build
 
 echo "Building and running backend tests..."
 rsync -a --exclude target --exclude .git \
   "$project_root/backend/" "$backend_test_context/"
 docker build --progress=plain -t "$backend_test_image" \
   -f "$backend_test_context/Dockerfile.test" "$backend_test_context"
-docker run --rm "$backend_test_image"
+docker run --rm --name "$backend_test_container" "$backend_test_image"
 
 echo "Building runtime images..."
 "$project_root/scripts/build-local-images.sh"
 
 echo "Starting an isolated verification stack..."
 echo "Verification ports: database=$STARTRACK_DB_PORT backend=$STARTRACK_BACKEND_PORT frontend=$STARTRACK_FRONTEND_PORT"
-verify_compose down -v --remove-orphans >/dev/null 2>&1 || true
 verify_compose up -d --no-build
 wait_for_url "Backend" "http://127.0.0.1:$STARTRACK_BACKEND_PORT/api/all"
 wait_for_url "Frontend" "http://127.0.0.1:$STARTRACK_FRONTEND_PORT/"
 
 echo "Running the synthetic API smoke test..."
 STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \
-  "$project_root/scripts/smoke-local.sh"
+  node "$project_root/scripts/smoke-local.mjs"
 STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \
   node "$project_root/scripts/security-smoke-local.mjs"
 
@@ -138,6 +187,6 @@ echo "Restarting the backend and proving persistence..."
 verify_compose restart backend
 wait_for_url "Restarted backend" "http://127.0.0.1:$STARTRACK_BACKEND_PORT/api/all"
 STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \
-  "$project_root/scripts/smoke-local.sh"
+  node "$project_root/scripts/smoke-local.mjs"
 
-echo "Phase 2 local verification passed."
+verification_completed=true

@@ -40,9 +40,11 @@ export class LoginComponent implements OnInit {
     const error: any = this.route.snapshot.queryParamMap.get('error'); // Error values
 
     // from local storage check user is login otherwise user will be authenticate from system and user will be login
-    if (this.tokenStorage.getToken()) {
-      this.isLoggedIn = true;
-      this.currentUser = this.tokenStorage.getUser();
+    const storedUser = this.tokenStorage.getUser();
+    this.isLoggedIn = !!this.tokenStorage.getToken() && !!storedUser;
+    this.currentUser = [];
+    if (this.isLoggedIn) {
+      this.currentUser = storedUser;
     } else if (token) {
       this.tokenStorage.saveToken(token);
       this.userLoginService.getCurrentUser().subscribe(
@@ -66,8 +68,10 @@ export class LoginComponent implements OnInit {
       (data) => {
         this.tokenStorage.saveToken(data.accessToken);
         this.login(data.user);
-        this.isLoginFailed = false;
-        this.notificationService.success('User is Login successfully');
+        if (this.isLoggedIn) {
+          this.isLoginFailed = false;
+          this.notificationService.success('User is Login successfully');
+        }
       },
       (err) => {
         this.notificationService.error(err.error.message);
@@ -83,9 +87,18 @@ export class LoginComponent implements OnInit {
   // login method for getting vlaues of user after login redirect to landing page
   login(user: any): void {
     this.tokenStorage.saveUser(user);
+    const storedUser = this.tokenStorage.getUser();
+    if (!this.tokenStorage.getToken() || !storedUser) {
+      this.isLoggedIn = false;
+      this.isLoginFailed = true;
+      this.currentUser = [];
+      this.errorMessage = 'Unable to read a valid login session. Please sign in again.';
+      this.notificationService.error(this.errorMessage);
+      return;
+    }
     this.isLoginFailed = false;
     this.isLoggedIn = true;
-    this.currentUser = this.tokenStorage?.getUser().roles;
+    this.currentUser = storedUser.roles;
 
     if (this.currentUser.includes('ROLE_USER')) {
       this._router.navigate(['createProject']).then(() => {

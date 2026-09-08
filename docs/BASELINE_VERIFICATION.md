@@ -34,3 +34,12 @@ test/build/runtime gate with `./scripts/test-local.sh`.
 
 The local Phase 2 gate passed on 3 September 2026. The matching GitHub Actions
 workflow has not run remotely because this branch has not been pushed.
+
+## Foundation review — 7 September 2026
+
+The [review record](FOUNDATION_REVIEW_2026-09-07.md) records the subsequent
+security/session/verification improvements, 17 passing backend tests, 58 passing
+frontend tests, nine script-regression tests, successful production compilation,
+and isolated API/security/restart-persistence verification. It distinguishes
+the shared-gate run from the final frontend-only verification and records the
+first Phase 3 inventory checkpoint without claiming migrations are complete.

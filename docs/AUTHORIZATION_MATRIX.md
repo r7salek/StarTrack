@@ -18,5 +18,10 @@ enforcement point; frontend route guards are navigation assistance only.
 State-changing account routes accept only their documented `DELETE`, `PUT` or
 `POST` method. Their inherited `GET` variants are no longer available.
 
+Deletion requests require the exact current account email, matching PostgreSQL's
+case-sensitive lookup semantics. The update itself targets the authenticated
+account ID, never a second lookup of the caller-supplied email. A differently
+cased email can belong to a separate account and must not pass this check.
+
 Project-level ownership and authorization are not defined by this matrix and
 remain a separate product and security decision.

@@ -34,6 +34,22 @@ it during cleanup; the developer backend and persistent database are not
 stopped or replaced. CI runs the same command with `./scripts/test-local.sh
 --ci`.
 
+Both modes generate fresh synthetic credentials in a private temporary directory.
+Verification never reads, creates or deletes the developer's `.env`. Compose
+paths are explicit, so the script can also be invoked by absolute path from
+another directory. Project/image/container names are generated per run;
+`STARTRACK_VERIFY_PROJECT` is deliberately ignored to prevent verification from
+selecting and deleting an existing database volume. Optional
+`STARTRACK_VERIFY_DB_PORT`, `STARTRACK_VERIFY_BACKEND_PORT` and
+`STARTRACK_VERIFY_FRONTEND_PORT` still select alternate ports.
+
+The gate includes nine lightweight isolation/cleanup regression tests. Frontend
+tests run without network access and have a five-minute process deadline.
+Failed cleanup or restoration produces a nonzero exit; success is printed only
+after cleanup. Local mode targets the standard `startrack` developer Compose
+project and restores only its previously running frontend. CI mode does not
+pause developer services and is intended for a clean runner.
+
 ## Inspect and stop
 
 ```sh

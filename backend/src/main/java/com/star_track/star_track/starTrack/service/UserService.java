@@ -138,11 +138,11 @@ public class UserService {
     /**
      * Submit a delete request for a user.
      *
-     * @param email The email of the user.
+     * @param id The authenticated user's immutable ID.
      * @return The updated user with the delete request marked.
      */
-    public User deleteUserRequest(String email) {
-        User user = userRepo.findByEmail(email);
+    public User deleteUserRequest(Long id) {
+        User user = findUserDataById(id);
         user.setDelete(true);
         user.setModifiedDate(new Date());
         return userRepo.save(user);

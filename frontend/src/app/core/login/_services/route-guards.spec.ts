@@ -67,4 +67,54 @@ describe('route guards', () => {
     expect(new AuthGuard(router, storage).canActivate()).toBeFalse();
     expect(new AdminAuthGuard(router, storage).canActivate()).toBeFalse();
   });
+
+  function expectAllGuardsToDeny(): void {
+    expect(new LoginCheck(router, storage).canActivate()).toBeFalse();
+    expect(new AuthGuard(router, storage).canActivate()).toBeFalse();
+    expect(new AdminAuthGuard(router, storage).canActivate()).toBeFalse();
+  }
+
+  it('denies structurally invalid sessions even when JSON is valid', () => {
+    storage.saveToken('synthetic-token');
+    for (const user of [null, [], 'user', {}, { roles: ['ROLE_ADMIN'] },
+      { id: 0, roles: ['ROLE_USER'] }, { id: {}, roles: ['ROLE_ADMIN'] },
+      { id: 'invalid', roles: ['ROLE_USER'] }, { id: 1, roles: [123] },
+      { id: 1, roles: ['UNKNOWN'] }, { id: 1, roles: ['ROLE_ADMIN', null] }]) {
+      storage.saveUser(user);
+      expectAllGuardsToDeny();
+    }
+  });
+
+  it('denies missing, blank and accidentally stringified null tokens', () => {
+    signIn(['ROLE_ADMIN', 'ROLE_USER']);
+    sessionStorage.removeItem('auth-token');
+    expectAllGuardsToDeny();
+    for (const token of ['', '   ', 'null', 'undefined']) {
+      storage.saveToken(token);
+      expectAllGuardsToDeny();
+    }
+  });
+
+  it('denies safely when browser storage access throws', () => {
+    signIn(['ROLE_ADMIN', 'ROLE_USER']);
+    spyOn(Storage.prototype, 'getItem').and.throwError('Storage unavailable');
+    expectAllGuardsToDeny();
+  });
+
+  it('accepts the string user ID returned by the API', () => {
+    storage.saveToken('synthetic-token');
+    storage.saveUser({ id: '7', roles: ['ROLE_ADMIN', 'ROLE_USER'] });
+    expect(new LoginCheck(router, storage).canActivate()).toBeTrue();
+    expect(new AuthGuard(router, storage).canActivate()).toBeTrue();
+    expect(new AdminAuthGuard(router, storage).canActivate()).toBeTrue();
+  });
+
+  it('denies every previously allowed guard immediately after sign-out', () => {
+    const guards = [new LoginCheck(router, storage), new AuthGuard(router, storage),
+      new AdminAuthGuard(router, storage)];
+    signIn(['ROLE_ADMIN', 'ROLE_USER']);
+    guards.forEach(guard => expect(guard.canActivate()).toBeTrue());
+    sessionStorage.clear();
+    guards.forEach(guard => expect(guard.canActivate()).toBeFalse());
+  });
 });

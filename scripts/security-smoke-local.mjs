@@ -2,6 +2,7 @@ const baseUrl = process.env.STARTRACK_API_URL ?? 'http://127.0.0.1:8080';
 const adminEmail = process.env.STARTRACK_BOOTSTRAP_ADMIN_EMAIL;
 const sharedSyntheticPassword = process.env.STARTRACK_BOOTSTRAP_ADMIN_PASSWORD;
 const userEmail = 'ordinary-user@startrack.test';
+const caseVariantEmail = 'ORDINARY-USER@startrack.test';
 
 if (!adminEmail || !sharedSyntheticPassword) {
   throw new Error('Synthetic local credentials are missing');
@@ -83,6 +84,29 @@ const userHeaders = {
   'content-type': 'application/json',
 };
 
+// The inherited database treats these as distinct addresses. Authorization
+// must not collapse them, even though they differ only in letter case.
+await expectStatus(await fetch(`${baseUrl}/api/auth/signup`, {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({
+    firstName: 'Case', lastName: 'Variant', email: caseVariantEmail,
+    password: sharedSyntheticPassword, matchingPassword: sharedSyntheticPassword,
+  }),
+}), 200, 'Synthetic case-variant registration');
+await expectStatus(await fetch(`${baseUrl}/sybeUser/deleteRequest/${encodeURIComponent(caseVariantEmail)}`, {
+  method: 'PUT', headers: userHeaders,
+}), 403, 'Case-variant cross-account deletion request');
+
+const ownDeletion = await expectStatus(await fetch(`${baseUrl}/sybeUser/deleteRequest/${encodeURIComponent(userEmail)}`, {
+  method: 'PUT', headers: userHeaders,
+}), 200, 'Own deletion request');
+const ownDeletionBody = await ownDeletion.json();
+if (String(ownDeletionBody.id) !== String(ordinaryUser.id) || ownDeletionBody.delete !== true
+    || Object.hasOwn(ownDeletionBody, 'password')) {
+  throw new Error('Own deletion request returned the wrong account or unsafe response');
+}
+
 await expectStatus(
   await fetch(`${baseUrl}/sybeUser/all`, { headers: userHeaders }),
   403,
@@ -122,6 +146,10 @@ const adminUsersResponse = await expectStatus(
   'Administrator account access',
 );
 const adminUsers = await adminUsersResponse.json();
+const caseVariantUser = adminUsers.find((user) => user.email === caseVariantEmail);
+if (!caseVariantUser || String(caseVariantUser.id) === String(ordinaryUser.id) || caseVariantUser.delete !== false) {
+  throw new Error('The distinct case-variant account was not preserved');
+}
 if (JSON.stringify(adminUsers).includes('password')) {
   throw new Error('A user response exposed a password field');
 }
@@ -174,6 +202,7 @@ console.log(JSON.stringify({
   oauthDisabled: 'pass',
   administratorAuthorization: 'pass',
   ordinaryUserIsolation: 'pass',
+  caseSensitiveDeletionIsolation: 'pass',
   passwordSerialization: 'pass',
   removedLegacyRoutes: 'pass',
   corsAllowlist: 'pass',

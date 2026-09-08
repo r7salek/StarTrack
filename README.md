@@ -42,6 +42,11 @@ Run the complete test, build and isolated runtime gate with
 `./scripts/test-local.sh`. Account-management permissions are documented in the
 [authorization matrix](docs/AUTHORIZATION_MATRIX.md).
 
+Phase 3 has started with the [current API inventory](docs/API_INVENTORY.md) and
+[observed PostgreSQL model](docs/DATA_MODEL.md). These record the inherited
+behaviour before introducing migrations; they are not a completed migration
+system or approval to change a live database.
+
 ## Licence and attribution
 
 The imported code is under the [MIT licence](LICENSE), with CPC-M bioArchive
