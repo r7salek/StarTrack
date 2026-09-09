@@ -1,6 +1,9 @@
 #!/bin/sh
 set -eu
 
+# Browser-origin checks are set explicitly for the isolated frontend only.
+unset STARTRACK_BROWSER_ORIGIN
+
 mode=local
 backend_only=false
 for option in "$@"; do
@@ -38,13 +41,18 @@ cleanup() {
   status=$?
   trap - EXIT HUP INT TERM
 
+  if [ "$status" -eq 0 ] && [ "$verification_completed" != true ]; then
+    echo "Verification ended before all required checks completed." >&2
+    status=1
+  fi
+
   if [ "$status" -ne 0 ] && [ -n "$verify_project" ] && [ -f "$env_file" ]; then
     echo "Verification failed; showing synthetic local service diagnostics." >&2
     verify_compose ps -a >&2 || true
     if [ "$backend_only" = true ]; then
-      verify_compose logs --tail=120 db backend >&2 || true
+      verify_compose logs --tail=400 db backend >&2 || true
     else
-      verify_compose logs --tail=120 db backend frontend >&2 || true
+      verify_compose logs --tail=400 db backend frontend >&2 || true
     fi
   fi
 
@@ -164,6 +172,8 @@ node --check "$project_root/scripts/smoke-local.mjs"
 node --check "$project_root/scripts/security-smoke-local.mjs"
 node --check "$project_root/scripts/test-database-local.mjs"
 node --test "$project_root/scripts/test-database-schema.mjs"
+node --test "$project_root/scripts/test-project-history-review.mjs"
+node --test "$project_root/scripts/test-rehearsal-http.mjs"
 node --test "$project_root/scripts/test-verification-gate.mjs"
 verify_compose config --quiet
 
@@ -183,7 +193,7 @@ if [ "$backend_only" = false ]; then
   docker build --progress=plain -t "$frontend_test_image" \
     -f "$frontend_test_context/Dockerfile.test" "$frontend_test_context"
   docker run --rm --network none --name "$frontend_test_container" "$frontend_test_image"
-  docker run --rm --name "$frontend_build_container" "$frontend_test_image" npm run build
+  docker run --rm --network none --name "$frontend_build_container" "$frontend_test_image" npm run build
 fi
 
 echo "Building and running backend tests..."
@@ -195,8 +205,11 @@ docker run --rm --name "$backend_test_container" "$backend_test_image"
 
 echo "Building runtime images..."
 if [ "$backend_only" = true ]; then
+  STARTRACK_BUILD_BACKEND_CONTEXT="$backend_test_context" \
   "$project_root/scripts/build-local-images.sh" --backend-only
 else
+  STARTRACK_BUILD_BACKEND_CONTEXT="$backend_test_context" \
+  STARTRACK_BUILD_FRONTEND_CONTEXT="$frontend_test_context" \
   "$project_root/scripts/build-local-images.sh"
 fi
 
@@ -216,6 +229,12 @@ fi
 echo "Running the synthetic API smoke test..."
 STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \
   node "$project_root/scripts/smoke-local.mjs"
+if [ "$backend_only" = false ]; then
+  echo "Checking login and project access through the isolated frontend proxy..."
+  STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_FRONTEND_PORT" \
+  STARTRACK_BROWSER_ORIGIN="http://127.0.0.1:$STARTRACK_FRONTEND_PORT" \
+    node "$project_root/scripts/smoke-local.mjs"
+fi
 STARTRACK_API_URL="http://127.0.0.1:$STARTRACK_BACKEND_PORT" \
   node "$project_root/scripts/security-smoke-local.mjs"
 

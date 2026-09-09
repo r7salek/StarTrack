@@ -1,7 +1,9 @@
 # Versioned PostgreSQL initialization and recovery
 
 Implementation status and execution evidence are recorded in
-[Phase 3 progress](PHASE3_PROGRESS.md). Do not infer completion from this runbook.
+[Phase 3 progress](PHASE3_PROGRESS.md) and [Phase 4 progress](PHASE4_PROGRESS.md).
+Do not infer completion from this runbook. Phase 4 identity migrations are under
+verification; do not apply them to the normal developer database.
 
 ## What the baseline means
 
@@ -11,7 +13,7 @@ case-fold emails, change foreign keys or remove inherited child-ID defaults.
 The `public` schema's generated-ID sequence is included intentionally.
 
 The standalone Flyway image contains the versioned SQL. Its own Java runtime is
-separate from StarTrack's Java 11/Spring Boot 2.5.4 runtime. The application does
+separate from StarTrack's Java 21/Spring Boot 4.1.1 runtime. The application does
 not gain a new Maven production dependency. See the
 [migration decision](adr/0001-explicit-postgresql-migrations.md).
 
@@ -22,6 +24,40 @@ checksums do not detect arbitrary live-schema changes; schema comparison and
 application validation are separate checks.
 
 ## Verification, without touching the developer database
+
+### Phase 4 reviewed identity migration
+
+`V2__expand_project_identity.sql` adds permanent project roots and nullable
+version identities, backfills account IDs only from existing email foreign-key
+relationships, and keeps those email strings as historical snapshots. It does
+not group records by name. Unknown attribution remains null.
+
+`V3__finalize_project_history.sql` refuses populated data without one complete
+approved mapping audit that matches every numeric version ID, UUID and version
+order. It then enforces identity constraints and protects versions, their links
+and linked children from mutation. Fresh empty databases need no legacy review.
+New snapshots may attach only freshly inserted children in the same transaction.
+A trigger-managed, transaction-local-in-effect ledger is emptied at commit;
+it is not a retained transaction-ID history. These protections guard against
+application mistakes, not a database owner disabling triggers.
+
+The internal synthetic review tool is `scripts/review-project-history.mjs`.
+`prepare` produces an **unapproved** proposal with each record separate. A
+reviewed manifest supplies explicit grouping/order, reviewer, approval reference
+and approval timestamp. `apply` locks the source tables, recomputes the schema
+and data fingerprint, validates complete coverage and records the mapping/audit
+in one transaction. Missing, duplicate, stale or unapproved mappings are refused.
+Sequence positions are excluded from review identity because `nextval` is not
+transactional; backup/restore checks still verify their positions.
+
+The tool deliberately accepts only gate-generated disposable Compose projects
+and verifies container labels. The normal developer database is **not** an
+automatic migration target. Do not replace a real approval with a synthetic
+fixture or set baselineOnMigrate=true to bypass the stop. Applying Phase 4 to
+real retained data requires a separately approved backup, reviewed mapping and
+adoption operation. Ordinary startup on populated V1 stops at this review gate.
+
+### Shared verification command
 
 ```sh
 ./scripts/test-local.sh

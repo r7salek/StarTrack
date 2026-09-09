@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/projectCreate") // Base URL for project creation APIs
@@ -53,9 +54,9 @@ public class ProjectCreateResource {
      * @return The created project data with HTTP status 200 (OK).
      */
     @PostMapping("/addToProjectCreate/{email}")
-    public ResponseEntity<ProjectCreate> AddToProjectCreate(@PathVariable(value = "email") String email, @RequestBody(required = true) ProjectCreateDTO project) {
-        ProjectCreate addData = projectCreateService.AddToProjectCreate(email, project);
-        return new ResponseEntity<>(addData, HttpStatus.OK);
+    public ResponseEntity<ProjectCreate> AddToProjectCreate(@PathVariable(value = "email") String email, @Valid @RequestBody(required = true) ProjectCreateDTO project) {
+        projectCreateService.AddToProjectCreate(email, project);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -199,7 +200,7 @@ public class ProjectCreateResource {
      */
     @PutMapping("/permUpdate/{id}/{applyValue}")
     public ResponseEntity<Object> updateUser(@PathVariable(value = "id") Long id, @PathVariable(value = "applyValue") String applyValue) {
-        ProjectCreate updateUser = projectCreateService.updateUserPerm(id, applyValue);
-        return new ResponseEntity<>(updateUser, HttpStatus.OK);
+        projectCreateService.updateUserPerm(id, applyValue);
+        return ResponseEntity.ok().build();
     }
 }

@@ -2,15 +2,18 @@ package com.star_track.star_track.starTrack.registration.dto;
 
 import com.star_track.star_track.starTrack.registration.validator.PasswordMatches;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * @author Zaheer
  * All reqired information regarding the user registration
  */
 @Data
+@NoArgsConstructor
 @PasswordMatches
 public class SignUpRequest {
 
@@ -25,6 +28,7 @@ public class SignUpRequest {
     @NotEmpty
     private String email;
     private SocialProvider socialProvider;
+    @NotBlank
     @Size(min = 6, message = "{Size.userDto.password}")
     private String password;
 

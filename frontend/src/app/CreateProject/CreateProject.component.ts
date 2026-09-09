@@ -17,6 +17,7 @@ import { CreateProjectService } from '../services/CreateProject.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
+import { MatStepper } from '@angular/material/stepper';
 import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
 @Component({
   selector: 'app-CreateProject',
@@ -24,6 +25,13 @@ import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
   styleUrls: ['./CreateProject.component.scss'],
 })
 export class CreateProjectComponent implements OnInit {
+  @ViewChild('stepper') stepper?: MatStepper;
+  isSaving = false;
+  saveSucceeded = false;
+
+  beginDraft(): void {
+    this.saveSucceeded = false;
+  }
   /**
    * Main forms for the project creation process.
    * Each form corresponds to a specific section of the project data.
@@ -745,6 +753,7 @@ export class CreateProjectComponent implements OnInit {
    * Combine data from all forms into a single object for submission.
    */
   combineData() {
+    this.beginDraft();
     if (this.form.get('otherInforPI').value !== '') {
       this.otherInforPI = this.form.get('otherInforPI').value;
     }
@@ -997,11 +1006,15 @@ export class CreateProjectComponent implements OnInit {
    * Submit the project data to the server via CreateProjectService.
    */
   storeData() {
+    if (this.isSaving) return;
     if (this.AddToProjectUpdate) {
+      this.beginDraft();
+      this.isSaving = true;
       this.createProjectService
-        .AddToProjectCreate(this.currentUser.email, this.AddToProjectUpdate)
+        .createProject(this.AddToProjectUpdate)
         .subscribe(
           (response: any) => {
+            this.isSaving = false;
             if (response) {
               // Initialize an empty AddToProjectUpdate object
               const emptyAddToProjectUpdate: newProject = {
@@ -1038,12 +1051,16 @@ export class CreateProjectComponent implements OnInit {
               this.notificationService.success(
                 ':: Project is Submitted successfully'
               );
+              this.saveSucceeded = true;
+              // Update the overview step's completion input before advancing.
+              this.cdr.detectChanges();
+              this.stepper?.next();
               // window.location.reload();
             }
           },
           (error: HttpErrorResponse) => {
-            alert(error.message);
-            this.notificationService.error(error.message);
+            this.isSaving = false;
+            this.notificationService.error('The project could not be saved. Your entries are still here.');
           }
         );
     } else {

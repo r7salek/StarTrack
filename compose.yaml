@@ -75,6 +75,8 @@ services:
 
   frontend:
     image: ${STARTRACK_FRONTEND_IMAGE:-startrack-frontend:local}
+    environment:
+      STARTRACK_PROXY_TARGET: http://backend:8080
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev

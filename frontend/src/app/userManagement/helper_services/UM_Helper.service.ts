@@ -17,12 +17,12 @@ export class UM_HelperService {
   public delete(email: string) {
     this.notificationService.confirmation(
       //Confirmation box before delete the record
-      'Data will be deleted permanently ',
+      'Deactivate this account? Access will be removed while historical attribution is retained.',
       () => {
-        this.notificationService.success('Request Granted successfully'); //Success notification
         this.userService.deleteUser(email).subscribe(
           //Deleting the record
-          (response: UserData) => {
+          () => {
+            this.notificationService.success('Account deactivated; history retained.');
             window.location.reload();
           },
           (error: HttpErrorResponse) => {

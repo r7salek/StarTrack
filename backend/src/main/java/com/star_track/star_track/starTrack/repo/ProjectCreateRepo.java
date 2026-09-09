@@ -13,8 +13,20 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ProjectCreateRepo extends JpaRepository<ProjectCreate, Long> {
+    Optional<ProjectCreate> findFirstByProjectIdOrderByVersionNumberDesc(UUID projectId);
+    List<ProjectCreate> findByProjectIdOrderByVersionNumberDesc(UUID projectId);
+    List<ProjectCreate> findByProjectName(String projectName);
+
+    @Query("select v from ProjectCreate v, Project p where p.id = v.projectId " +
+            "and p.archived = false and v.versionNumber = " +
+            "(select max(v2.versionNumber) from ProjectCreate v2 where v2.projectId = v.projectId) " +
+            "order by v.createdDate desc, v.id desc")
+    List<ProjectCreate> findLatestActive();
+
+    List<ProjectCreate> findAllByOrderByCreatedDateDescIdDesc();
     /**
      * Find a role by its ID.
      *
@@ -34,7 +46,7 @@ public interface ProjectCreateRepo extends JpaRepository<ProjectCreate, Long> {
             "d.departmentPI, d.crsidPI, d.otherInforPI, d.ttoContractName, " +
             "d.ttoContractEmail, d.ttoContractOtherInfo, " +
             "d.modality, d.modalityOther, d.areaOfExpertise, d.areaOfExpertiseOther, " +
-            "d.readiness, d.projectBackground,d.briefDescription, d.applyUser.email as createdEmail, d.createdDate, d.modifyUser.email as modifyEmail, d.applyValue) " +
+            "d.readiness, d.projectBackground,d.briefDescription, d.createdEmail as createdEmail, d.createdDate, d.modifyEmail as modifyEmail, d.applyValue) " +
             "FROM ProjectCreate AS d order by d.createdDate desc")
     List<ProjectCreateResponse> getProjectCreateManagementData();
     /** Retrieve the latest project data.
@@ -47,7 +59,7 @@ public interface ProjectCreateRepo extends JpaRepository<ProjectCreate, Long> {
             "d.departmentPI, d.crsidPI, d.otherInforPI, d.ttoContractName, " +
             "d.ttoContractEmail, d.ttoContractOtherInfo, " +
             "d.modality, d.modalityOther, d.areaOfExpertise, d.areaOfExpertiseOther, " +
-            "d.readiness, d.projectBackground,d.briefDescription, d.applyUser.email as createdEmail, d.createdDate, d.modifyUser.email as modifyEmail, d.applyValue) " +
+            "d.readiness, d.projectBackground,d.briefDescription, d.createdEmail as createdEmail, d.createdDate, d.modifyEmail as modifyEmail, d.applyValue) " +
             "FROM ProjectCreate AS d " +
             "WHERE d.createdDate = (" +
             "    SELECT MAX(d2.createdDate) " +
@@ -68,7 +80,7 @@ public interface ProjectCreateRepo extends JpaRepository<ProjectCreate, Long> {
             "d.departmentPI, d.crsidPI, d.otherInforPI, d.ttoContractName, " +
             "d.ttoContractEmail, d.ttoContractOtherInfo, " +
             "d.modality, d.modalityOther, d.areaOfExpertise, d.areaOfExpertiseOther, " +
-            "d.readiness, d.projectBackground,d.briefDescription, d.applyUser.email as createdEmail, d.createdDate, d.modifyUser.email as modifyEmail, d.applyValue) " +
+            "d.readiness, d.projectBackground,d.briefDescription, d.createdEmail as createdEmail, d.createdDate, d.modifyEmail as modifyEmail, d.applyValue) " +
             "FROM ProjectCreate AS d " +
             "WHERE d.createdDate <> (" +
             "    SELECT MAX(d2.createdDate) " +
@@ -82,7 +94,9 @@ public interface ProjectCreateRepo extends JpaRepository<ProjectCreate, Long> {
      * @param id The project ID.
      * @return List of `GroupMemberRowsResponse` objects with group member details.
      */
-    @Query(value = "select DISTINCT new com.star_track.star_track.starTrack.dto.GroupMemberRowsResponse(sp.id,sr1.lastNamePostDoc,sr1.firstNamePostDoc,sr1.emailPostDoc,sr1.departmentPostDoc,sr1.positionPostDoc,sr1.crsidPostDoc,sr1.otherInforPostDoc) from ProjectCreate sp JOIN sp.groupMemberRows sr1 WHERE sp.id in (?1)")
+    // Legacy response ID is the parent version ID. DISTINCT would erase separate
+    // equal-content members, so preserve one response per persisted child row.
+    @Query(value = "select new com.star_track.star_track.starTrack.dto.GroupMemberRowsResponse(sp.id,sr1.lastNamePostDoc,sr1.firstNamePostDoc,sr1.emailPostDoc,sr1.departmentPostDoc,sr1.positionPostDoc,sr1.crsidPostDoc,sr1.otherInforPostDoc) from ProjectCreate sp JOIN sp.groupMemberRows sr1 WHERE sp.id in (?1)")
     List<GroupMemberRowsResponse> findGroupMemberRows(Long id);
 
     /**

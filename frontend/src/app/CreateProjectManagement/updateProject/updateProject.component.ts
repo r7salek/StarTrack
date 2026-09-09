@@ -87,6 +87,8 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
   sum!: number; // Sum for funding
   sumOverview!: number; // Sum for funding overview
   AddToProjectUpdate: newProject = {} as newProject;
+  isSaving = false;
+  saveSucceeded = false;
 
   @ViewChild('formContainer', { static: false })
   formContainer!: ElementRef;
@@ -719,6 +721,7 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
     }
   }
   combineData() {
+    this.saveSucceeded = false;
     if (this.createProjectService.form.get('otherInforPI')?.value !== '') {
       this.otherInforPI =
         this.createProjectService.form.get('otherInforPI')?.value;
@@ -993,11 +996,20 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
     }
   }
   storeData() {
+    if (this.isSaving) return;
+    const source = this.data?.dataKey;
+    if (!source?.projectId || !Number.isInteger(source.versionNumber)) {
+      this.notificationService.error('Reopen the project from the latest list before saving.');
+      return;
+    }
     if (this.AddToProjectUpdate) {
+      this.saveSucceeded = false;
+      this.isSaving = true;
       this.createProjectService
-        .AddToProjectCreate(this.currentUser.email, this.AddToProjectUpdate)
+        .appendProjectVersion(source.projectId, source.versionNumber, this.AddToProjectUpdate)
         .subscribe(
           (response: any) => {
+            this.isSaving = false;
             if (response) {
               // Initialize an empty AddToProjectUpdate object
               const emptyAddToProjectUpdate: newProject = {
@@ -1034,11 +1046,15 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
               this.notificationService.success(
                 ':: Project is Updated successfully'
               );
+              this.saveSucceeded = true;
+              this.dialogRef.close(true);
             }
           },
           (error: HttpErrorResponse) => {
-            alert(error.message);
-            this.notificationService.error(error.message);
+            this.isSaving = false;
+            this.notificationService.error(error.status === 409
+              ? 'This project has changed since you opened it. Your edits are still here. Copy them before reopening the latest version; nothing was overwritten.'
+              : 'The project could not be saved. Your edits are still here.');
           }
         );
     } else {

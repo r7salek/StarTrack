@@ -9,9 +9,7 @@ package com.star_track.star_track.starTrack.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.HashSet;
+import jakarta.persistence.*;
 import java.util.Set;
 
 // Lombok annotations for boilerplate code reduction
@@ -24,7 +22,7 @@ import java.util.Set;
 @ToString          // Generates a toString() method
 @Table(name = "collaborationRows", catalog = "starTrack", schema = "startrack")
 // Maps the class to the 'collaborationRows' table in the 'starTrack' catalog and 'startrack' schema
-public class CollaborationRows extends HashSet<CollaborationRows> {
+public class CollaborationRows {
 
     @Id // Marks this field as the primary key
     @Column(name = "id", columnDefinition = "serial")
@@ -32,7 +30,7 @@ public class CollaborationRows extends HashSet<CollaborationRows> {
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq_name_generated_in_db")
     @SequenceGenerator(name = "seq_name_generated_in_db", sequenceName = "seq_name_generated_in_db", allocationSize = 1)
     // Configures the sequence generator for ID generation
-    @NotNull // Validates that the ID field cannot be null
+    // PostgreSQL assigns the identity during insertion; a new entity has no ID yet.
     private Long id;
 
     @JsonProperty("collaboration") // Maps JSON property 'collaboration' to this field
@@ -61,5 +59,7 @@ public class CollaborationRows extends HashSet<CollaborationRows> {
             targetEntity = ProjectCreate.class, // Specifies the target entity of the relationship
             cascade = CascadeType.ALL // Configures cascading operations (e.g., persist, merge, remove)
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<ProjectCreate> projectCreate; // Many-to-Many relationship with the ProjectCreate entity
 }

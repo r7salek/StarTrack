@@ -43,7 +43,7 @@ public class FundingRowsByID {
 
     private String schemeOther; // Additional details about the funding scheme
 
-    private int value; // Total value or amount of funding
+    private Integer value; // Null means the funding amount is unknown
 
     private Date fundingStartDate; // Start date of the funding period
 

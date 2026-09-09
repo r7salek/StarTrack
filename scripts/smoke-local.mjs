@@ -1,6 +1,8 @@
 const baseUrl = process.env.STARTRACK_API_URL ?? 'http://127.0.0.1:8080';
 const adminEmail = process.env.STARTRACK_BOOTSTRAP_ADMIN_EMAIL;
 const adminPassword = process.env.STARTRACK_BOOTSTRAP_ADMIN_PASSWORD;
+const browserOrigin = process.env.STARTRACK_BROWSER_ORIGIN;
+const originHeaders = browserOrigin ? { Origin: browserOrigin } : {};
 
 if (!adminEmail || !adminPassword) {
   throw new Error('Synthetic bootstrap credentials are missing from the local environment');
@@ -13,13 +15,13 @@ async function expectOk(response, label) {
   return response;
 }
 
-const publicResponse = await expectOk(await fetch(`${baseUrl}/api/all`), 'Public API');
+const publicResponse = await expectOk(await fetch(`${baseUrl}/api/all`, { headers: originHeaders }), 'Public API');
 const publicBody = await publicResponse.text();
 
 const loginResponse = await expectOk(
   await fetch(`${baseUrl}/api/auth/signin`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { ...originHeaders, 'content-type': 'application/json' },
     body: JSON.stringify({ email: adminEmail, password: adminPassword }),
   }),
   'Synthetic admin sign-in',
@@ -30,6 +32,7 @@ if (!loginBody.accessToken) {
 }
 
 const authenticatedHeaders = {
+  ...originHeaders,
   Authorization: `Bearer ${loginBody.accessToken}`,
   'content-type': 'application/json',
 };

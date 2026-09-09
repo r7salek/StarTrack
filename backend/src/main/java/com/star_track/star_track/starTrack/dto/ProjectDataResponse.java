@@ -27,6 +27,12 @@ public class ProjectDataResponse {
      * Used to identify or reference the project in the system.
      */
     private Long id;
+    private java.util.UUID projectId;
+    private Long versionId;
+    private Integer versionNumber;
+    private Long createdBy;
+    private Long modifiedBy;
+    private boolean archived;
 
     /**
      * Name of the project.
@@ -67,7 +73,7 @@ public class ProjectDataResponse {
     private String fundingOverview;          // Overview of the project's funding.
     private String fundingOverviewOther;     // Additional funding details not covered in the overview.
     private String schemeOverview;           // Overview of the funding scheme.
-    private int valueOverview;               // Total funding value for the project.
+    private Integer valueOverview;           // Null means the funding amount is unknown.
     private Date fundingOverviewStartDate;   // Start date of the funding period.
     private Date fundingOverviewEndDate;     // End date of the funding period.
     private String grantNumberOverview;      // Grant number associated with the project.

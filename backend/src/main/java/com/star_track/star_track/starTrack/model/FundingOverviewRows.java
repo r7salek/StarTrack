@@ -8,10 +8,8 @@ package com.star_track.star_track.starTrack.model;
 
 import lombok.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 // Lombok annotations for reducing boilerplate code
@@ -24,7 +22,7 @@ import java.util.Set;
 @ToString          // Generates a toString() method
 @Table(name = "fundingOverviewRows", catalog = "starTrack", schema = "startrack")
 // Maps the class to the 'fundingOverviewRows' table in the 'starTrack' catalog and 'startrack' schema
-public class FundingOverviewRows extends HashSet<FundingOverviewRows> {
+public class FundingOverviewRows {
 
     @Id // Marks this field as the primary key
     @Column(name = "id", columnDefinition = "serial")
@@ -32,7 +30,7 @@ public class FundingOverviewRows extends HashSet<FundingOverviewRows> {
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq_name_generated_in_db")
     @SequenceGenerator(name = "seq_name_generated_in_db", sequenceName = "seq_name_generated_in_db", allocationSize = 1)
     // Configures a sequence generator for generating unique IDs
-    @NotNull // Ensures the ID field cannot be null
+    // PostgreSQL assigns the identity during insertion; a new entity has no ID yet.
     private Long id;
 
     @Column(name = "fundingOverview") // Maps this field to the 'fundingOverview' column
@@ -66,7 +64,7 @@ public class FundingOverviewRows extends HashSet<FundingOverviewRows> {
     private String schemeOverviewOther;
 
     @Column(name = "valueOverview") // Maps this field to the 'valueOverview' column
-    private int valueOverview; // Stores numerical data for funding value
+    private Integer valueOverview; // Null preserves an unknown legacy funding value
 
     @Column(name = "fundingOverviewStartDate") // Maps this field to the 'fundingOverviewStartDate' column
     @Temporal(TemporalType.TIMESTAMP)
@@ -94,5 +92,7 @@ public class FundingOverviewRows extends HashSet<FundingOverviewRows> {
             targetEntity = ProjectCreate.class, // Specifies the target entity for this relationship
             cascade = CascadeType.ALL // Enables cascading operations (persist, merge, remove)
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<ProjectCreate> projectCreate; // Many-to-Many relationship with the ProjectCreate entity
 }

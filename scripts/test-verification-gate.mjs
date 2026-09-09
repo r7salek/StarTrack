@@ -18,6 +18,13 @@ const tool = path.basename(process.argv[1]);
 const args = process.argv.slice(2);
 const record = { tool, args };
 const value = (flag) => args[args.indexOf(flag) + 1];
+if (tool === 'rsync') {
+  const destination = args.at(-1);
+  fs.mkdirSync(destination, { recursive: true });
+  for (const name of ['Dockerfile', 'Dockerfile.dev', 'pom.xml', 'package.json']) {
+    fs.writeFileSync(path.join(destination, name), 'synthetic fixture');
+  }
+}
 if (tool === 'docker' && args[0] === 'compose') {
   record.project = value('-p');
   record.envFile = value('--env-file');
@@ -31,8 +38,10 @@ if (tool === 'node' && !args.includes('--check') && !args.includes('--test')) {
     /^[a-f0-9]{36}$/.test(process.env.STARTRACK_BOOTSTRAP_ADMIN_PASSWORD || '') &&
     /^[a-f0-9]{48}$/.test(process.env.STARTRACK_DB_PASSWORD || '');
   record.apiUrl = process.env.STARTRACK_API_URL;
+  record.browserOrigin = process.env.STARTRACK_BROWSER_ORIGIN;
 }
 fs.appendFileSync(process.env.GATE_MOCK_LOG, JSON.stringify(record) + '\\n');
+if (tool === 'node' && record.browserOrigin && process.env.GATE_FAIL === 'proxy') process.exit(24);
 if (tool === 'docker') {
   if (args[0] === 'compose') {
     if (args.includes('ps') && args.includes('--services')) {
@@ -53,7 +62,7 @@ if (tool === 'docker') {
 }
 `;
 
-function runGate({ mode = '--ci', backendOnly = false, failure = '', running = true, existingEnv = true } = {}) {
+function runGate({ mode = '--ci', backendOnly = false, failure = '', running = true, existingEnv = true, prematureExit = false } = {}) {
   const fixture = mkdtempSync(path.join(tmpdir(), 'startrack-gate-regression-'));
   const project = path.join(fixture, 'project with spaces');
   const bin = path.join(fixture, 'bin');
@@ -70,6 +79,11 @@ function runGate({ mode = '--ci', backendOnly = false, failure = '', running = t
     mkdirSync(directory, { recursive: true });
   }
   copyFileSync(gate, path.join(project, 'scripts/test-local.sh'));
+  if (prematureExit) {
+    const source = readFileSync(gate, 'utf8');
+    assert.ok(source.includes('verification_completed=true'));
+    writeFileSync(path.join(project, 'scripts/test-local.sh'), source.replace('verification_completed=true', 'exit 0'));
+  }
   writeFileSync(path.join(project, 'compose.yaml'), 'name: startrack\nservices: {}\n');
   for (const name of ['init-local-env.sh', 'smoke-local.sh']) {
     const file = path.join(project, 'scripts', name);
@@ -107,6 +121,9 @@ function runGate({ mode = '--ci', backendOnly = false, failure = '', running = t
         STARTRACK_TOKEN_SECRET: 'developer-secret',
         STARTRACK_BOOTSTRAP_ADMIN_EMAIL: 'developer@example.invalid',
         STARTRACK_BOOTSTRAP_ADMIN_PASSWORD: 'developer-secret',
+        STARTRACK_BROWSER_ORIGIN: 'https://developer-origin.invalid',
+        STARTRACK_BUILD_BACKEND_CONTEXT: path.join(unrelated, 'hostile-backend'),
+        STARTRACK_BUILD_FRONTEND_CONTEXT: path.join(unrelated, 'hostile-frontend'),
       },
       encoding: 'utf8',
       timeout: 20_000,
@@ -115,6 +132,12 @@ function runGate({ mode = '--ci', backendOnly = false, failure = '', running = t
     const records = readFileSync(log, 'utf8').trim().split('\n').map(JSON.parse);
     const compose = records.filter((record) => record.tool === 'docker' && record.args[0] === 'compose');
     assert.ok(compose.length > 0);
+    assert.ok(records.some((record) => record.tool === 'node' && record.args.includes('--test') &&
+      record.args.some((arg) => arg.endsWith('/test-project-history-review.mjs'))),
+    'Every gate mode must run reviewed history mapping regressions');
+    assert.ok(records.some((record) => record.tool === 'node' && record.args.includes('--test') &&
+      record.args.some((arg) => arg.endsWith('/test-rehearsal-http.mjs'))),
+    'Every gate mode must run rehearsal transport regressions');
     for (const record of compose) {
       assert.ok(record.privateEnv, 'Compose must receive fresh synthetic credentials');
       assert.equal(record.envMode, 0o600);
@@ -155,8 +178,55 @@ test('CI ignores hostile project/env/cwd overrides and uses fresh synthetic cred
   const result = runGate();
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Local verification and cleanup passed/);
+  const productionBuild = result.records.find((record) => record.tool === 'docker' &&
+    record.args[0] === 'run' && record.args.some((arg) => arg.endsWith('-frontend-build')));
+  assert.ok(productionBuild, 'Full gate must execute the production frontend build');
+  assert.equal(productionBuild.args[productionBuild.args.indexOf('--network') + 1], 'none',
+    'Production frontend build must run offline, without fetching remote assets');
   assert.equal(result.compose.filter((record) => record.args.includes('down')).length, 1);
-    assert.equal(result.records.filter((record) => record.tool === 'node' && !record.args.includes('--check') && !record.args.includes('--test')).length, 5);
+  assert.equal(result.records.filter((record) => record.tool === 'node' && !record.args.includes('--check') && !record.args.includes('--test')).length, 6);
+});
+
+test('full gate checks the frontend proxy with its browser origin and isolated credentials', () => {
+  const result = runGate();
+  assert.equal(result.status, 0, result.stderr);
+  const calls = result.records.filter((record) => record.tool === 'node' &&
+    record.args[0]?.endsWith('/smoke-local.mjs'));
+  assert.equal(calls.length, 3);
+  assert.equal(calls[0].browserOrigin, undefined);
+  assert.equal(calls[1].browserOrigin, calls[1].apiUrl);
+  assert.notEqual(calls[1].apiUrl, calls[0].apiUrl);
+  assert.equal(calls[1].syntheticCredentials, true);
+  assert.equal(calls[2].browserOrigin, undefined);
+  assert.equal(calls[2].apiUrl, calls[0].apiUrl);
+});
+
+test('frontend proxy failure fails the gate and cleans the isolated stack', () => {
+  const result = runGate({ failure: 'proxy' });
+  assert.notEqual(result.status, 0);
+  assert.ok(result.compose.some((record) => record.args.includes('down')));
+  assert.doesNotMatch(result.stdout, /verification and cleanup passed/);
+});
+
+test('runtime images reuse the exact source contexts used for tests', () => {
+  const result = runGate();
+  assert.equal(result.status, 0, result.stderr);
+  const builds = result.records.filter((record) => record.tool === 'docker' && record.args[0] === 'build');
+  for (const component of ['backend', 'frontend']) {
+    const componentBuilds = builds.filter((record) => record.args.at(-1).endsWith('/' + component));
+    assert.equal(componentBuilds.length, 2);
+    assert.equal(componentBuilds[0].args.at(-1), componentBuilds[1].args.at(-1));
+    assert.equal(result.records.filter((record) => record.tool === 'rsync' &&
+      record.args.at(-1).endsWith('/' + component + '/')).length, 1);
+  }
+});
+
+test('an early exit zero cannot report a completed verification', () => {
+  const result = runGate({ prematureExit: true });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /before all required checks completed/);
+  assert.ok(result.compose.some((record) => record.args.includes('down')));
+  assert.doesNotMatch(result.stdout, /verification and cleanup passed/);
 });
 
 for (const mode of ['local', '--ci']) {
@@ -181,6 +251,8 @@ for (const mode of ['local', '--ci']) {
       'smoke-local.mjs', 'security-smoke-local.mjs', 'test-postgres-baseline.mjs',
       'test-database-local.mjs', 'smoke-local.mjs',
     ]);
+    assert.ok(checks.every((record) => record.browserOrigin === undefined),
+      'Backend-only does not inherit caller origins or execute frontend proxy requests');
     const restart = result.records.findIndex((record) => record.args.includes('restart'));
     const smokeRuns = result.records.map((record, index) => ({ record, index }))
       .filter(({ record }) => record.tool === 'node' && path.basename(record.args[0]) === 'smoke-local.mjs');

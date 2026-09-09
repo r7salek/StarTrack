@@ -11,11 +11,18 @@ copied operational data. Runtime credentials must be supplied outside Git.
 
 | Path | Contents | Baseline stack |
 | --- | --- | --- |
-| `backend/` | API, user management and project-tracking persistence | Java 11, Spring Boot 2.7.18 (upgrade checkpoint), JPA, PostgreSQL |
+| `backend/` | API, user management and project-tracking persistence | Java 21, Spring Boot 4.1.1, JPA, PostgreSQL |
 | `frontend/` | Browser interface | Angular 16.2, TypeScript, Angular Material and DevExtreme |
 | `docs/` | Provenance, run readiness and staged modernisation plan | — |
 
 ## Current state
+
+Phase 4 is in progress on `codex/backend-modernization`: the backend now uses
+Java 21/Spring Boot 4.1.1, with safe API failures and versioned project history.
+See [Phase 4 checkpoints](docs/PHASE4_PROGRESS.md) for measured test results and
+remaining verification. Existing populated databases require an explicitly
+reviewed identity mapping; **do not point ordinary startup at your retained
+database to bypass that review**. No production deployment or push is included.
 
 The imported code has been matched to the public upstream revisions documented
 in [the provenance record](docs/UPSTREAM_PROVENANCE.md). It now runs locally

@@ -18,13 +18,13 @@ describe('UserService HTTP contracts', () => {
 
   afterEach(() => http.verify());
 
-  it('deletes a user with DELETE', () => {
+  it('deactivates a user through the retained DELETE route with an empty response', () => {
     service.deleteUser('user@startrack.test').subscribe();
     const request = http.expectOne(
       `${environment.apiBaseUrl}/sybeUser/delete/user@startrack.test`
     );
     expect(request.request.method).toBe('DELETE');
-    request.flush({});
+    request.flush(null);
   });
 
   it('activates a user with PUT', () => {

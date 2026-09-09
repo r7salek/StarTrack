@@ -37,14 +37,12 @@ export class UpdateProposalStatusComponent implements OnInit {
         this.notificationService.success(
           ':: Permission is successfully updated'
         );
-        this.dialogRef.close();
-        //window.location.href = '/proposal-management';
-        this._router.navigate(['CreateProjectManagement']).then(() => {
-          window.location.reload();
-        });
+        this.dialogRef.close(true);
       },
       (error: HttpErrorResponse) => {
-        alert(error.message);
+        this.notificationService.error(error.status === 409
+          ? 'This project has changed. Close this dialog and reopen its latest version before changing the status.'
+          : 'The status could not be saved.');
       }
     );
   }

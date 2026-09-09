@@ -18,10 +18,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -53,15 +53,15 @@ class ProductionSecurityTests {
     @Autowired private MockMvc mvc;
     @Autowired private Environment environment;
     @Autowired @Qualifier("corsConfigurationSource") private CorsConfigurationSource corsSource;
-    @MockBean private UserService users;
-    @MockBean private RoleService roles;
-    @MockBean private RoleRepo roleRepo;
-    @MockBean private ProjectCreateService projects;
-    @MockBean private LocalUserDetailService details;
-    @MockBean private CustomOAuth2UserService oauth;
-    @MockBean private CustomOidcUserService oidc;
-    @MockBean private OAuth2AuthenticationSuccessHandler success;
-    @MockBean private OAuth2AuthenticationFailureHandler failure;
+    @MockitoBean private UserService users;
+    @MockitoBean private RoleService roles;
+    @MockitoBean private RoleRepo roleRepo;
+    @MockitoBean private ProjectCreateService projects;
+    @MockitoBean private LocalUserDetailService details;
+    @MockitoBean private CustomOAuth2UserService oauth;
+    @MockitoBean private CustomOidcUserService oidc;
+    @MockitoBean private OAuth2AuthenticationSuccessHandler success;
+    @MockitoBean private OAuth2AuthenticationFailureHandler failure;
 
     private static final String BEARER = "Bearer " + TokenProviderCompatibilityTests.LEGACY_TOKEN;
 
@@ -113,6 +113,14 @@ class ProductionSecurityTests {
         mvc.perform(options("/sybeUser/all").header("Origin", "https://unapproved.example")
                         .header("Access-Control-Request-Method", "GET"))
                 .andExpect(status().isForbidden()).andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
+    }
+
+    @Test
+    void administratorDeactivationPreservesEmptySafeSuccessResponse() throws Exception {
+        when(details.loadUserById(7L)).thenReturn(principal(true, "ROLE_USER", "ROLE_ADMIN"));
+        mvc.perform(delete("/sybeUser/delete/user@startrack.test").header("Authorization", BEARER))
+                .andExpect(status().isOk()).andExpect(content().string(""));
+        verify(users).deleteUser("user@startrack.test");
     }
 
     @Test

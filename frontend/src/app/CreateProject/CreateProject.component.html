@@ -8,7 +8,8 @@
   <div class="container">
     <mat-card-content>
       <mat-card appearance="outlined">
-        <mat-stepper [linear]="true" #stepper>
+        <mat-stepper [linear]="true" #stepper
+          (selectionChange)="$event.selectedIndex < stepper.steps.length - 1 && beginDraft()">
           <mat-step [stepControl]="form">
             <br />
             <mat-divider></mat-divider>
@@ -2889,7 +2890,7 @@
               </form>
             </mat-card>
           </mat-step>
-          <mat-step>
+          <mat-step [completed]="saveSucceeded">
             <div id="contentToConvert">
               <ng-template matStepLabel
                 ><span style="font-size: 20px">Data overview</span></ng-template
@@ -3737,11 +3738,11 @@
                   mat-raised-button
                   color="primary"
                   (click)="storeData()"
-                  matTooltip="Go to next"
+                  [disabled]="isSaving"
+                  matTooltip="Save project"
                   class="example-button"
-                  matStepperNext
                 >
-                  Next
+                  Save project
                 </button>
                 <button mat-raised-button color="primary" (click)="makePDF()">
                   Export To PDF

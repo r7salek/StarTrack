@@ -10,7 +10,7 @@ enforcement point; frontend route guards are navigation assistance only.
 | Edit profile or password | Denied | Own account only | Own account only |
 | Request account deletion | Denied | Own account only | Own account only |
 | List or inspect managed users | Denied | Denied | Allowed |
-| Activate or delete an account | Denied | Denied | Allowed |
+| Activate or deactivate an account | Denied | Denied | Allowed |
 | Assign roles | Denied | Denied | Allowed |
 | View or change role definitions | Denied | Denied | Allowed |
 | Reset another user's password | Denied | Denied | Denied; feature removed |
@@ -25,3 +25,14 @@ cased email can belong to a separate account and must not pass this check.
 
 Project-level ownership and authorization are not defined by this matrix and
 remain a separate product and security decision.
+
+Phase 4 retains the legacy account DELETE endpoint but deactivates instead of
+physically deleting: enabled=false, delete=true and modifiedDate updated.
+Identity, roles and historical project attribution remain stored. Existing bearer
+tokens are rejected on their next request because account state is rechecked.
+An explicit administrator activation can restore access; this is not erasure.
+
+All six `/api/projects` routes require authentication but retain the existing
+shared-project permission model. Account IDs recorded on versions identify who
+saved them, not who is authorized to read/change them. Project archive retains
+history; permanent account/project erasure is not exposed by these routes.

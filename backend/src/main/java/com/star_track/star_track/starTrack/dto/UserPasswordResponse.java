@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 // Lombok annotations to reduce boilerplate code
 @Data                 // Combines getter, setter, equals, hashCode, and toString methods
@@ -22,5 +24,7 @@ public class UserPasswordResponse {
      * The user's password.
      * Should be handled securely to prevent unauthorized access.
      */
+    @NotBlank
+    @Size(min = 6)
     private String password;
 }

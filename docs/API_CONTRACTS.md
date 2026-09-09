@@ -1,10 +1,13 @@
-# Existing API contracts — Phase 3
+# API contracts — Phase 4 in progress
 
 Recorded from the current controllers, DTOs, services and repository queries on
 2026-09-08. This is a compatibility specification, **not a claim that the legacy
 API is production-safe**. It complements [the route inventory](API_INVENTORY.md),
 [authorization matrix](AUTHORIZATION_MATRIX.md) and [data model](DATA_MODEL.md).
-No endpoint or production behaviour was changed to produce this document.
+Phase 3 established the original shapes. Phase 4 updates the failure contract
+and validation rules below. Phase 4 adds permanent project IDs and version metadata;
+legacy success statuses and numeric child routes remain compatible.
+See [Phase 4 evidence](PHASE4_PROGRESS.md) for checkpoint status.
 
 ## Reading the contracts
 
@@ -22,15 +25,15 @@ No endpoint or production behaviour was changed to produce this document.
   Missing fields normally deserialize as null; primitive integers/booleans default
   to `0`/`false`. Null response properties are included. These are binding rules,
   **not a promise that the service can safely process every null value**.
-- Body-required routes reject an absent body; most legacy mutation DTOs do not
-  have `@Valid`. “Required for safe use” below is therefore stricter than the
-  server's incomplete input validation.
-- Successful mutations return `200`, except role update (`202`). “Empty” means
+- Body-required routes reject an absent body. Signup, password changes and project
+  snapshots run Bean Validation; nine project collections and their elements must
+  be nonnull. Other business-field validation remains limited.
+- Legacy successful mutations return `200`, except role update (`202`). “Empty” means
   no response bytes, not the JSON literal `null` and not a newly created object.
 - URL-encode individual email, project-name and status path values. There is no
   pagination, version header or stable ordering unless explicitly stated.
 
-## Route-to-shape map: all 34 routes
+## Retained legacy routes: 34 routes
 
 Access: public needs no token; USER/ADMIN mean the exact `ROLE_USER`/`ROLE_ADMIN`
 authority; own-ID applies even to administrators; own-email requires exact case.
@@ -40,30 +43,30 @@ All routes also have the shared failure behaviour described below.
 | Method and complete path | Access | Input | Success | Specific failures / quirks |
 | --- | --- | --- | --- | --- |
 | POST `/api/auth/signin` | Public | Login | `200` Token | Invalid credentials/disabled account: authentication failure; blank fields: `400` Validation |
-| POST `/api/auth/signup` | Public | Signup | `200` ApiResponse | Existing exact email or supplied existing `userID`: `400` ApiResponse; validation failures: `400` Validation |
+| POST `/api/auth/signup` | Public | Signup | `200` ApiResponse | Existing exact email or supplied existing `userID`: `409` Conflict; validation failures: `400` |
 | GET `/api/all` | Public | None | `200` text `Public content goes here` | Public readiness/content route, not a database health check |
 | GET `/api/user/me` | USER | None | `200` UserInfo | ADMIN without USER receives `403` |
 | GET `/api/user` | USER | None | `200` text `User content goes here` | No account payload |
 | GET `/api/admin` | ADMIN | None | `200` text `Admin content goes here` | No account payload |
 | GET `/sybeUser/all` | ADMIN | None | `200` User[] | No role relationships or password fields |
 | GET `/sybeUser/userData` | ADMIN | None | `200` UserManagement[] | Role names merged per user; output order not guaranteed |
-| GET `/sybeUser/{id}` | Own-ID | Integer account ID | `200` User | Cross-account `403`; missing authorized ID: `400` LegacyApiError |
-| DELETE `/sybeUser/delete/{email}` | ADMIN | Exact email | `200` Empty | Missing email dereferences null; referenced account can fail a database constraint; neither is a deliberate `404` |
-| PUT `/sybeUser/activate/{email}` | ADMIN | Exact email | `200` User | Sets enabled=true; not a toggle. Missing email dereferences null |
-| PUT `/sybeUser/roleUpdate/{email}/{role}` | ADMIN | Exact email; comma-separated role names | `200` User | Replaces role set, does not append. Missing email: `400` LegacyApiError; unknown role names are not cleanly validated |
-| POST `/sybeUser/profileUpdate/{id}` | Own-ID | UserManagement; only firstName/lastName/email copied | `200` User | Omitted copied fields can overwrite with null; uniqueness/FK conflicts can become server errors |
-| POST `/sybeUser/passwordUpdate/{id}` | Own-ID | PasswordChange | `200` User | Does not require old password; no minimum-length validator here; null password fails encoding |
+| GET `/sybeUser/{id}` | Own-ID | Integer account ID | `200` User | Cross-account `403`; missing authorized ID: `404` |
+| DELETE `/sybeUser/delete/{email}` | ADMIN | Exact email | `200` Empty | Deactivates (enabled=false, delete=true); retains identity/roles/history; missing email `404` |
+| PUT `/sybeUser/activate/{email}` | ADMIN | Exact email | `200` User | Sets enabled=true; not a toggle. Missing email `404` |
+| PUT `/sybeUser/roleUpdate/{email}/{role}` | ADMIN | Exact email; comma-separated role names | `200` User | Replaces role set; missing email `404`; unknown/absent roles `400` before mutation |
+| POST `/sybeUser/profileUpdate/{id}` | Own-ID | UserManagement; only firstName/lastName/email copied | `200` User | Omitted copied fields can overwrite with null; uniqueness/FK conflicts `409`; authority fields ignored |
+| POST `/sybeUser/passwordUpdate/{id}` | Own-ID | PasswordChange | `200` User | Does not require old password; nonblank and minimum six characters; invalid `400` |
 | PUT `/sybeUser/deleteRequest/{email}` | Own exact email | Exact authenticated email | `200` User | Sets delete=true; updates authenticated immutable account ID; other email/case variant `403` |
 | GET `/role/all` | ADMIN | None | `200` RoleName[] | `description`, not `name`, holds each role name |
-| GET `/role/details/{id}` | ADMIN | Integer role ID | `200` Role or Empty | Missing role returns empty `200`, not `404` |
+| GET `/role/details/{id}` | ADMIN | Integer role ID | `200` Role | Missing role `404` |
 | PUT `/role/update/{id}` | ADMIN | Role; only name copied | `202` text | Missing role `422`; failed post-save lookup `400`; see exact text below |
 | DELETE `/role/delete/{id}` | ADMIN | Integer role ID | `200` text | Missing or assigned role `422`; see exact text below |
 | GET `/projectCreate/allData` | Authenticated | None | `200` ProjectList[] | Creation date descending |
-| GET `/projectCreate/allDatalatest` | Authenticated | None | `200` ProjectList[] | Maximum creation date per exact project name, descending; ties may return multiple rows |
-| GET `/projectCreate/allDataHistroy/{data1}` | Authenticated | Exact project name | `200` ProjectList[] | Same-name rows excluding maximum timestamp; missing name yields `[]` |
-| POST `/projectCreate/addToProjectCreate/{email}` | Authenticated | ProjectInput; nine arrays required for safe use | `200` Empty | URL email and DTO ID do not choose owner/update target; always inserts; null collections can cause server errors |
-| DELETE `/projectCreate/delete/{id}` | Authenticated | Integer project-row ID | `200` Empty | No ownership check; missing row is not deliberately mapped to `404` |
-| PUT `/projectCreate/permUpdate/{id}/{applyValue}` | Authenticated | Project-row ID and status string | `200` Empty | Stores the string; neither role permission nor status enum is enforced; missing row fails entity lookup |
+| GET `/projectCreate/allDatalatest` | Authenticated | None | `200` ProjectList[] | Latest version per permanent project ID, excluding archived projects |
+| GET `/projectCreate/allDataHistroy/{data1}` | Authenticated | Exact project name | `200` ProjectList[] | Resolves one project and returns older versions; ambiguous independent projects `409`; missing name `[]` |
+| POST `/projectCreate/addToProjectCreate/{email}` | Authenticated | ProjectInput; nine nonnull arrays with nonnull members | `200` Empty | No ID creates a new project; existing numeric ID appends only if current (`409` stale); actor comes from authentication, not URL email |
+| DELETE `/projectCreate/delete/{id}` | Authenticated | Integer version-row ID | `200` Empty | Archives the continuing project, retains every row; missing version `404` |
+| PUT `/projectCreate/permUpdate/{id}/{applyValue}` | Authenticated | Current version-row ID and status | `200` Empty | Appends copied snapshot; status SUBMITTED/ACCEPTED/REJECTED/CLOSED only (`400` otherwise); stale/archived `409`, missing `404` |
 | GET `/projectCreate/allGroupMember/{id}` | Authenticated | Project-row ID | `200` GroupMember[] | Returned `id` is the project ID, not member ID |
 | GET `/projectCreate/allOutput/{id}` | Authenticated | Project-row ID | `200` Output[] | Child IDs in response |
 | GET `/projectCreate/allCollaboration/{id}` | Authenticated | Project-row ID | `200` Collaboration[] | Child IDs in response |
@@ -76,11 +79,37 @@ All routes also have the shared failure behaviour described below.
 
 All nine child queries return `[]` for a nonexistent project or a project with no
 matching children. They do not distinguish those cases and have no explicit order.
-The Phase 3 runtime rehearsal confirms that project deletion removes its join
-rows but retains child records, including shared children; it is not complete
-erasure of the associated data.
+Phase 4 archives the permanent project without deleting versions, joins or children.
 **Project endpoints have authentication but no ownership/administrator restriction.**
 Frontend menus are not a security boundary; project-permission redesign is deferred.
+
+## Permanent-ID project API: six additional routes
+
+All six routes require authentication. Attribution is not an ownership permission.
+Numeric `id`/`versionId` identify saved rows; `projectId` is the continuing UUID.
+
+| Method and path | Success | Contract |
+| --- | --- | --- |
+| GET `/api/projects` | `200` ProjectList[] | Latest active version for each project |
+| POST `/api/projects` | `201` ProjectVersion | Full ProjectInput; omit id/expectedVersion; new UUID and version 1 |
+| GET `/api/projects/{projectId}` | `200` ProjectVersion | Latest complete snapshot; archived projects remain readable |
+| GET `/api/projects/{projectId}/versions` | `200` ProjectVersion[] | Every version, newest version number first |
+| POST `/api/projects/{projectId}/versions` | `201` ProjectVersion | Full ProjectInput plus positive expectedVersion; stale/archived `409` |
+| DELETE `/api/projects/{projectId}` | `204` Empty | Idempotent archive, preserving history |
+
+Unknown UUIDs return `404`; malformed UUIDs and missing expectedVersion return
+`400`. Saves serialize through a database lock on the continuing project. Two
+saves based on the same version cannot both succeed. A rename does not change
+project identity. A same-name new project is independent.
+
+ProjectVersion includes ProjectList fields and all nine child arrays. Funding,
+modality and expertise selection output retains legacy string formatting; clients
+must convert selection strings back to arrays for input. Child IDs are ignored
+when saving, so each version owns freshly copied child snapshots. A status-only
+save also copies all children. Archive changes root metadata, not a historical
+snapshot. These Goal 4 contracts passed the complete backend/database gate,
+including restore and restart, on 2026-09-09. Goal 5 browser and final combined
+verification remain in progress; see PHASE4_PROGRESS.md.
 
 ## Authentication and account shapes
 
@@ -89,7 +118,7 @@ Frontend menus are not a security boundary; project-permission redesign is defer
 | Login | email | string | Required, not blank; no email-format validator |
 | Login | password | string | Required, not blank; credentials are never echoed in Token |
 | Signup | firstName, lastName, email | string each | Required, nonempty; whitespace-only values are not rejected by `@NotEmpty` |
-| Signup | password | string | Supply non-null, minimum six characters; null is unsafe in the matching validator |
+| Signup | password | string | Required, nonblank, minimum six characters; comparison is null-safe |
 | Signup | matchingPassword | string | Required, nonempty and equal to password |
 | Signup | userID | integer | Optional legacy field; if an account with this ID exists registration is rejected; not an ID-allocation request |
 | Signup | providerUserId | string | Optional, ignored by local account construction |
@@ -112,7 +141,7 @@ Frontend menus are not a security boundary; project-permission redesign is defer
 | UserManagement | enabled, delete | boolean each | Output flags; ignored by profileUpdate |
 | UserManagement | role_id | integer | ID from one joined role row; not an array or complete representation of a multi-role account |
 | UserManagement | role | string | Role names joined with `, `; ordering is not defined |
-| PasswordChange | password | string | New password; required for safe use; no old-password field |
+| PasswordChange | password | string | Required, nonblank, minimum six characters; no old-password field |
 | RoleName | description | string | Role name; DTO's inherited Java name is `TimeSlotData` |
 | Role | id | integer | Role ID; ignored in update body in favour of path ID |
 | Role | name | string | Role name; only this field is copied by update |
@@ -130,12 +159,12 @@ Exact role-operation text:
 | Operation/outcome | Status | Body |
 | --- | --- | --- |
 | Update success | 202 | `Role saved successfully` |
-| Update missing | 422 | `Specified Role not found` |
-| Update post-save lookup failed | 400 | `Failed to update Role` |
+| Update missing | 422 | Safe error envelope |
+| Update post-save lookup failed | 400 | Safe error envelope |
 | Delete success | 200 | `Successfully deleted specified record` |
-| Delete missing | 422 | `No Records Found` |
-| Delete assigned role | 422 | `Failed to delete, Please delete the users associated with this role` |
-| Delete post-delete lookup still present | 422 | `Failed to delete the specified record` |
+| Delete missing | 422 | Safe error envelope |
+| Delete assigned role | 422 | Safe error envelope |
+| Delete post-delete lookup still present | 422 | Safe error envelope |
 
 ## ProjectInput and ProjectList
 
@@ -144,8 +173,11 @@ separate property with the specified type, not a combined JSON key.
 
 | Properties | ProjectInput type/use | ProjectList type/use |
 | --- | --- | --- |
-| id | integer, ignored; every create inserts a new row | integer, project-row ID |
-| projectName | string, copied | string; also the inherited history grouping key |
+| id | Optional integer version-row ID for legacy append; forbidden on new-project API | integer, version-row ID |
+| expectedVersion | Positive integer required by permanent-ID append | Not included |
+| projectId, versionId, versionNumber | Server allocated, not trusted input | UUID string, numeric version-row ID, positive version number |
+| createdBy, modifiedBy, archived | Server controlled | Numeric snapshot author IDs (nullable unknown legacy authorship); root archive boolean |
+| projectName | string, copied | string; not an identity/grouping key |
 | lastNamePI, firstNamePI, emailPI, departmentPI, crsidPI, otherInforPI | string each, copied | string each |
 | ttoContractName, ttoContractEmail, ttoContractOtherInfo | string each, copied | string each; spelling is `Contract` |
 | modality, areaOfExpertise | string[] each, converted using Java list-to-string | string each, e.g. `[Synthetic modality]`, **not JSON arrays** |
@@ -163,11 +195,11 @@ separate property with the specified type, not a combined JSON key.
 | funding | string[], legacy field ignored | Not included |
 | fundingOther, duration, grantNumber, value, fundingNIHR, fundingNIHROther, fundingUKRIMRC, fundingUKRIMRCOther, fundingWellcomeTrust, fundingWellcomeTrustOther | string each, legacy fields ignored; top-level value is a string | Not included |
 | fundingOverview, fundingOverviewOther, schemeOverview, grantNumberOverview, worktribeNumberOverview | Not accepted as active top-level create properties | string each, from the first returned overview child |
-| valueOverview | Not an active top-level create property | integer, from overview child; defaults to 0 if none |
+| valueOverview | Not an active top-level create property | nullable integer, from overview child; null means unknown or no overview |
 | fundingOverviewStartDate, fundingOverviewEndDate | Not active top-level create properties | date each, from overview child |
-| createdEmail, modifyEmail | Not active create properties | string each from linked User.email; create service does not assign either relationship |
+| createdEmail, modifyEmail | Not active create properties | Historical email snapshots; new writes use the authenticated account, email edits do not rewrite them |
 | createdDate | Not an active create property | date, assigned by server |
-| applyValue | Not an active create property | string, create initializes `SUBMITTED`; permUpdate accepts arbitrary strings |
+| applyValue | Optional allowed status; new default SUBMITTED, omitted append preserves current status | SUBMITTED/ACCEPTED/REJECTED/CLOSED; legacy imported values preserved until explicitly updated |
 
 Use `[]` for absent child collections, not null. Child elements must be non-null.
 Child input IDs are ignored; new child objects are built for every create. There
@@ -179,9 +211,9 @@ Funding summary selection has no ordering clause and uses the first returned
 overview; multiple overview children therefore do not define a stable summary.
 Listing currently performs one additional overview query per project. Optimizing
 this must preserve or intentionally redesign the ambiguity, not accidentally
-change which record is shown. Same-name projects share a history group; equal
-maximum timestamps may produce several “latest” rows. No independent project
-family ID or version counter exists.
+change which record is shown. Latest/history selection uses permanent UUID and
+version number rather than names or timestamps. Existing rows require a reviewed
+mapping before the final schema accepts application writes.
 
 ## Child object shapes
 
@@ -208,7 +240,7 @@ and date properties are nullable in the DTO and lack business validation.
 | funding | string[] on input; Java-list-formatted string on output |
 | fundingOther, fundingNIHR, fundingNIHROther, fundingUKRIMRC, fundingUKRIMRCOther, fundingWellcomeTrust, fundingWellcomeTrustOther | string each, copied without enum validation |
 | scheme, schemeOther | string each |
-| value | integer, Java signed 32-bit; defaults to 0; no currency or nonnegative rule |
+| value | nullable integer, Java signed 32-bit; null means unknown, distinct from explicit zero; no currency or nonnegative rule |
 | fundingStartDate, fundingEndDate | date each; no start-before-end validation |
 | aims, grantNumber, worktribeNumber | string each |
 
@@ -220,7 +252,7 @@ and date properties are nullable in the DTO and lack business validation.
 | fundingOverview | string[] on input; Java-list-formatted string on output |
 | fundingOverviewOther, fundingOverviewNIHR, fundingOverviewNIHROther, fundingOverviewUKRIMRC, fundingOverviewUKRIMRCOther, fundingOverviewWellcomeTrust, fundingOverviewWellcomeTrustOther | string each, copied without enum validation |
 | schemeOverview, schemeOverviewOther | string each |
-| valueOverview | integer, Java signed 32-bit; defaults to 0; no currency or nonnegative rule |
+| valueOverview | nullable integer, Java signed 32-bit; null means unknown, distinct from explicit zero; no currency or nonnegative rule |
 | fundingOverviewStartDate, fundingOverviewEndDate | date each; no start-before-end validation |
 | aimsOverview, grantNumberOverview, worktribeNumberOverview | string each |
 
@@ -228,30 +260,24 @@ and date properties are nullable in the DTO and lack business validation.
 
 | Failure | Status / body contract |
 | --- | --- |
-| Unauthenticated protected request | `401`; do not depend on an exact framework error body |
-| Authenticated user fails method authority / own-account rule | `403`; security tests pin status, not framework body |
-| Validated signin/signup fields invalid | `400` ApiResponse with success=false; message joins field/object validation messages and is not a stable code |
-| Duplicate signup | `400` ApiResponse: success=false, message=`Email Address already in use!` (also used for supplied existing userID) |
-| Malformed JSON, incompatible scalar type, missing required request body, nonnumeric ID | Normally `400` from Spring binding; framework-generated body is not normalized |
+| Unauthenticated protected request | `401`, code `UNAUTHORIZED` |
+| Authenticated user fails method authority / own-account rule | `403`, code `FORBIDDEN` |
+| Invalid validated input, malformed JSON, incompatible scalar type, missing body, nonnumeric ID | `400`, code `BAD_REQUEST`; safe field errors where available |
+| Duplicate signup, including unique-constraint race | `409`, code `CONFLICT` |
 | Unsupported HTTP method | `405` after authentication when a retained path matches; legacy state-changing GETs are not supported |
 | Removed GET/PUT `/sybeUser/resetPassword/{email}` | `404` after authentication; unauthenticated requests can be rejected earlier with `401` |
-| Missing user ID / role-update email explicitly throws ApiRequestException | `400` LegacyApiError, not `404` |
-| Uncaught null dereference, missing entity proxy, FK/uniqueness/persistence failure | Server failure, generally `500`; not normalized to field errors/404/409 |
+| Missing requested account, project write target or role detail | `404`, code `NOT_FOUND` |
+| Database integrity conflict | `409`, code `CONFLICT`; failed transaction rolls back |
+| Unexpected failure | `500`, code `INTERNAL_ERROR`; no exception details |
 | Unapproved CORS origin | No allow-origin permission; browser cross-origin use is denied; CORS is not authentication |
 
-`LegacyApiError` is the inherited `ApiException extends Throwable` serialization:
-`message` string, `httpStatus` enum string (`BAD_REQUEST`), `timestamp` UTC zoned
-timestamp, `throwable` nested exception and inherited Throwable properties such
-as `stackTrace`, `cause`, `suppressed` and `localizedMessage`. This shape can expose
-implementation details. **Do not build new clients against it, show it to users,
-or print it in synthetic-safe diagnostics.** Replace it with a small structured
-error DTO in a separately reviewed hardening change; documenting it does not
-endorse retaining exception internals as a public contract.
-
-Several invalid-input paths are source-characterized rather than exhaustively
-HTTP-tested. For example, a null signup password dereferences in the custom
-matching validator instead of yielding an ordinary validation message. This
-phase does not silently repair such cases or pretend all errors share one schema.
+Controller and authentication/authorization failures use exactly `success:false`,
+`code`, `message`, `fieldErrors` (field-name to safe-message object), and
+`requestId`. The server generates the UUID and returns it in `X-Request-ID`;
+caller-supplied IDs are ignored. Messages never include rejected values, SQL,
+passwords, tokens, causes or stack traces. The former Throwable-shaped response
+has been removed. Framework method failures preserve the `Allow` header.
+CORS rejection remains a browser-origin policy response, not authentication.
 Authentication filters may reject a request before controller path/method rules
 run. OAuth is disabled; no provider redirect or PID/network integration is part
 of this contract.
@@ -284,7 +310,8 @@ of this contract.
   pre-existing cluster-global role; it does not claim database dumps create roles
   or that native SQL tests exercise JPA cascading, API history or HTTP behavior.
 
-This document specifies current shapes and explicitly known shortcomings. It does
-not introduce API versioning, promise stable error payloads, fix email foreign
-keys, normalize list storage, redesign history, add ownership rules or modernize
-the frontend/frameworks.
+This document specifies current shapes and explicitly known shortcomings. The
+runtime is now Java 21/Boot 4.1.1. UUID identity, append-only history and retained
+account-ID attribution are implemented and database-verified as documented above.
+Legacy list storage and shared project-level permissions remain unchanged.
+Frontend modernization is not included.

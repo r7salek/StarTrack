@@ -1,6 +1,6 @@
 package com.star_track.star_track;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.star_track.star_track.starTrack.model.User;
 import com.star_track.star_track.starTrack.registration.config.WebConfig;
 import com.star_track.star_track.starTrack.registration.dto.LocalUser;
@@ -12,15 +12,18 @@ import com.star_track.star_track.starTrack.service.ProjectCreateService;
 import com.star_track.star_track.starTrack.service.RoleService;
 import com.star_track.star_track.starTrack.service.UserService;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +34,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.not;
@@ -65,16 +68,16 @@ class AccountSecurityTests {
     @Resource
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
-    @MockBean
+    @MockitoBean
     private RoleService roleService;
 
-    @MockBean
+    @MockitoBean
     private RoleRepo roleRepo;
 
-    @MockBean
+    @MockitoBean
     private ProjectCreateService projectCreateService;
 
     @Test
@@ -295,20 +298,19 @@ class AccountSecurityTests {
 
     @TestConfiguration
     @EnableWebSecurity
-    @EnableGlobalMethodSecurity(prePostEnabled = true)
-    static class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    @EnableMethodSecurity(prePostEnabled = true)
+    static class TestSecurityConfiguration {
         @Autowired
         @Qualifier("corsConfigurationSource")
         private CorsConfigurationSource corsConfigurationSource;
 
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.cors().configurationSource(corsConfigurationSource)
-                    .and()
-                    .csrf().disable()
-                    .authorizeRequests().anyRequest().authenticated()
-                    .and()
-                    .httpBasic();
+        @Bean
+        SecurityFilterChain testSecurityFilterChain(HttpSecurity http) throws Exception {
+            http.cors(cors -> cors.configurationSource(corsConfigurationSource))
+                    .csrf(AbstractHttpConfigurer::disable)
+                    .authorizeHttpRequests(authorization -> authorization.anyRequest().authenticated())
+                    .httpBasic(Customizer.withDefaults());
+            return http.build();
         }
     }
 }

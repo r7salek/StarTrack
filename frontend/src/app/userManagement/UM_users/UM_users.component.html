@@ -54,10 +54,10 @@
           </ng-container>
 
           <ng-container matColumnDef="deleteUser">
-            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Delete </th>
+            <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Deactivate </th>
             <td mat-mdc-cell *matCellDef="let row">
-              <button mat-raised-button type="button" color="accent" matTooltip="Delete"
-                (click)="um_HelperService.delete(row?.email)" matTooltip="Delete User">
+              <button mat-raised-button type="button" color="accent"
+                (click)="um_HelperService.delete(row?.email)" matTooltip="Deactivate account">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </td>

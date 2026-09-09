@@ -1,7 +1,7 @@
 package com.star_track.star_track;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.star_track.star_track.starTrack.dto.*;
 import com.star_track.star_track.starTrack.model.Role;
 import com.star_track.star_track.starTrack.model.User;
@@ -13,7 +13,7 @@ import com.star_track.star_track.starTrack.resource.RoleResource;
 import com.star_track.star_track.starTrack.resource.UserResource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -103,6 +103,19 @@ class ApiContractTests {
     }
 
     @Test
+    void signupRequestDeserializesAllClientFields() throws Exception {
+        SignUpRequest signup = mapper.readValue("{\"firstName\":\"Synthetic\",\"lastName\":\"User\","
+                + "\"email\":\"user@startrack.test\",\"password\":\"synthetic-password\","
+                + "\"matchingPassword\":\"synthetic-password\",\"socialProvider\":\"LOCAL\"}", SignUpRequest.class);
+        assertEquals("Synthetic", signup.getFirstName());
+        assertEquals("User", signup.getLastName());
+        assertEquals("user@startrack.test", signup.getEmail());
+        assertEquals("synthetic-password", signup.getPassword());
+        assertEquals(signup.getPassword(), signup.getMatchingPassword());
+        assertEquals(SocialProvider.LOCAL, signup.getSocialProvider());
+    }
+
+    @Test
     void entityAndNestedRoleResponsesNeverExposePasswordOrUserRoles() throws Exception {
         User user = new User();
         user.setId(7L);
@@ -125,10 +138,11 @@ class ApiContractTests {
         assertFields(new ProjectCreateDTO(), PROJECT_FIELDS + " groupMemberRows subContractorsRows ppiRows "
                 + "funding fundingOther duration grantNumber value fundingNIHR fundingNIHROther fundingUKRIMRC "
                 + "fundingUKRIMRCOther fundingWellcomeTrust fundingWellcomeTrustOther outputRows collaborationRows "
-                + "externalAdvisorsRows fundingRows fundingOverviewRows otrRows");
+                + "externalAdvisorsRows fundingRows fundingOverviewRows otrRows expectedVersion applyValue");
         assertFields(new ProjectDataResponse(), PROJECT_FIELDS + " fundingOverview fundingOverviewOther "
                 + "schemeOverview valueOverview fundingOverviewStartDate fundingOverviewEndDate grantNumberOverview "
-                + "worktribeNumberOverview createdEmail createdDate modifyEmail applyValue");
+                + "worktribeNumberOverview createdEmail createdDate modifyEmail applyValue "
+                + "projectId versionId versionNumber createdBy modifiedBy archived");
     }
 
     @Test
@@ -158,8 +172,8 @@ class ApiContractTests {
         response.setFunding("[synthetic-source]");
         assertTrue(mapper.valueToTree(request).get("funding").isArray());
         assertTrue(mapper.valueToTree(response).get("funding").isTextual());
-        assertEquals(0, new FundingRowsResponse().getValue());
-        assertEquals(0, new FundingOverviewRowsResponse().getValueOverview());
+        assertNull(new FundingRowsResponse().getValue());
+        assertNull(new FundingOverviewRowsResponse().getValueOverview());
     }
 
     @Test
@@ -174,18 +188,19 @@ class ApiContractTests {
     }
 
     @Test
-    void omittedNullableFieldsAndPrimitiveDefaultsRemainVisible() throws Exception {
+    void omittedNullableFieldsRemainVisibleAsNull() throws Exception {
         JsonNode output = mapper.valueToTree(new OutputRowsResponse());
         assertTrue(output.has("outputQuantity"));
         assertTrue(output.get("outputQuantity").isNull());
         JsonNode overview = mapper.valueToTree(new FundingOverviewRowsResponse());
-        assertEquals(0, overview.get("valueOverview").intValue());
+        assertTrue(overview.has("valueOverview"));
+        assertTrue(overview.get("valueOverview").isNull());
         assertTrue(overview.get("fundingOverview").isNull());
     }
 
     private void assertFields(Object value, String expected) throws Exception {
         Set<String> fields = new HashSet<>();
-        mapper.readTree(mapper.writeValueAsString(value)).fieldNames().forEachRemaining(fields::add);
+        mapper.readTree(mapper.writeValueAsString(value)).propertyNames().forEach(fields::add);
         assertEquals(new HashSet<>(Arrays.asList(expected.split(" "))), fields, value.getClass().getSimpleName());
     }
 }

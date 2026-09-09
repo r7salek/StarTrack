@@ -1,8 +1,9 @@
-# Current API inventory — Phase 3 checkpoint 1
+# Historical API inventory — Phase 3 checkpoint 1
 
 For the subsequent field-level contracts and runtime characterization, see
 [API contracts](API_CONTRACTS.md) and [Phase 3 verification](PHASE3_PROGRESS.md).
-The inventory below preserves the original checkpoint's source observations.
+The inventory below preserves the original checkpoint's source observations;
+the linked API contracts supersede its error and validation descriptions.
 
 Recorded 2026-09-07 from the Phase 2 source plus the foundation-review fixes.
 This describes inherited behaviour, not a redesigned API. It inventories all

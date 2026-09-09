@@ -1,4 +1,33 @@
-# Observed PostgreSQL model — Phase 3 checkpoint 1
+# PostgreSQL model — baseline and Phase 4 expansion
+
+## Current Phase 4 changes (verification in progress)
+
+V1 remains immutable. V2/V3 introduce the following additions without replacing
+numeric version IDs or the nine child/join structures:
+
+| Structure | Meaning and constraints |
+| --- | --- |
+| `project` | Permanent UUID; original creator account ID and creation time; archive flag/time/actor |
+| `project_create.project_id` | Required UUID foreign key to the continuing project after finalization |
+| `project_create.version_number` | Positive integer; unique with project_id; reviewed legacy ordering begins at one |
+| `project_create.created_by`, `modified_by` | Account-ID foreign keys; unknown legacy attribution remains null; new saves record the authenticated actor |
+| `project_create.apply_user`, `modify_user` | Retained historical email strings; no longer foreign keys to mutable account email |
+| `project_history_review` | Complete approved manifest, source fingerprint and application timestamp |
+| `snapshot_creation_ledger` | Trigger-managed insertion-transaction bookkeeping, emptied at commit; not business history |
+
+Each save inserts a full snapshot, including fresh children, under a lock on the
+project root. Status changes also append. Existing versions, their links and
+linked children cannot be updated/deleted by ordinary application statements.
+Same-name projects are independent; names/timestamps no longer decide identity.
+Archiving changes only the continuing project. Account deactivation retains IDs,
+roles and attribution; neither action physically erases history.
+
+Current verification and adoption limits are in [Phase 4 progress](PHASE4_PROGRESS.md)
+and [database operations](DATABASE_OPERATIONS.md). The normal developer volume
+has not been adopted. The description below is retained **historical V1 evidence**,
+not the current final-schema contract.
+
+## Historical Phase 3 checkpoint 1
 
 Later checkpoint (2026-09-08): the migration baseline and recovery rehearsal are
 implemented; see [Phase 3 evidence](PHASE3_PROGRESS.md). The 22 application tables

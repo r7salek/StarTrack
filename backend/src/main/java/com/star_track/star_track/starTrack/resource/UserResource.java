@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/sybeUser") // Base URL for user-related APIs
@@ -107,7 +108,7 @@ public class UserResource {
      */
     @PostMapping("/passwordUpdate/{id}")
     @PreAuthorize("#id == principal.user.id")
-    public ResponseEntity<User> updateUserPassword(@PathVariable(value = "id") Long id, @RequestBody(required = true) UserPasswordResponse user) {
+    public ResponseEntity<User> updateUserPassword(@PathVariable(value = "id") Long id, @Valid @RequestBody(required = true) UserPasswordResponse user) {
         User updateEmployee = userService.updateUserPassword(id, user);
         return new ResponseEntity<>(updateEmployee, HttpStatus.OK);
     }

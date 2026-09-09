@@ -60,17 +60,27 @@ no push, merge or migration of the normal developer database is implied.
 - Add database-level integration tests where unit/MockMvc tests cannot validate
   PostgreSQL-specific behaviour.
 
-## Phase 4 — supported runtimes and code quality
+## Phase 4 — backend modernization and reliable history (active)
 
-**Outcome:** supported Java/Spring and Angular versions without losing verified
-business behaviour.
+**Outcome:** Java 21/Spring Boot 4.1, safer APIs and retained project history,
+with the existing Angular version and visual design preserved. This is the
+approved Phase 4 scope, superseding the earlier runtime-only roadmap.
 
 - Upgrade Java and Spring incrementally, treating the Jakarta transition as a
   separate tested change.
-- Upgrade Angular in supported increments, remove unused packages, tighten
-  TypeScript checks and address accessibility, bundle and stylesheet warnings.
-- Centralise frontend/API errors and validation, and add observability that
-  excludes sensitive project content.
+- Add safe API errors, input validation and atomic-write regressions without
+  exposing sensitive project content in responses or diagnostics.
+- Introduce stable project UUIDs, append-only versions, stale-save rejection,
+  project archiving and retained account-ID attribution. Existing data requires
+  an explicitly reviewed mapping; names alone never determine identity.
+- Connect the existing UI to version/history/archive operations and preserve
+  drafts on failed or stale saves. Do not upgrade Angular or redesign the UI.
+- Verify fresh databases, reviewed upgrades, recovery, restart persistence,
+  browser workflows and local/CI-style gates before signed local commits.
+
+See [Phase 4 progress](PHASE4_PROGRESS.md) for observed results and outstanding
+checks. Angular upgrades, AI, OAuth/SSO, remote PID and project-permission design
+remain deferred; these are not implied by the current implementation.
 
 ## Phase 5 — product improvements
 
@@ -98,5 +108,7 @@ business behaviour.
 ## Current decision gates
 
 No deployment, production-data migration, OAuth/SSO connection, remote PID
-connection or AI connection is authorised by these local results. Phase 3 must
-establish the data/API baseline before framework modernisation begins.
+connection or AI connection is authorised by these local results. Phase 3's
+verified data/API baseline is preserved during Phase 4. The normal developer
+database remains excluded from automatic migration adoption, and no push or
+merge is authorized by the local implementation goal.

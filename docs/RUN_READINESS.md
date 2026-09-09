@@ -8,10 +8,10 @@
   consolidated commit still requires revocation by its owner; see
   [security notes](SECURITY.md).
 - Remote PID lookup is opt-in and disabled by default.
-- The backend specifies Java 11 and Spring Boot 2.5.4; the frontend specifies
+- The backend specifies Java 21 and Spring Boot 4.1.1; the frontend specifies
   Angular 16.2 and uses its committed npm lockfile.
-- The API expects PostgreSQL and the frontend's local development API base URL
-  is `http://127.0.0.1:8080`.
+- The API expects PostgreSQL. Browser requests use the frontend's same-origin
+  development proxy; its native backend target defaults to `http://127.0.0.1:8080`.
 - Backend and frontend tests now run in Docker, and one shared command exercises
   tests, builds and a fresh isolated runtime stack.
 - Critical account operations have explicit administrator or self-only rules;
@@ -24,7 +24,7 @@
 ## Local verification and remaining limits
 
 The Docker baseline has now been proven to start end-to-end using PostgreSQL
-15, Java 11 and Node 18 images. Native Java, Maven and PostgreSQL installations
+15, Java 21 and Node 18 images. Native Java, Maven and PostgreSQL installations
 are not required. The services bind to loopback ports only and use generated
 local credentials plus synthetic data.
 
@@ -32,7 +32,7 @@ The source now has a local Docker Compose definition and a GitHub Actions
 workflow, but the remote workflow has not run because this branch is unpushed.
 The migration runner and synthetic recovery checks are implemented and verified
 locally; this is not evidence of production readiness. Project-level permission
-rules, dependency upgrades and production backup/retention arrangements remain
+rules, frontend dependency upgrades and production backup/retention arrangements remain
 unresolved. Do not expose it publicly.
 
 The normal developer database has not been adopted into migration management.
@@ -56,6 +56,8 @@ that refusal. Adoption requires separate approval and the checks in
 4. Keep the API contracts and schema baseline current when approving later
    changes; never edit an already-applied migration.
 
-Framework modernization is the next phase, not part of this local Phase 3
-completion. No deployment, existing-volume adoption or remote integration is
-implied by the verification results.
+Phase 4 backend runtime modernization, API safety and identity/history are
+verified with the complete local gate, including recovery and restart. Browser
+workflows are verified; clean-checkout CI-style verification remains in progress.
+See [Phase 4 evidence](PHASE4_PROGRESS.md). No deployment,
+existing-volume adoption or remote integration is implied by these results.
