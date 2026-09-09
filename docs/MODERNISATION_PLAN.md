@@ -60,7 +60,7 @@ no push, merge or migration of the normal developer database is implied.
 - Add database-level integration tests where unit/MockMvc tests cannot validate
   PostgreSQL-specific behaviour.
 
-## Phase 4 — backend modernization and reliable history (active)
+## Phase 4 — backend modernization and reliable history (completed locally)
 
 **Outcome:** Java 21/Spring Boot 4.1, safer APIs and retained project history,
 with the existing Angular version and visual design preserved. This is the
@@ -78,8 +78,8 @@ approved Phase 4 scope, superseding the earlier runtime-only roadmap.
 - Verify fresh databases, reviewed upgrades, recovery, restart persistence,
   browser workflows and local/CI-style gates before signed local commits.
 
-See [Phase 4 progress](PHASE4_PROGRESS.md) for observed results and outstanding
-checks. Angular upgrades, AI, OAuth/SSO, remote PID and project-permission design
+See [Phase 4 progress](PHASE4_PROGRESS.md) for passed local, clean-checkout and
+browser checks. Angular upgrades, AI, OAuth/SSO, remote PID and project-permission design
 remain deferred; these are not implied by the current implementation.
 
 ## Phase 5 — product improvements

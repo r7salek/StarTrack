@@ -17,10 +17,10 @@ copied operational data. Runtime credentials must be supplied outside Git.
 
 ## Current state
 
-Phase 4 is in progress on `codex/backend-modernization`: the backend now uses
+Phase 4 is complete locally on `codex/backend-modernization`: the backend now uses
 Java 21/Spring Boot 4.1.1, with safe API failures and versioned project history.
 See [Phase 4 checkpoints](docs/PHASE4_PROGRESS.md) for measured test results and
-remaining verification. Existing populated databases require an explicitly
+local and clean-checkout verification. Existing populated databases require an explicitly
 reviewed identity mapping; **do not point ordinary startup at your retained
 database to bypass that review**. No production deployment or push is included.
 

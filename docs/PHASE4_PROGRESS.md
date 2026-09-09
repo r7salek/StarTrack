@@ -1,7 +1,7 @@
 # Phase 4 — backend modernization and reliable history
 
 Approved implementation started 2026-09-08 from `d349ca9` on
-`codex/backend-modernization`. The persistent Phase 4 goal is active. No push,
+`codex/backend-modernization`. All Phase 4 acceptance checks passed. No push,
 merge, developer-volume adoption or production operation is authorized.
 
 ## Checkpoints
@@ -12,7 +12,7 @@ merge, developer-volume adoption or production operation is authorized.
 | 2. Supported backend runtime | Passed | Java 21/Boot 4.1.1; 44 backend tests, full PostgreSQL/recovery/restart gate, unchanged V1 |
 | 3. API safety | Passed | 107 backend tests; safe errors/input guards; real late-failure rollback; 12 recovery checks and restart |
 | 4. Identity and history | Passed | 187 backend tests; 18 real migration/recovery checks; identity, concurrent append, status snapshots, archive, restore and restart passed |
-| 5. UI wiring and final verification | Active | Combined local gate and rebuilt browser workflows passed; clean-checkout CI-style gate and signed commits remain |
+| 5. UI wiring and final verification | Passed | Full local and clean-checkout CI-style gates, rebuilt browser workflows and signed implementation commit 7b401db passed; final record is documentation-only |
 
 One checkpoint is active at a time. Small prerequisite fixes may be made when a
 new regression proves a blocker, but do not imply that a later goal is complete.
@@ -375,3 +375,29 @@ database operation occurred. Staged whitespace and scope checks passed; a
 limited common-credential-pattern scan found no matches, not a whole-history
 security certification. Signed implementation commit and clean-checkout CI-style
 verification are the remaining Goal 5 steps.
+
+### Goal 5 closure
+
+Signed implementation commit `7b401dba312b5d40a3a8065a92869e092d4e4c7f`
+passed `./scripts/test-local.sh --ci` from a clean shallow local clone with no
+developer `.env`. Its SSH signature verified against the configured public key.
+The clone remained clean afterward. The original checkout had also passed the
+complete local-mode gate and was clean after the implementation commit.
+
+The clean-checkout run passed 187 backend tests (zero failures/errors/skips),
+80 Angular tests, four proxy/local-assets tests, eight schema guards, 18 mapping
+review tests, four transport regressions and 18 verification-runner tests.
+The offline production build passed in 68 seconds with the same build hash
+`c7212f4390d69341`. Direct and proxied API smoke tests, account-security checks,
+17 native PostgreSQL checks and all 18 migration/recovery checks passed.
+Backend restart retained login/current-user/project access. The command exited
+zero with `Local verification and cleanup passed.` Its synthetic Compose project
+was `startrack_verify_86093cef0f40cff9`; normal developer data was not touched.
+
+All five phase goals are satisfied. The final evidence update changes only
+documentation; application and test sources remain those of `7b401db`.
+GitHub-hosted CI has not run: there was no push or merge. Production deployment,
+normal-volume adoption, owner-side legacy credential revocation, project-level
+authorization redesign, Angular modernization and mobile layout remain outside
+this completed phase. Browser skill guidance shaped the end-to-end checks;
+the UI guardrails preserved the inherited design rather than redesigning it.

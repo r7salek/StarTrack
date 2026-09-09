@@ -58,6 +58,8 @@ that refusal. Adoption requires separate approval and the checks in
 
 Phase 4 backend runtime modernization, API safety and identity/history are
 verified with the complete local gate, including recovery and restart. Browser
-workflows are verified; clean-checkout CI-style verification remains in progress.
+workflows and clean-checkout CI-style verification also passed. The tested
+implementation is signed local commit `7b401db`; the remote workflow remains
+unrun because nothing was pushed.
 See [Phase 4 evidence](PHASE4_PROGRESS.md). No deployment,
 existing-volume adoption or remote integration is implied by these results.
