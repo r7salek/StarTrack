@@ -9,9 +9,7 @@ package com.star_track.star_track.starTrack.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.HashSet;
+import jakarta.persistence.*;
 import java.util.Set;
 
 // Lombok annotations to reduce boilerplate code
@@ -24,7 +22,7 @@ import java.util.Set;
 @ToString             // Generates a toString() method
 @Table(name = "outputRows", catalog = "starTrack", schema = "startrack")
 /* Maps the class to the 'outputRows' table in the 'starTrack' catalog and 'startrack' schema */
-public class OutputRows extends HashSet<OutputRows> {
+public class OutputRows {
 
     @Id // Marks this field as the primary key
     @Column(name = "id", columnDefinition = "serial")
@@ -32,7 +30,7 @@ public class OutputRows extends HashSet<OutputRows> {
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq_name_generated_in_db")
     @SequenceGenerator(name = "seq_name_generated_in_db", sequenceName = "seq_name_generated_in_db", allocationSize = 1)
     /* Configures a sequence generator for auto-incrementing IDs */
-    @NotNull // Ensures the ID field cannot be null
+    // PostgreSQL assigns the identity during insertion; a new entity has no ID yet.
     private Long id;
 
     @JsonProperty("output") // Maps JSON property 'output' to this field
@@ -55,5 +53,7 @@ public class OutputRows extends HashSet<OutputRows> {
             targetEntity = ProjectCreate.class, // Specifies the target entity for this relationship
             cascade = CascadeType.ALL // Enables cascading of all operations (persist, merge, remove, etc.)
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<ProjectCreate> projectCreate; // Many-to-Many relationship with ProjectCreate entity
 }

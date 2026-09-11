@@ -33,9 +33,9 @@ export class UserService {
         userData
       );
     }
-      // Rest API for deleting specific user
-  public deleteUser(email: string): Observable<UserData> {
-    return this.http.delete<UserData>(
+      // Retained API route deactivates access without erasing attribution.
+  public deleteUser(email: string): Observable<void> {
+    return this.http.delete<void>(
       `${this.apiServerUrl}/sybeUser/delete/${email}`
     );
   }
@@ -43,13 +43,6 @@ export class UserService {
   public activateUser(email: string): Observable<UserData> {
     return this.http.put<UserData>(
       `${this.apiServerUrl}/sybeUser/activate/${email}`,
-      ''
-    );
-  }
-  //  for resetPassword user
-  public resetPassword(email: string): Observable<UserData> {
-    return this.http.put<UserData>(
-      `${this.apiServerUrl}/sybeUser/resetPassword/${email}`,
       ''
     );
   }

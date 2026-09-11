@@ -13,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "*") // Allows cross-origin requests from any domain
 @RestController
 @RequestMapping("/projectCreate") // Base URL for project creation APIs
 public class ProjectCreateResource {
@@ -54,9 +54,9 @@ public class ProjectCreateResource {
      * @return The created project data with HTTP status 200 (OK).
      */
     @PostMapping("/addToProjectCreate/{email}")
-    public ResponseEntity<ProjectCreate> AddToProjectCreate(@PathVariable(value = "email") String email, @RequestBody(required = true) ProjectCreateDTO project) {
-        ProjectCreate addData = projectCreateService.AddToProjectCreate(email, project);
-        return new ResponseEntity<>(addData, HttpStatus.OK);
+    public ResponseEntity<ProjectCreate> AddToProjectCreate(@PathVariable(value = "email") String email, @Valid @RequestBody(required = true) ProjectCreateDTO project) {
+        projectCreateService.AddToProjectCreate(email, project);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -65,7 +65,7 @@ public class ProjectCreateResource {
      * @param id The ID of the project to be deleted.
      * @return The deleted project data with HTTP status 200 (OK).
      */
-    @RequestMapping(value = "/delete/{id}", method = {RequestMethod.DELETE, RequestMethod.GET})
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<ProjectCreate> deleteUser(@PathVariable("id") Long id) {
         ProjectCreate newData = projectCreateService.deleteData(id);
         return new ResponseEntity<>(newData, HttpStatus.OK);
@@ -198,9 +198,9 @@ public class ProjectCreateResource {
      * @param applyValue The permission value to update.
      * @return The updated project data with HTTP status 200 (OK).
      */
-    @RequestMapping(value = "/permUpdate/{id}/{applyValue}", method = {RequestMethod.PUT, RequestMethod.GET})
+    @PutMapping("/permUpdate/{id}/{applyValue}")
     public ResponseEntity<Object> updateUser(@PathVariable(value = "id") Long id, @PathVariable(value = "applyValue") String applyValue) {
-        ProjectCreate updateUser = projectCreateService.updateUserPerm(id, applyValue);
-        return new ResponseEntity<>(updateUser, HttpStatus.OK);
+        projectCreateService.updateUserPerm(id, applyValue);
+        return ResponseEntity.ok().build();
     }
 }

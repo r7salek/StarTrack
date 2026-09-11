@@ -17,12 +17,12 @@ export class UM_HelperService {
   public delete(email: string) {
     this.notificationService.confirmation(
       //Confirmation box before delete the record
-      'Data will be deleted permanently ',
+      'Deactivate this account? Access will be removed while historical attribution is retained.',
       () => {
-        this.notificationService.success('Request Granted successfully'); //Success notification
         this.userService.deleteUser(email).subscribe(
           //Deleting the record
-          (response: UserData) => {
+          () => {
+            this.notificationService.success('Account deactivated; history retained.');
             window.location.reload();
           },
           (error: HttpErrorResponse) => {
@@ -49,29 +49,4 @@ export class UM_HelperService {
       }
     );
   }
-   // Updating the User Password
-  //Delete the record from user management system
-  public onResetPassword(email: string) {
-    this.notificationService.confirmation(
-      //Confirmation box before delete the record
-      'User password will be reset ',
-      () => {
-        this.notificationService.success('Request Granted successfully'); //Success notification
-        this.userService.resetPassword(email).subscribe(
-          //Deleting the record
-          (response: UserData) => {
-            window.location.reload();
-          },
-          (error: HttpErrorResponse) => {
-            this.notificationService.error('Error occured');
-          }
-        );
-      },
-      'Are you sure?',
-      () => {
-        this.notificationService.error('cancellation is confirmed');
-      }
-    );
-  }
-
 }

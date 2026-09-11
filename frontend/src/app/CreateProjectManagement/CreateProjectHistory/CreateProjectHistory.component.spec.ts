@@ -1,28 +1,20 @@
-/* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
 import { CreateProjectHistoryComponent } from './CreateProjectHistory.component';
+import { of } from 'rxjs';
 
 describe('CreateProjectHistoryComponent', () => {
-  let component: CreateProjectHistoryComponent;
-  let fixture: ComponentFixture<CreateProjectHistoryComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ CreateProjectHistoryComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(CreateProjectHistoryComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
+  it('creates with isolated collaborators', () => {
+    const component = new CreateProjectHistoryComponent(
+      {} as any, {} as any, {} as any, {} as any, {} as any, {}
+    );
     expect(component).toBeTruthy();
+  });
+  it('fetches history using the stable UUID passed by the list', () => {
+    const service = jasmine.createSpyObj('CreateProjectService', ['getCreateProjectDataHistory']);
+    service.getCreateProjectDataHistory.and.returnValue(of([{ projectId: 'uuid', versionNumber: 2 }]));
+    const component = new CreateProjectHistoryComponent({} as any, {} as any,
+      service, {} as any, {} as any, { dataKey: 'uuid' });
+    component.getProjectDataLatest();
+    expect(service.getCreateProjectDataHistory).toHaveBeenCalledWith('uuid');
+    expect(component.dataSource[0].versionNumber).toBe(2);
   });
 });

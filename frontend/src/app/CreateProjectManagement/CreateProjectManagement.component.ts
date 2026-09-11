@@ -148,6 +148,7 @@ export class CreateProjectManagementComponent implements OnInit, AfterViewInit {
   getProjectDataLatest() {
     this.createProjectService.getCreateProjectDataLatest().subscribe(
       (res1) => {
+        this.dataSource = res1 ?? [];
         if (res1 && res1.length > 0) {
           res1.forEach((item) => {
             // Convert modality and areaOfExpertise strings to arrays
@@ -195,15 +196,16 @@ export class CreateProjectManagementComponent implements OnInit, AfterViewInit {
       dialogConfig.height = '90%';
       dialogConfig.data = {
         dataKey:
-          this.dataGridInstance.instance.getSelectedRowsData()[0].projectName,
+          this.dataGridInstance.instance.getSelectedRowsData()[0].projectId,
       };
-      this.dialog.open(CreateProjectHistoryComponent, dialogConfig);
+      this.dialog.open(CreateProjectHistoryComponent, dialogConfig).afterClosed().subscribe(() => this.getProjectDataLatest());
     }
   }
   /**
    * Opens a dialog to update the status of the selected project.
    */
   updateStatus() {
+    if (this.isSelectedArchived()) return;
     if (this.dataGridInstance.instance.getSelectedRowsData()[0]) {
       this.createProjectService.populateForm(
         this.dataGridInstance.instance.getSelectedRowsData()[0]
@@ -212,7 +214,7 @@ export class CreateProjectManagementComponent implements OnInit, AfterViewInit {
       dialogConfig.disableClose = true;
       dialogConfig.autoFocus = true;
       dialogConfig.width = '50%';
-      this.dialog.open(UpdateProposalStatusComponent, dialogConfig);
+      this.dialog.open(UpdateProposalStatusComponent, dialogConfig).afterClosed().subscribe(() => this.getProjectDataLatest());
     }
   }
   /**
@@ -220,6 +222,7 @@ export class CreateProjectManagementComponent implements OnInit, AfterViewInit {
    * Cleans up data before populating the update form.
    */
   updateProject() {
+    if (this.isSelectedArchived()) return;
     if (this.dataGridInstance.instance.getSelectedRowsData()[0]) {
       const selectedRowData =
         this.dataGridInstance.instance.getSelectedRowsData()[0];
@@ -255,21 +258,23 @@ export class CreateProjectManagementComponent implements OnInit, AfterViewInit {
       dialogConfig.width = '100%';
       dialogConfig.height = '90%';
       dialogConfig.data = { dataKey: selectedRowData };
-      this.dialog.open(UpdateProjectComponent, dialogConfig);
+      this.dialog.open(UpdateProjectComponent, dialogConfig).afterClosed().subscribe(() => this.getProjectDataLatest());
     }
   }
   onDelete() {
+    if (this.isSelectedArchived()) return;
     if (this.dataGridInstance.instance.getSelectedRowsData()[0]) {
       this.notificationService.confirmation(
-        'Data will be deleted permanently ',
+        'Archive this project? Its versions and history will be retained.',
         () => {
-          this.notificationService.success('Request Granted successfully');
           this.createProjectService
-            .deletePermissions(
-              this.dataGridInstance.instance.getSelectedRowsData()[0].id
+            .archiveProject(
+              this.dataGridInstance.instance.getSelectedRowsData()[0].projectId
             )
             .subscribe(
               () => {
+                this.notificationService.success('Project archived; history retained.');
+                this.getProjectDataLatest();
                 this.cdr.detectChanges();
               },
               (error: HttpErrorResponse) => {
@@ -277,9 +282,6 @@ export class CreateProjectManagementComponent implements OnInit, AfterViewInit {
               }
             );
           this.cdr.detectChanges();
-          this.router.navigate(['CreateProjectManagement']).then(() => {
-            window.location.reload();
-          });
         },
         'Are you sure?',
         () => {
@@ -287,5 +289,8 @@ export class CreateProjectManagementComponent implements OnInit, AfterViewInit {
         }
       );
     }
+  }
+  isSelectedArchived(): boolean {
+    return this.dataGridInstance?.instance?.getSelectedRowsData()?.[0]?.archived === true;
   }
 }

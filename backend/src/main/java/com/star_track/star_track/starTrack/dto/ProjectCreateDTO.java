@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 // Lombok annotations to reduce boilerplate code
 @Data                 // Combines getter, setter, equals, hashCode, and toString methods
@@ -28,6 +30,10 @@ public class ProjectCreateDTO {
      * Used for referencing or updating existing projects.
      */
     private Long id;
+
+    // Required by the permanent-ID append endpoint; never inferred from a name.
+    private Integer expectedVersion;
+    private String applyValue;
 
     /**
      * Name of the project.
@@ -47,7 +53,8 @@ public class ProjectCreateDTO {
      * List of group members associated with the project.
      * Includes details of contributors such as Postdocs or team members.
      */
-    private List<GroupMemberRowsResponse> groupMemberRows;
+    @NotNull
+    private List<@NotNull @Valid GroupMemberRowsResponse> groupMemberRows;
 
     // Technology Transfer Office (TTO) contact details
     private String ttoContractName;       // Name of the TTO contact person.
@@ -58,13 +65,15 @@ public class ProjectCreateDTO {
      * List of subcontractors involved in the project.
      * Provides details about external collaborators or service providers.
      */
-    private List<SubContractorsRowsResponse> subContractorsRows;
+    @NotNull
+    private List<@NotNull @Valid SubContractorsRowsResponse> subContractorsRows;
 
     /**
      * List of PPI (Patient and Public Involvement) rows.
      * Captures details of public or patient engagement in the project.
      */
-    private List<PpiRowsResponse> ppiRows;
+    @NotNull
+    private List<@NotNull @Valid PpiRowsResponse> ppiRows;
 
     // Funding details
     private List<String> funding;         // List of funding sources or types.
@@ -99,35 +108,41 @@ public class ProjectCreateDTO {
      * List of output rows associated with the project.
      * Represents deliverables, results, or key outcomes.
      */
-    private List<OutputRowsResponse> outputRows;
+    @NotNull
+    private List<@NotNull @Valid OutputRowsResponse> outputRows;
 
     /**
      * List of collaboration rows associated with the project.
      * Captures details of partnerships or collaborations.
      */
-    private List<CollaborationRowsResponse> collaborationRows;
+    @NotNull
+    private List<@NotNull @Valid CollaborationRowsResponse> collaborationRows;
 
     /**
      * List of external advisors associated with the project.
      * Provides information about advisory roles and contributions.
      */
-    private List<ExternalAdvisorsRowsResponse> externalAdvisorsRows;
+    @NotNull
+    private List<@NotNull @Valid ExternalAdvisorsRowsResponse> externalAdvisorsRows;
 
     /**
      * List of funding rows associated with the project.
      * Represents financial details and related metadata.
      */
-    private List<FundingRowsResponse> fundingRows;
+    @NotNull
+    private List<@NotNull @Valid FundingRowsResponse> fundingRows;
 
     /**
      * List of funding overview rows associated with the project.
      * Provides high-level summaries of funding information.
      */
-    private List<FundingOverviewRowsResponse> fundingOverviewRows;
+    @NotNull
+    private List<@NotNull @Valid FundingOverviewRowsResponse> fundingOverviewRows;
 
     /**
      * List of OTR (Operational Team Resources) rows.
      * Captures details about team resources and roles.
      */
-    private List<otrRowsResponse> otrRows;
+    @NotNull
+    private List<@NotNull @Valid otrRowsResponse> otrRows;
 }

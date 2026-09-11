@@ -109,7 +109,9 @@ public class UserServiceImpl implements UserService {
                 .addFirstName(oAuth2UserInfo.getFirstName())
                 .addLastName(oAuth2UserInfo.getLastName())
                 .addEmail(oAuth2UserInfo.getEmail())
-                .addSocialProvider(GeneralUtils.toSocialProvider(registrationId)).addPassword("changeit").build();
+                .addSocialProvider(GeneralUtils.toSocialProvider(registrationId))
+                .addPassword(UUID.randomUUID().toString())
+                .build();
     }
 
     @Override

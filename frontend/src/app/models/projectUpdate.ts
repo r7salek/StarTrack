@@ -198,6 +198,12 @@ export interface FundingRowsResponse {
   worktribeNumber: string;
 }
 export interface newProjectResponse {
+  projectId: string;
+  versionId: number;
+  versionNumber: number;
+  archived: boolean;
+  createdBy: number | null;
+  modifiedBy: number | null;
   //Teams
   id: number;
   projectName: string;

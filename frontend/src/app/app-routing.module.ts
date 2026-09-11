@@ -38,7 +38,7 @@ const routes: Routes = [
     canActivate: [AdminAuthGuard],
   },
   { path: 'register', component: RegisterComponent },
-  { path: 'profile', component: ProfileComponent },
+  { path: 'profile', component: ProfileComponent, canActivate: [LoginCheck] },
   {
     path: '**',
     redirectTo: 'home',

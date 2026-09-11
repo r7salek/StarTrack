@@ -1,0 +1,72 @@
+{
+  "projectName": "Synthetic Phase 3 contract project",
+  "lastNamePI": "Investigator",
+  "firstNamePI": "Synthetic",
+  "emailPI": "investigator@startrack.test",
+  "departmentPI": "Synthetic Department",
+  "crsidPI": "synthetic-id",
+  "otherInforPI": "Synthetic test data only",
+  "ttoContractName": "Synthetic Contact",
+  "ttoContractEmail": "tto@startrack.test",
+  "ttoContractOtherInfo": "Synthetic contact details",
+  "modality": ["Synthetic modality"],
+  "modalityOther": "Synthetic other modality",
+  "areaOfExpertise": ["Synthetic expertise"],
+  "areaOfExpertiseOther": "Synthetic other expertise",
+  "readiness": "Synthetic readiness",
+  "projectBackground": "Synthetic migration and API characterization fixture",
+  "briefDescription": "Contains one record in every child collection",
+  "groupMemberRows": [{
+    "lastNamePostDoc": "Member", "firstNamePostDoc": "Synthetic",
+    "emailPostDoc": "member@startrack.test", "departmentPostDoc": "Synthetic Department",
+    "positionPostDoc": "Synthetic position", "crsidPostDoc": "synthetic-member",
+    "otherInforPostDoc": "Synthetic member notes"
+  }],
+  "outputRows": [{
+    "output": "Synthetic output", "confirmation": "Synthetic confirmation",
+    "outputQuantity": 2, "output_description": "Synthetic output details"
+  }],
+  "collaborationRows": [{
+    "collaboration": "Synthetic collaboration", "collaborationName": "Synthetic Collaborator",
+    "collaborationEmail": "collaborator@startrack.test", "collaborationLocation": "Synthetic location",
+    "collaborationOtherInfo": "Synthetic collaboration notes"
+  }],
+  "externalAdvisorsRows": [{
+    "externalAdvisorsMeeting": "2026-01-02T03:04:05.123Z",
+    "externalAdvisorsOrganisation": "Synthetic Organisation", "externalAdvisorsName": "Synthetic Advisor",
+    "externalAdvisorsEmail": "advisor@startrack.test", "externalAdvisorsOutcome": "Synthetic outcome",
+    "externalAdvisorsExpertise": "Synthetic expertise"
+  }],
+  "subContractorsRows": [{
+    "subContractorsName": "Synthetic Subcontractor", "subContractorsEmail": "subcontractor@startrack.test",
+    "subContractorsExpertise": "Synthetic expertise", "subContractorsOrganisation": "Synthetic Organisation",
+    "subContractorsOtherInfo": "Synthetic subcontractor notes"
+  }],
+  "ppiRows": [{
+    "ppiMeeting": "2026-01-02T03:04:05.123Z", "ppiContact": "Synthetic PPI contact",
+    "ppiGroup": "Synthetic PPI group", "ppiOutcome": "Synthetic PPI outcome"
+  }],
+  "otrRows": [{
+    "otrTeamMember": "Synthetic OTR member", "otrRole": "Synthetic role",
+    "otrFunding": "Synthetic funding", "otrDate": "2026-01-02T03:04:05.123Z",
+    "otrOtherInfo": "Synthetic OTR notes"
+  }],
+  "fundingRows": [{
+    "funding": ["Synthetic source"], "fundingOther": "Synthetic other source",
+    "fundingNIHR": "Synthetic NIHR", "fundingNIHROther": "Synthetic other NIHR",
+    "fundingUKRIMRC": "Synthetic UKRIMRC", "fundingUKRIMRCOther": "Synthetic other UKRIMRC",
+    "fundingWellcomeTrust": "Synthetic Wellcome", "fundingWellcomeTrustOther": "Synthetic other Wellcome",
+    "scheme": "Synthetic scheme", "schemeOther": "Synthetic other scheme", "value": 123,
+    "fundingStartDate": "2026-01-02T03:04:05.123Z", "fundingEndDate": "2026-02-03T04:05:06.123Z",
+    "aims": "Synthetic aims", "grantNumber": "SYNTHETIC-GRANT-1", "worktribeNumber": "SYNTHETIC-WORKTRIBE-1"
+  }],
+  "fundingOverviewRows": [{
+    "fundingOverview": ["Synthetic overview source"], "fundingOverviewOther": "Synthetic other overview source",
+    "fundingOverviewNIHR": "Synthetic overview NIHR", "fundingOverviewNIHROther": "Synthetic other overview NIHR",
+    "fundingOverviewUKRIMRC": "Synthetic overview UKRIMRC", "fundingOverviewUKRIMRCOther": "Synthetic other overview UKRIMRC",
+    "fundingOverviewWellcomeTrust": "Synthetic overview Wellcome", "fundingOverviewWellcomeTrustOther": "Synthetic other overview Wellcome",
+    "schemeOverview": "Synthetic overview scheme", "schemeOverviewOther": "Synthetic other overview scheme", "valueOverview": 456,
+    "fundingOverviewStartDate": "2026-01-02T03:04:05.123Z", "fundingOverviewEndDate": "2026-02-03T04:05:06.123Z",
+    "aimsOverview": "Synthetic overview aims", "grantNumberOverview": "SYNTHETIC-GRANT-2", "worktribeNumberOverview": "SYNTHETIC-WORKTRIBE-2"
+  }]
+}

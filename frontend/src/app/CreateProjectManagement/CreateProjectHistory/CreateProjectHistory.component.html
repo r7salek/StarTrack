@@ -27,13 +27,15 @@
             icon="check"
             type="success"
             text=" Update Status"
+            [disabled]="isSelectedArchived()"
             (onClick)="updateStatus()"
           ></dx-button>
           &nbsp;
           <dx-button
             icon="check"
             type="danger"
-            text="Delete"
+            text="Archive project"
+            [disabled]="isSelectedArchived()"
             (onClick)="onDelete()"
           ></dx-button>
         </div>
@@ -56,6 +58,7 @@
             [height]="calculateGridHeight(dataSource?.length || 0)"
           >
             <dxo-selection mode="single"></dxo-selection>
+            <dxi-column dataField="archived" caption="Archived" dataType="boolean" [width]="90"></dxi-column>
             <dxo-filter-panel [visible]="true"></dxo-filter-panel>
             <dxo-filter-builder
               [customOperations]="customOperations"

@@ -10,14 +10,16 @@ import com.star_track.star_track.starTrack.dto.TimeSlotData;
 import com.star_track.star_track.starTrack.model.Role;
 import com.star_track.star_track.starTrack.repo.RoleRepo;
 import com.star_track.star_track.starTrack.service.RoleService;
+import com.star_track.star_track.starTrack.registration.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*") // Allows cross-origin requests from any domain
 @RestController
 @RequestMapping("/role") // Base URL for role-related APIs
+@PreAuthorize("hasRole('ADMIN')")
 public class RoleResource {
     private final RoleService roleService;
     private final RoleRepo roleRepository;
@@ -46,7 +48,7 @@ public class RoleResource {
      */
     @GetMapping("/details/{id}")
     public Role getRole(@PathVariable Long id) {
-        return roleRepository.findById(id).orElse(null);
+        return roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role", "id", id));
     }
 
     /**

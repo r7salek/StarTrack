@@ -115,6 +115,7 @@ export class CreateProjectHistoryComponent implements OnInit {
     }
   }
   updateStatus() {
+    if (this.isSelectedArchived()) return;
     // Opens a dialog to update the status of the selected project
     if (this.dataGridInstance.instance.getSelectedRowsData()[0]) {
       this.createProjectService.populateForm(
@@ -124,23 +125,24 @@ export class CreateProjectHistoryComponent implements OnInit {
       dialogConfig.disableClose = true;
       dialogConfig.autoFocus = true;
       dialogConfig.width = '50%';
-      this.dialog.open(UpdateProposalStatusComponent, dialogConfig);
+      this.dialog.open(UpdateProposalStatusComponent, dialogConfig).afterClosed().subscribe(() => this.getProjectDataLatest());
     }
   }
   onDelete() {
+    if (this.isSelectedArchived()) return;
     // Deletes the selected project data after confirmation
     if (this.dataGridInstance.instance.getSelectedRowsData()[0]) {
       this.notificationService.confirmation(
-        'Data will be deleted permanently ',
+        'Archive this project? All of its versions and history will be retained.',
         () => {
           // On confirmation, proceed with deletion
-          this.notificationService.success('Request Granted successfully');
           this.createProjectService
-            .deletePermissions(
-              this.dataGridInstance.instance.getSelectedRowsData()[0].id
+            .archiveProject(
+              this.data.dataKey
             )
             .subscribe(
               () => {
+                this.notificationService.success('Project archived; history retained.');
                 this.onClose(); // Closes the dialog after successful deletion
               },
               (error: HttpErrorResponse) => {
@@ -159,5 +161,8 @@ export class CreateProjectHistoryComponent implements OnInit {
   }
   onClose() {
     this.dialogRef.close();
+  }
+  isSelectedArchived(): boolean {
+    return this.dataGridInstance?.instance?.getSelectedRowsData()?.[0]?.archived === true;
   }
 }

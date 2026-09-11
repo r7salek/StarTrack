@@ -8,9 +8,17 @@ import com.star_track.star_track.starTrack.dto.*;
 import com.star_track.star_track.starTrack.model.*;
 import com.star_track.star_track.starTrack.repo.ProjectCreateRepo;
 import com.star_track.star_track.starTrack.repo.UserRepo;
+import com.star_track.star_track.starTrack.repo.ProjectRepo;
+import com.star_track.star_track.starTrack.exception.ProjectConflictException;
+import com.star_track.star_track.starTrack.exception.ApiRequestException;
+import com.star_track.star_track.starTrack.registration.dto.LocalUser;
+import com.star_track.star_track.starTrack.registration.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.BeanUtils;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,10 +27,12 @@ import java.util.stream.Collectors;
 public class ProjectCreateService {
     private final UserRepo userRepo; // Repository for project creation operations
     private final ProjectCreateRepo projectCreateRepo;
+    private final ProjectRepo projectRepo;
 
-    public ProjectCreateService(UserRepo userRepo, ProjectCreateRepo projectCreateRepo) {
+    public ProjectCreateService(UserRepo userRepo, ProjectCreateRepo projectCreateRepo, ProjectRepo projectRepo) {
         this.userRepo = userRepo;
         this.projectCreateRepo = projectCreateRepo;
+        this.projectRepo = projectRepo;
     }
 
     /**
@@ -31,8 +41,8 @@ public class ProjectCreateService {
      * @return List of `ProjectDataResponse` containing detailed project information.
      */
     public List<ProjectDataResponse> getProjectCreateManagementData() {
-        List<ProjectCreateResponse> projectCreateResponses = projectCreateRepo.getProjectCreateManagementData();
-        return getProjectDataResponses(projectCreateResponses);
+        return projectCreateRepo.findAllByOrderByCreatedDateDescIdDesc().stream()
+                .map(this::summary).toList();
     }
     /**
      * Helper method to map `ProjectCreateResponse` objects to `ProjectDataResponse` objects.
@@ -110,8 +120,7 @@ public class ProjectCreateService {
      * @return List of `ProjectDataResponse` containing the latest project information.
      */
     public List<ProjectDataResponse> getProjectCreateManagementDataLatest() {
-        List<ProjectCreateResponse> projectCreateResponses = projectCreateRepo.getProjectCreateManagementDataLatest();
-        return getProjectDataResponses(projectCreateResponses);
+        return projectCreateRepo.findLatestActive().stream().map(this::summary).toList();
     }
 
     /**
@@ -122,6 +131,13 @@ public class ProjectCreateService {
      * @return The created `ProjectCreate` object.
      */
     public ProjectCreate AddToProjectCreate(String email, ProjectCreateDTO dto) {
+        // Legacy URL email is not trusted attribution. Authentication supplies the account.
+        if (dto.getId() == null) return create(dto);
+        ProjectCreate previous = requireProject(dto.getId());
+        return append(previous.getProjectId(), previous.getVersionNumber(), dto);
+    }
+
+    private ProjectCreate buildSnapshot(ProjectCreateDTO dto) {
         ProjectCreate entity = new ProjectCreate();
         entity.setCreatedDate(new Date());
         entity.setProjectName(dto.getProjectName());
@@ -136,7 +152,7 @@ public class ProjectCreateService {
         entity.setTtoContractOtherInfo(dto.getTtoContractOtherInfo());
 
         // Get data for output
-        final HashSet<SubContractorsRows> subContractorsRows = new HashSet<SubContractorsRows>();
+        final Set<SubContractorsRows> subContractorsRows = newSnapshotRows();
         for (SubContractorsRowsResponse val : dto.getSubContractorsRows()) {
             SubContractorsRows sr = new SubContractorsRows();
             sr.setSubContractorsName(val.getSubContractorsName());
@@ -153,10 +169,10 @@ public class ProjectCreateService {
         entity.setReadiness(dto.getReadiness());
         entity.setProjectBackground(dto.getProjectBackground());
         entity.setBriefDescription(dto.getBriefDescription());
-        entity.setApplyValue(ProjectCreate.SUBMITTED);
+        entity.setApplyValue(validStatus(dto.getApplyValue() == null ? ProjectCreate.SUBMITTED : dto.getApplyValue()));
 
         // Get data for output
-        final HashSet<GroupMemberRows> groupMemberRows = new HashSet<GroupMemberRows>();
+        final Set<GroupMemberRows> groupMemberRows = newSnapshotRows();
         for (GroupMemberRowsResponse val : dto.getGroupMemberRows()) {
             GroupMemberRows sr = new GroupMemberRows();
             sr.setLastNamePostDoc(val.getLastNamePostDoc());
@@ -169,7 +185,7 @@ public class ProjectCreateService {
             groupMemberRows.add(sr);
         }
         // Get data for output
-        final HashSet<OutputRows> outputRows = new HashSet<OutputRows>();
+        final Set<OutputRows> outputRows = newSnapshotRows();
         for (OutputRowsResponse val : dto.getOutputRows()) {
             OutputRows sr = new OutputRows();
             sr.setOutput(val.getOutput());
@@ -179,7 +195,7 @@ public class ProjectCreateService {
             outputRows.add(sr);
         }
     // Get data for collaborations
-        final HashSet<CollaborationRows> collaborationRows = new HashSet<CollaborationRows>();
+        final Set<CollaborationRows> collaborationRows = newSnapshotRows();
         for (CollaborationRowsResponse val : dto.getCollaborationRows()) {
             CollaborationRows sr1 = new CollaborationRows();
             sr1.setCollaboration(val.getCollaboration());
@@ -190,7 +206,7 @@ public class ProjectCreateService {
             collaborationRows.add(sr1);
         }
     // Get data for external adviser
-        final HashSet<ExternalAdvisorsRows> externalAdvisorsRows = new HashSet<ExternalAdvisorsRows>();
+        final Set<ExternalAdvisorsRows> externalAdvisorsRows = newSnapshotRows();
         for (ExternalAdvisorsRowsResponse val : dto.getExternalAdvisorsRows()) {
             ExternalAdvisorsRows exa = new ExternalAdvisorsRows();
             exa.setExternalAdvisorsMeeting(val.getExternalAdvisorsMeeting());
@@ -203,7 +219,7 @@ public class ProjectCreateService {
         }
 
         // Get data for PPI
-        final HashSet<PpiRows> ppiRows = new HashSet<PpiRows>();
+        final Set<PpiRows> ppiRows = newSnapshotRows();
         for (PpiRowsResponse val : dto.getPpiRows()) {
             PpiRows exa = new PpiRows();
             exa.setPpiMeeting(val.getPpiMeeting());
@@ -214,7 +230,7 @@ public class ProjectCreateService {
         }
 
         // Get data for funding
-        final HashSet<FundingRows> fundingRows = new HashSet<FundingRows>();
+        final Set<FundingRows> fundingRows = newSnapshotRows();
         for (FundingRowsResponse val : dto.getFundingRows()) {
             FundingRows fund = new FundingRows();
             fund.setFunding(String.valueOf(val.getFunding()));
@@ -237,7 +253,7 @@ public class ProjectCreateService {
         }
 
         // Get data for funding overview
-        final HashSet<FundingOverviewRows> fundingOverviewRows = new HashSet<FundingOverviewRows>();
+        final Set<FundingOverviewRows> fundingOverviewRows = newSnapshotRows();
         for (FundingOverviewRowsResponse val : dto.getFundingOverviewRows()) {
             FundingOverviewRows fund = new FundingOverviewRows();
             fund.setFundingOverview(String.valueOf(val.getFundingOverview()));
@@ -260,7 +276,7 @@ public class ProjectCreateService {
         }
 
         // Get data for PPI
-        final HashSet<OtrRows> otrRows = new HashSet<OtrRows>();
+        final Set<OtrRows> otrRows = newSnapshotRows();
         for (otrRowsResponse val : dto.getOtrRows()) {
             OtrRows exa = new OtrRows();
             exa.setOtrTeamMember(val.getOtrTeamMember());
@@ -281,9 +297,7 @@ public class ProjectCreateService {
         entity.setFundingOverviewRows(fundingOverviewRows);
         entity.setOtrRows(otrRows);
 
-        projectCreateRepo.save(entity);
-
-        return null;
+        return entity;
     }
     /**
      * Delete a project by ID.
@@ -292,7 +306,7 @@ public class ProjectCreateService {
      * @return Null after deletion.
      */
     public ProjectCreate deleteData(Long id) {
-        projectCreateRepo.deleteById(id);
+        archive(requireProject(id).getProjectId());
         return null;
     }
 
@@ -303,8 +317,12 @@ public class ProjectCreateService {
      * @return List of `ProjectDataResponse` containing historical project information.
      */
     public List<ProjectDataResponse> getCreateProjectDataHistory(String data1) {
-        List<ProjectCreateResponse> projectCreateResponses = projectCreateRepo.getCreateProjectDataHistory(data1);
-        return getProjectDataResponses(projectCreateResponses);
+        Set<UUID> roots = projectCreateRepo.findByProjectName(data1).stream()
+                .map(ProjectCreate::getProjectId).collect(Collectors.toSet());
+        if (roots.size() > 1) throw new ProjectConflictException();
+        if (roots.isEmpty()) return List.of();
+        return projectCreateRepo.findByProjectIdOrderByVersionNumberDesc(roots.iterator().next())
+                .stream().skip(1).map(this::summary).toList();
     }
     /**
      * Retrieve group member rows for a specific project by ID.
@@ -398,9 +416,169 @@ public class ProjectCreateService {
      * @return The updated `ProjectCreate` object.
      */
     public ProjectCreate updateUserPerm(Long id, String applyValue) {
-        ProjectCreate data = projectCreateRepo.getById(id);
-        data.setApplyValue(applyValue);
-        projectCreateRepo.save(data);
-        return null;
+        ProjectCreate previous = requireProject(id);
+        Project root = lockProject(previous.getProjectId());
+        requireCurrent(root, previous.getVersionNumber());
+        ProjectCreate next = copySnapshot(previous);
+        next.setApplyValue(validStatus(applyValue));
+        return saveVersion(root, next, previous.getVersionNumber() + 1);
+    }
+
+    public ProjectCreate create(ProjectCreateDTO dto) {
+        if (dto.getId() != null || dto.getExpectedVersion() != null) throw new ApiRequestException("New project cannot reference a version");
+        User actor = actor();
+        Project root = new Project();
+        root.setId(UUID.randomUUID());
+        root.setCreatedAt(new Date());
+        root.setCreatedBy(actor.getId());
+        projectRepo.saveAndFlush(root);
+        return saveVersion(root, buildSnapshot(dto), 1);
+    }
+
+    public ProjectCreate append(UUID projectId, Integer expectedVersion, ProjectCreateDTO dto) {
+        if (expectedVersion == null || expectedVersion < 1) throw new ApiRequestException("Expected version is required");
+        Project root = lockProject(projectId);
+        requireCurrent(root, expectedVersion);
+        if (dto.getId() != null) {
+            ProjectCreate supplied = requireProject(dto.getId());
+            if (!projectId.equals(supplied.getProjectId()) || !expectedVersion.equals(supplied.getVersionNumber())) {
+                throw new ProjectConflictException();
+            }
+        }
+        ProjectCreate next = buildSnapshot(dto);
+        if (dto.getApplyValue() == null) next.setApplyValue(latest(projectId).getApplyValue());
+        return saveVersion(root, next, expectedVersion + 1);
+    }
+
+    public void archive(UUID projectId) {
+        Project root = lockProject(projectId);
+        if (!root.isArchived()) {
+            root.setArchived(true);
+            root.setArchivedAt(new Date());
+            root.setArchivedBy(actor().getId());
+            projectRepo.save(root);
+        }
+    }
+
+    public ProjectVersionResponse current(UUID projectId) {
+        requireRoot(projectId);
+        return detail(latest(projectId));
+    }
+
+    public List<ProjectVersionResponse> versions(UUID projectId) {
+        requireRoot(projectId);
+        return projectCreateRepo.findByProjectIdOrderByVersionNumberDesc(projectId).stream().map(this::detail).toList();
+    }
+
+    public ProjectVersionResponse detail(ProjectCreate version) {
+        ProjectVersionResponse result = new ProjectVersionResponse();
+        BeanUtils.copyProperties(summary(version), result);
+        Long id = version.getId();
+        result.setGroupMemberRows(projectCreateRepo.findGroupMemberRows(id));
+        result.setOutputRows(projectCreateRepo.findOutputRows(id));
+        result.setCollaborationRows(projectCreateRepo.findCollaborationRows(id));
+        result.setExternalAdvisorsRows(projectCreateRepo.findExternalAdvisorsRows(id));
+        result.setSubContractorsRows(projectCreateRepo.findSubcontractorsRows(id));
+        result.setPpiRows(projectCreateRepo.findPpiRows(id));
+        result.setOtrRows(projectCreateRepo.findOTRRows(id));
+        result.setFundingRows(projectCreateRepo.findFundingRows(id));
+        result.setFundingOverviewRows(projectCreateRepo.findFundingOverviewRows(id));
+        return result;
+    }
+
+    private ProjectDataResponse summary(ProjectCreate version) {
+        ProjectDataResponse result = new ProjectDataResponse();
+        BeanUtils.copyProperties(version, result);
+        result.setVersionId(version.getId());
+        result.setArchived(requireRoot(version.getProjectId()).isArchived());
+        projectCreateRepo.findFundingOverviewRows(version.getId()).stream().findFirst().ifPresent(funding ->
+                BeanUtils.copyProperties(funding, result, "id"));
+        return result;
+    }
+
+    private ProjectCreate saveVersion(Project root, ProjectCreate next, int number) {
+        User actor = actor();
+        next.setProjectId(root.getId());
+        next.setVersionNumber(number);
+        next.setCreatedDate(new Date());
+        // Each snapshot records who saved it. Root retains the original project creator.
+        next.setCreatedBy(actor.getId());
+        next.setModifiedBy(actor.getId());
+        next.setCreatedEmail(actor.getEmail());
+        next.setModifyEmail(actor.getEmail());
+        return projectCreateRepo.saveAndFlush(next);
+    }
+
+    private void requireCurrent(Project root, Integer expectedVersion) {
+        if (expectedVersion == null || expectedVersion == Integer.MAX_VALUE || root.isArchived()
+                || !latest(root.getId()).getVersionNumber().equals(expectedVersion)) throw new ProjectConflictException();
+    }
+
+    private ProjectCreate latest(UUID id) {
+        return projectCreateRepo.findFirstByProjectIdOrderByVersionNumberDesc(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));
+    }
+
+    private Project requireRoot(UUID id) {
+        return projectRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));
+    }
+
+    private Project lockProject(UUID id) {
+        return projectRepo.lockById(id).orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));
+    }
+
+    private User actor() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || !(auth.getPrincipal() instanceof LocalUser principal)) {
+            throw new InsufficientAuthenticationException("Authentication required");
+        }
+        User user = userRepo.findById(principal.getUser().getId())
+                .orElseThrow(() -> new InsufficientAuthenticationException("Authentication required"));
+        if (!user.isEnabled()) throw new InsufficientAuthenticationException("Authentication required");
+        return user;
+    }
+
+    private String validStatus(String value) {
+        if (!Set.of(ProjectCreate.SUBMITTED, ProjectCreate.ACCEPTED, ProjectCreate.REJECTED, ProjectCreate.CLOSED).contains(value)) {
+            throw new ApiRequestException("Unknown project status");
+        }
+        return value;
+    }
+
+    private ProjectCreate copySnapshot(ProjectCreate previous) {
+        ProjectCreate next = new ProjectCreate();
+        BeanUtils.copyProperties(previous, next, "id", "projectId", "versionNumber", "createdDate",
+                "createdBy", "modifiedBy", "createdEmail", "modifyEmail", "groupMemberRows", "outputRows",
+                "collaborationRows", "externalAdvisorsRows", "subContractorsRows", "ppiRows", "otrRows", "fundingRows", "fundingOverviewRows");
+        next.setGroupMemberRows(copyRows(previous.getGroupMemberRows(), GroupMemberRows::new));
+        next.setOutputRows(copyRows(previous.getOutputRows(), OutputRows::new));
+        next.setCollaborationRows(copyRows(previous.getCollaborationRows(), CollaborationRows::new));
+        next.setExternalAdvisorsRows(copyRows(previous.getExternalAdvisorsRows(), ExternalAdvisorsRows::new));
+        next.setSubContractorsRows(copyRows(previous.getSubContractorsRows(), SubContractorsRows::new));
+        next.setPpiRows(copyRows(previous.getPpiRows(), PpiRows::new));
+        next.setOtrRows(copyRows(previous.getOtrRows(), OtrRows::new));
+        next.setFundingRows(copyRows(previous.getFundingRows(), FundingRows::new));
+        next.setFundingOverviewRows(copyRows(previous.getFundingOverviewRows(), FundingOverviewRows::new));
+        return next;
+    }
+
+    private <T> Set<T> copyRows(Set<T> rows, java.util.function.Supplier<T> factory) {
+        Set<T> copies = newSnapshotRows();
+        rows.forEach(row -> {
+            T copy = factory.get();
+            BeanUtils.copyProperties(row, copy, "id", "projectCreate");
+            copies.add(copy);
+        });
+        return copies;
+    }
+
+    private <T> Set<T> newSnapshotRows() {
+        // Distinct rows with identical content must survive before generated IDs exist.
+        return Collections.newSetFromMap(new IdentityHashMap<>());
+    }
+
+    private ProjectCreate requireProject(Long id) {
+        return projectCreateRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));
     }
 }

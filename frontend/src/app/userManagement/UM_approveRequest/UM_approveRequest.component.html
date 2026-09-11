@@ -42,8 +42,8 @@
           <ng-container matColumnDef="deny">
             <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Reject </th>
             <td mat-mdc-cell *matCellDef="let row2">
-              <button mat-raised-button type="button" color="accent" matTooltip="Delete"
-                (click)="um_HelperService.delete(row2?.email)"  matTooltip="Reject user Account request">
+              <button mat-raised-button type="button" color="accent"
+                (click)="um_HelperService.delete(row2?.email)" matTooltip="Deactivate account">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </td>

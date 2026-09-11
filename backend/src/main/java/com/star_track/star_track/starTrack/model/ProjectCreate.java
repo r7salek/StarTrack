@@ -12,9 +12,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 // Lombok annotations for reducing boilerplate code
 @Data                 // Combines getter, setter, equals, hashCode, and toString methods
@@ -44,6 +45,18 @@ public class ProjectCreate {
     @Column(nullable = false, updatable = false) // Ensures the ID is non-null and immutable
     private Long id;
 
+    @Column(name = "project_id", nullable = false, updatable = false)
+    private UUID projectId;
+
+    @Column(name = "version_number", nullable = false, updatable = false)
+    private Integer versionNumber;
+
+    @Column(name = "created_by", updatable = false)
+    private Long createdBy;
+
+    @Column(name = "modified_by", updatable = false)
+    private Long modifiedBy;
+
     @Column(name = "projectName") // Maps to the 'projectName' column
     private String projectName;
 
@@ -51,25 +64,12 @@ public class ProjectCreate {
     @Temporal(TemporalType.TIMESTAMP) // Specifies the temporal type as TIMESTAMP
     protected Date createdDate;
 
-    @JoinColumn(name = "apply_user", referencedColumnName = "email") // Maps foreign key to the 'email' column in User
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            targetEntity = User.class,
-            cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}
-    )
-    @JsonIgnore
-    @JsonManagedReference
-    private User applyUser;
+    // Historical snapshots, deliberately not joins to the account's mutable email.
+    @Column(name = "apply_user", updatable = false)
+    private String createdEmail;
 
-    @JoinColumn(name = "modify_user", referencedColumnName = "email") // Maps foreign key to the 'email' column in User
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            targetEntity = User.class,
-            cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}
-    )
-    @JsonIgnore
-    @JsonManagedReference
-    private User modifyUser;
+    @Column(name = "modify_user", updatable = false)
+    private String modifyEmail;
 
     // PI (Principal Investigator) information
     @Column(name = "lastNamePI")
@@ -136,6 +136,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<GroupMemberRows> groupMemberRows;
 
     @ManyToMany(
@@ -151,6 +153,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<OutputRows> outputRows;
 
     @ManyToMany(
@@ -166,6 +170,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<CollaborationRows> collaborationRows;
 
     @ManyToMany(
@@ -181,6 +187,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<ExternalAdvisorsRows> externalAdvisorsRows;
 
     @ManyToMany(
@@ -196,6 +204,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<SubContractorsRows> subContractorsRows;
 
     @ManyToMany(
@@ -211,6 +221,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<PpiRows> ppiRows;
 
     @ManyToMany(
@@ -226,6 +238,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<OtrRows> otrRows;
 
     @ManyToMany(
@@ -241,6 +255,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<FundingRows> fundingRows;
 
     @ManyToMany(
@@ -256,6 +272,8 @@ public class ProjectCreate {
             catalog = "starTrack",
             schema = "startrack"
     )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<FundingOverviewRows> fundingOverviewRows;
 
     @Column(name = "apply_value") // Maps to the 'apply_value' column

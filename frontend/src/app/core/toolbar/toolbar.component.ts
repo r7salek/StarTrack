@@ -31,30 +31,15 @@ export class ToolbarComponent implements OnInit {
     private _router: Router
   ) {
     // Get login information of user if he is login and store values for further processing
-    this.isLoggedIn = !!this.tokenStorageService.getToken();
-    if (this.isLoggedIn) {
-      this.currentUser = this.tokenStorageService.getUser();
-      this.isLoggedIn = true;
-      const user = this.tokenStorageService.getUser();
-      this.userName = user.userName;
-    }
-    if (!!this.tokenStorageService) {
-      this.currentUser = this.tokenStorageService.getUser();
-      if (!!this.currentUser) {
-        this.firstName = this.currentUser.firstName;
-        this.lastName = this.currentUser.lastName;
-        var role = this.currentUser.roles;
-        if (!!role) {
-          this.isUser = false;
-          this.isAdmin = false;
-          if (role.includes('ROLE_ADMIN')) {
-            this.isAdmin = true;
-          }
-          if (role.includes('ROLE_USER')) {
-            this.isUser = true;
-          }
-        }
-      }
+    const user = this.tokenStorageService.getUser();
+    this.isLoggedIn = !!this.tokenStorageService.getToken() && !!user;
+    this.currentUser = this.isLoggedIn ? user : null;
+    if (this.currentUser) {
+      this.userName = this.currentUser.userName;
+      this.firstName = this.currentUser.firstName;
+      this.lastName = this.currentUser.lastName;
+      this.isAdmin = this.currentUser.roles.includes('ROLE_ADMIN');
+      this.isUser = this.currentUser.roles.includes('ROLE_USER');
     }
   }
   // Dialog box logic for registration
@@ -86,7 +71,7 @@ export class ToolbarComponent implements OnInit {
   }
   // Get current user email
   public getCurrentEmail() {
-    if (!!this.currentUser.email) {
+    if (this.currentUser?.email) {
       return this.currentUser.email;
     }
     else{

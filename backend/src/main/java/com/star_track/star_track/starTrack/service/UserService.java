@@ -1,7 +1,7 @@
 /**
  * UserService
  * Provides business logic for managing users and their roles.
- * Handles CRUD operations, role updates, password resets, and more.
+ * Handles CRUD operations, role updates, password changes, and more.
  */
 
 package com.star_track.star_track.starTrack.service;
@@ -13,11 +13,12 @@ import com.star_track.star_track.starTrack.model.Role;
 import com.star_track.star_track.starTrack.model.User;
 import com.star_track.star_track.starTrack.repo.RoleRepo;
 import com.star_track.star_track.starTrack.repo.UserRepo;
+import com.star_track.star_track.starTrack.registration.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -43,7 +44,7 @@ public class UserService {
      */
     public User findUserDataById(Long id) {
         return userRepo.findDataById(id)
-                .orElseThrow(() -> new ApiRequestException("User by id " + id + " was not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 
     /**
@@ -56,14 +57,17 @@ public class UserService {
     }
 
     /**
-     * Delete a user by email.
+     * Deactivate a user while retaining permanent identity and historical attribution.
      *
-     * @param email The email of the user to delete.
-     * @return Null after deletion.
+     * @param email The email of the user to deactivate.
+     * @return Null to preserve the legacy empty success response.
      */
     public User deleteUser(String email) {
-        User user = userRepo.findByEmail(email);
-        userRepo.deleteById(user.getId());
+        User user = requireUserByEmail(email);
+        user.setEnabled(false);
+        user.setDelete(true);
+        user.setModifiedDate(new Date());
+        userRepo.save(user);
         return null;
     }
 
@@ -74,21 +78,8 @@ public class UserService {
      * @return The updated user with enabled status set to true.
      */
     public User activateUser(String email) {
-        User user = userRepo.findByEmail(email);
+        User user = requireUserByEmail(email);
         user.setEnabled(true);
-        user.setModifiedDate(new Date());
-        return userRepo.save(user);
-    }
-
-    /**
-     * Reset a user's password.
-     *
-     * @param email The email of the user.
-     * @return The updated user with the reset password.
-     */
-    public User resetPassword(String email) {
-        User user = userRepo.findByEmail(email);
-        user.setPassword(passwordEncoder.encode("123456")); // Default reset password
         user.setModifiedDate(new Date());
         return userRepo.save(user);
     }
@@ -101,21 +92,20 @@ public class UserService {
      * @return The updated user with new roles.
      */
     public User updateUserRole(String email, ArrayList<String> roles) {
-        User user = userRepo.findByEmail(email);
-        if (user != null) {
-            user.setModifiedDate(new Date());
-            HashSet<Role> userRoles = new HashSet<>();
-
-            // Assign roles
-            for (String roleName : roles) {
-                Role role = roleRepository.findByName(roleName);
-                userRoles.add(role);
-            }
-            user.setRoles(userRoles);
-            return userRepo.save(user);
-        } else {
-            throw new ApiRequestException("User not found with email: " + email);
+        User user = requireUserByEmail(email);
+        if (roles == null || roles.isEmpty()) {
+            throw new ApiRequestException("A valid role is required");
         }
+        HashSet<Role> userRoles = new HashSet<>();
+        // Resolve every role before changing any managed account field.
+        for (String roleName : roles) {
+            Role role = roleName == null ? null : roleRepository.findByName(roleName);
+            if (role == null) throw new ApiRequestException("Unknown role");
+            userRoles.add(role);
+        }
+        user.setModifiedDate(new Date());
+        user.setRoles(userRoles);
+        return userRepo.save(user);
     }
 
     /**
@@ -126,7 +116,7 @@ public class UserService {
      * @return The updated user.
      */
     public User updateUserProfile(Long id, UserManagementResponse user) {
-        User existingUser = userRepo.getById(id);
+        User existingUser = findUserDataById(id);
         existingUser.setModifiedDate(new Date());
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());
@@ -142,7 +132,7 @@ public class UserService {
      * @return The updated user with the new password.
      */
     public User updateUserPassword(Long id, UserPasswordResponse user) {
-        User existingUser = userRepo.getById(id);
+        User existingUser = findUserDataById(id);
         existingUser.setModifiedDate(new Date());
         existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(existingUser);
@@ -151,14 +141,19 @@ public class UserService {
     /**
      * Submit a delete request for a user.
      *
-     * @param email The email of the user.
+     * @param id The authenticated user's immutable ID.
      * @return The updated user with the delete request marked.
      */
-    public User deleteUserRequest(String email) {
-        User user = userRepo.findByEmail(email);
+    public User deleteUserRequest(Long id) {
+        User user = findUserDataById(id);
         user.setDelete(true);
         user.setModifiedDate(new Date());
         return userRepo.save(user);
+    }
+
+    private User requireUserByEmail(String email) {
+        return Optional.ofNullable(userRepo.findByEmail(email))
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
     }
 
     /**

@@ -8,11 +8,14 @@ package com.star_track.star_track.starTrack.service;
 
 import com.star_track.star_track.starTrack.model.Role;
 import com.star_track.star_track.starTrack.repo.RoleRepo;
+import com.star_track.star_track.starTrack.exception.ApiRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
@@ -39,18 +42,18 @@ public class RoleService {
                 roleRepository.deleteById(id);
                 if (roleRepository.findById(id).isPresent()) {
                     // Check if the deletion failed
-                    return ResponseEntity.unprocessableEntity().body("Failed to delete the specified record");
+                    throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
                 } else {
                     // Deletion successful
                     return ResponseEntity.ok().body("Successfully deleted specified record");
                 }
             } else {
                 // Role has associated users
-                return ResponseEntity.unprocessableEntity().body("Failed to delete, Please delete the users associated with this role");
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
             }
         } else {
             // Role not found
-            return ResponseEntity.unprocessableEntity().body("No Records Found");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
@@ -65,6 +68,9 @@ public class RoleService {
      *         - 422 (Unprocessable Entity) if the role doesn't exist.
      */
     public ResponseEntity<Object> updateRole(Long id, Role role) {
+        if (role == null || role.getName() == null || role.getName().isBlank()) {
+            throw new ApiRequestException("A role name is required");
+        }
         if (roleRepository.findById(id).isPresent()) {
             // Retrieve the existing role
             Role existingRole = roleRepository.findById(id).get();
@@ -77,11 +83,11 @@ public class RoleService {
                 return ResponseEntity.accepted().body("Role saved successfully");
             } else {
                 // Update failed
-                return ResponseEntity.badRequest().body("Failed to update Role");
+                throw new ApiRequestException("Role update failed");
             }
         } else {
             // Role not found
-            return ResponseEntity.unprocessableEntity().body("Specified Role not found");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 }

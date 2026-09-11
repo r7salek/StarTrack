@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "node --test proxy.conf.spec.cjs local-assets.spec.cjs && CI=true ng test --watch=false --browsers=ChromeHeadlessNoSandbox --progress=false"
   },
   "private": true,
   "dependencies": {

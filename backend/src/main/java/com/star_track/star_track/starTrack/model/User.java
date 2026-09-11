@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -60,6 +60,7 @@ public class User implements Serializable {
     private String email;
 
     @Column(name = "password") // Maps to the 'password' column
+    @JsonIgnore
     private String password;
 
     @Column(name = "delete") // Indicates whether the user is marked for deletion
@@ -118,7 +119,6 @@ public class User implements Serializable {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", delete=" + delete +
                 ", enabled=" + enabled +
                 ", provider='" + provider + '\'' +

@@ -9,15 +9,18 @@ package com.star_track.star_track.starTrack.resource;
 import com.star_track.star_track.starTrack.dto.UserManagementResponse;
 import com.star_track.star_track.starTrack.dto.UserPasswordResponse;
 import com.star_track.star_track.starTrack.model.User;
+import com.star_track.star_track.starTrack.registration.dto.LocalUser;
 import com.star_track.star_track.starTrack.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "*") // Allows cross-origin requests from any domain
 @RestController
 @RequestMapping("/sybeUser") // Base URL for user-related APIs
 public class UserResource {
@@ -33,6 +36,7 @@ public class UserResource {
      * @return A list of all users with HTTP status 200 (OK).
      */
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> getAllDataInterceptor() {
         try {
             List<User> sybeUsers = userService.allUser();
@@ -49,6 +53,7 @@ public class UserResource {
      * @return The user details with HTTP status 200 (OK).
      */
     @GetMapping("/{id}")
+    @PreAuthorize("#id == principal.user.id")
     public ResponseEntity<User> getDataById(@PathVariable("id") Long id) {
         User sybeUsers = userService.findUserDataById(id);
         return new ResponseEntity<>(sybeUsers, HttpStatus.OK);
@@ -60,7 +65,8 @@ public class UserResource {
      * @param email The email of the user to delete.
      * @return The deleted user details with HTTP status 200 (OK).
      */
-    @RequestMapping(value = "/delete/{email}", method = {RequestMethod.DELETE, RequestMethod.GET})
+    @DeleteMapping("/delete/{email}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> deleteUser(@PathVariable("email") String email) {
         User sybeUsers = userService.deleteUser(email);
         return new ResponseEntity<>(sybeUsers, HttpStatus.OK);
@@ -72,21 +78,10 @@ public class UserResource {
      * @param email The email of the user to activate.
      * @return The updated user details with HTTP status 200 (OK).
      */
-    @RequestMapping(value = "/activate/{email}", method = {RequestMethod.PUT, RequestMethod.GET})
+    @PutMapping("/activate/{email}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> activateUser(@PathVariable(value = "email") String email) {
         User updateUser = userService.activateUser(email);
-        return new ResponseEntity<>(updateUser, HttpStatus.OK);
-    }
-
-    /**
-     * Reset a user's password by email.
-     *
-     * @param email The email of the user.
-     * @return The user details after resetting the password with HTTP status 200 (OK).
-     */
-    @RequestMapping(value = "/resetPassword/{email}", method = {RequestMethod.PUT, RequestMethod.GET})
-    public ResponseEntity<User> resetPassword(@PathVariable(value = "email") String email) {
-        User updateUser = userService.resetPassword(email);
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
@@ -97,7 +92,8 @@ public class UserResource {
      * @param role  A list of roles to assign.
      * @return The updated user details with HTTP status 200 (OK).
      */
-    @RequestMapping(value = "/roleUpdate/{email}/{role}", method = {RequestMethod.PUT, RequestMethod.GET})
+    @PutMapping("/roleUpdate/{email}/{role}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> updateUser(@PathVariable(value = "email") String email, @PathVariable(value = "role") ArrayList<String> role) {
         User updateUser = userService.updateUserRole(email, role);
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
@@ -111,7 +107,8 @@ public class UserResource {
      * @return The updated user details with HTTP status 200 (OK).
      */
     @PostMapping("/passwordUpdate/{id}")
-    public ResponseEntity<User> updateUserPassword(@PathVariable(value = "id") Long id, @RequestBody(required = true) UserPasswordResponse user) {
+    @PreAuthorize("#id == principal.user.id")
+    public ResponseEntity<User> updateUserPassword(@PathVariable(value = "id") Long id, @Valid @RequestBody(required = true) UserPasswordResponse user) {
         User updateEmployee = userService.updateUserPassword(id, user);
         return new ResponseEntity<>(updateEmployee, HttpStatus.OK);
     }
@@ -124,6 +121,7 @@ public class UserResource {
      * @return The updated user details with HTTP status 200 (OK).
      */
     @PostMapping("/profileUpdate/{id}")
+    @PreAuthorize("#id == principal.user.id")
     public ResponseEntity<User> updateUserProfile(@PathVariable(value = "id") Long id, @RequestBody(required = true) UserManagementResponse user) {
         User updateEmployee = userService.updateUserProfile(id, user);
         return new ResponseEntity<>(updateEmployee, HttpStatus.OK);
@@ -135,9 +133,11 @@ public class UserResource {
      * @param email The email of the user to delete.
      * @return The updated user details after the delete request with HTTP status 200 (OK).
      */
-    @RequestMapping(value = "/deleteRequest/{email}", method = {RequestMethod.PUT, RequestMethod.GET})
-    public ResponseEntity<User> deleteUserRequest(@PathVariable(value = "email") String email) {
-        User updateUser = userService.deleteUserRequest(email);
+    @PutMapping("/deleteRequest/{email}")
+    @PreAuthorize("#email.equals(principal.user.email)")
+    public ResponseEntity<User> deleteUserRequest(@PathVariable(value = "email") String email,
+                                                  @AuthenticationPrincipal LocalUser principal) {
+        User updateUser = userService.deleteUserRequest(principal.getUser().getId());
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
@@ -147,6 +147,7 @@ public class UserResource {
      * @return A list of user management data with HTTP status 200 (OK).
      */
     @GetMapping("/userData")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List> getUserManagementData() {
         List sybeUsers = userService.getuserManagementData();
         return new ResponseEntity<>(sybeUsers, HttpStatus.OK);

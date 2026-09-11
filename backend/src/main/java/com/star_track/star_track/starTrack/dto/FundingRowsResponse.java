@@ -93,7 +93,7 @@ public class FundingRowsResponse {
      * Total monetary value of the funding.
      * Represents the overall amount allocated for the specified funding.
      */
-    private int value;
+    private Integer value;
 
     /**
      * Start date of the funding period.

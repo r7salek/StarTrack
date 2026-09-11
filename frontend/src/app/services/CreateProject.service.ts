@@ -27,6 +27,22 @@ export class CreateProjectService {
   private apiServerUrl = environment.apiBaseUrl;
   constructor(private http: HttpClient) {}
 
+  public createProject(data: newProject): Observable<newProjectResponse> {
+    return this.http.post<newProjectResponse>(`${this.apiServerUrl}/api/projects`, data);
+  }
+
+  public appendProjectVersion(projectId: string, expectedVersion: number,
+    data: newProject): Observable<newProjectResponse> {
+    return this.http.post<newProjectResponse>(
+      `${this.apiServerUrl}/api/projects/${encodeURIComponent(projectId)}/versions`,
+      { ...data, expectedVersion }
+    );
+  }
+
+  public archiveProject(projectId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiServerUrl}/api/projects/${encodeURIComponent(projectId)}`);
+  }
+
   // Rest APi for getting Adding values for project create into database table
   public AddToProjectCreate(
     email: string,
@@ -46,7 +62,7 @@ export class CreateProjectService {
   // Get Project create data (Latest one)
   public getCreateProjectDataLatest(): Observable<newProjectResponse[]> {
     return this.http.get<newProjectResponse[]>(
-      `${this.apiServerUrl}/projectCreate/allDatalatest`
+      `${this.apiServerUrl}/api/projects`
     );
   }
   // Rest APi for deleting access permissions values
@@ -60,7 +76,7 @@ export class CreateProjectService {
     data: string
   ): Observable<newProjectResponse[]> {
     return this.http.get<newProjectResponse[]>(
-      `${this.apiServerUrl}/projectCreate/allDataHistroy/${data}`
+      `${this.apiServerUrl}/api/projects/${encodeURIComponent(data)}/versions`
     );
   }
   public getGroupMemberById(id: number): Observable<GroupMemberRowsResponse[]> {
