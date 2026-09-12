@@ -1,6 +1,6 @@
 import { LoginComponent } from './login.component';
 import { TokenStorageService } from '../_services/token-storage.service';
-import { of } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 describe('LoginComponent', () => {
   let storage: TokenStorageService;
@@ -36,6 +36,21 @@ describe('LoginComponent', () => {
     expect(component.isLoggedIn).toBeFalse();
     expect(authService.login).not.toHaveBeenCalled();
     expect(userLoginService.getCurrentUser).not.toHaveBeenCalled();
+  });
+
+  it('prevents duplicate sign-in requests while pending', () => {
+    authService.login.and.returnValue(new Subject());
+    component.onSubmit();
+    component.onSubmit();
+    expect(authService.login).toHaveBeenCalledTimes(1);
+  });
+
+  it('explains activation and permits retry after failed sign-in', () => {
+    authService.login.and.returnValue(throwError(() => ({ status: 401 })));
+    component.onSubmit();
+    expect(component.isSubmitting).toBeFalse();
+    expect(component.isLoginFailed).toBeTrue();
+    expect(component.errorMessage).toContain('activated by an administrator');
   });
 
   for (const storedUser of [null, '{invalid-json', '{}']) {
@@ -88,8 +103,8 @@ describe('LoginComponent', () => {
     expect(notifications.success).not.toHaveBeenCalled();
   });
 
-  for (const [role, destination] of [['ROLE_USER', 'createProject'], ['ROLE_ADMIN', 'user-management']]) {
-    it(`preserves the successful ${role} login destination`, () => {
+  for (const [role, destination] of [['ROLE_USER', 'projects'], ['ROLE_ADMIN', 'projects']]) {
+    it(`opens the shared overview after successful ${role} login`, () => {
       authService.login.and.returnValue(of({
         accessToken: 'synthetic-token', user: { id: '7', roles: [role] },
       }));
@@ -108,6 +123,6 @@ describe('LoginComponent', () => {
     expect(userLoginService.getCurrentUser).toHaveBeenCalled();
     expect(storage.getToken()).toBe('synthetic-token');
     expect(component.isLoggedIn).toBeTrue();
-    expect(router.navigate).toHaveBeenCalledWith(['createProject']);
+    expect(router.navigate).toHaveBeenCalledWith(['projects']);
   });
 });

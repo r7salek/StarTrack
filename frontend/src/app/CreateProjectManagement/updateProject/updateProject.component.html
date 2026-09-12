@@ -1,11 +1,19 @@
-<mat-card appearance="outlined" fxFlex>
-  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
-    <span style="font-size: 24px">Update Project</span>
-  </mat-toolbar>
-  <div class="container">
+<mat-card appearance="outlined" class="st-project-form">
+  <header class="st-form-heading">
+    <h1 mat-dialog-title>Edit project</h1>
+    <p>Update the project record, then review and save a new version. Earlier versions remain in its history. Required fields are marked with an asterisk. Changes are not saved automatically.</p>
+    <button type="button" class="st-button" [disabled]="isSaving" (click)="onClose()">Close editor</button>
+  </header>
+  <p *ngIf="loading" role="status">Loading the complete project record…</p>
+  <div *ngIf="loadError" role="alert" class="st-error">
+    <p>{{ loadError }}</p>
+    <button type="button" class="st-button" (click)="retryLoad()">Retry loading</button>
+  </div>
+  <p *ngIf="isSaving" role="status" aria-live="polite">Saving project version. Please wait; editing is paused until the save finishes.</p>
+  <div class="container" *ngIf="!loading && !loadError" #editorFields [attr.inert]="isSaving ? '' : null" [attr.aria-busy]="isSaving">
     <mat-card-content>
       <mat-card appearance="outlined">
-        <mat-stepper [linear]="true" #stepper>
+        <mat-stepper [linear]="true" #stepper (selectionChange)="onStepChanged($event.selectedIndex)">
           <mat-step [stepControl]="createProjectService.form">
             <br />
             <mat-divider></mat-divider>
@@ -15,7 +23,7 @@
                 >Team information</span
               ></ng-template
             >
-            <form [formGroup]="createProjectService.form" class="normal-form">
+            <form stFocusInvalid [formGroup]="createProjectService.form" class="normal-form">
               <mat-grid-list cols="1" rowHeight="140px" rowWidth="150px">
                 <mat-grid-tile [style.width.px]="450">
                   <div class="controles-container">
@@ -436,7 +444,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [disabled]="!createProjectService.form.valid"
+                    [disabled]="isSaving"
                     matTooltip="Go to next"
                     class="example-button"
                     matStepperNext
@@ -447,7 +455,7 @@
               </div>
             </form>
           </mat-step>
-          <mat-step>
+          <mat-step [stepControl]="createProjectService.form5">
             <br />
             <mat-divider></mat-divider>
             <br />
@@ -461,7 +469,7 @@
               <mat-toolbar color="primary" fxLayoutAlign="space-around center">
                 <span style="font-size: 24px">Funding source</span>
               </mat-toolbar>
-              <form
+              <form stFocusInvalid
                 [formGroup]="createProjectService.form5"
                 class="normal-form"
               >
@@ -1039,7 +1047,7 @@
                     <button
                       mat-raised-button
                       color="primary"
-                      [disabled]="!createProjectService.form5.valid"
+                      [disabled]="isSaving"
                       matTooltip="Go to next"
                       class="example-button"
                       matStepperNext
@@ -1059,7 +1067,7 @@
               </form>
             </mat-card>
           </mat-step>
-          <mat-step>
+          <mat-step [stepControl]="createProjectService.form3">
             <br />
             <mat-divider></mat-divider>
             <br />
@@ -1068,7 +1076,7 @@
                 >Scope of the project</span
               ></ng-template
             >
-            <form [formGroup]="createProjectService.form3" class="normal-form">
+            <form stFocusInvalid [formGroup]="createProjectService.form3" class="normal-form">
               <mat-grid-list cols="5" rowHeight="400px" rowWidth="120px">
                 <mat-grid-tile [style.width.px]="450" class="align-top">
                   <div class="controles-container">
@@ -1349,7 +1357,7 @@
                         >Enter text here...</mat-hint
                       >
                       <mat-label style="font-size: 20px">
-                        (Characters Remaining: {{ myInput8.value.length }} /{{
+                        (Characters used: {{ myInput8.value.length }} /{{
                           maxChars1
                         }})</mat-label
                       >
@@ -1378,7 +1386,7 @@
                         >Enter text here...</mat-hint
                       >
                       <mat-label style="font-size: 20px">
-                        (Characters Remaining: {{ myInput7.value.length }} /{{
+                        (Characters used: {{ myInput7.value.length }} /{{
                           maxChars1
                         }})</mat-label
                       >
@@ -1401,7 +1409,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [disabled]="!createProjectService.form3.valid"
+                    [disabled]="isSaving"
                     matTooltip="Go to next"
                     class="example-button"
                     matStepperNext
@@ -1412,14 +1420,14 @@
               </div>
             </form>
           </mat-step>
-          <mat-step>
+          <mat-step [stepControl]="createProjectService.form1">
             <br />
             <mat-divider></mat-divider>
             <br />
             <ng-template matStepLabel
               ><span style="font-size: 20px">Collaborators</span></ng-template
             >
-            <form [formGroup]="createProjectService.form1" class="normal-form">
+            <form stFocusInvalid [formGroup]="createProjectService.form1" class="normal-form">
               <h1>Collaborator</h1>
               <div formArrayName="collaborationRows">
                 <div
@@ -1435,7 +1443,7 @@
                       <div class="controles-container">
                         <mat-form-field appearance="outline">
                           <mat-label style="font-size: 20px">
-                            Collaborator</mat-label
+                            Collaborator (required)</mat-label
                           >
                           <mat-select
                             id="collaboration{{ i }}"
@@ -1448,6 +1456,7 @@
                               >{{ collaboration }}</mat-option
                             >
                           </mat-select>
+                          <mat-error *ngIf="createProjectService.collaborationArr.controls[i].get('collaboration')?.hasError('required')">Select a collaborator.</mat-error>
                           <mat-hint style="font-size: 16px"
                             >Please select Collaborator<span
                               *ngIf="
@@ -2099,7 +2108,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [disabled]="!createProjectService.form1.valid"
+                    [disabled]="isSaving"
                     matTooltip="Go to next"
                     class="example-button"
                     matStepperNext
@@ -2111,14 +2120,14 @@
             </form>
           </mat-step>
 
-          <mat-step>
+          <mat-step [stepControl]="createProjectService.form2">
             <br />
             <mat-divider></mat-divider>
             <br />
             <ng-template matStepLabel
               ><span style="font-size: 20px">Output</span></ng-template
             >
-            <form [formGroup]="createProjectService.form2" class="normal-form">
+            <form stFocusInvalid [formGroup]="createProjectService.form2" class="normal-form">
               <h1>Output</h1>
               <div formArrayName="outputRows">
                 <div
@@ -2150,7 +2159,7 @@
                       <div class="controles-container">
                         <mat-form-field appearance="outline">
                           <mat-label style="font-size: 20px">
-                            Confirmation</mat-label
+                            Confirmation (required)</mat-label
                           >
                           <mat-select
                             id="confirmation{{ i }}"
@@ -2168,6 +2177,7 @@
                           <mat-hint style="font-size: 16px"
                             >Please select confirmation</mat-hint
                           >
+                          <mat-error *ngIf="createProjectService.formArr.controls[i].get('confirmation')?.hasError('required')">Select a confirmation for this output.</mat-error>
                         </mat-form-field>
                       </div>
                     </mat-grid-tile>
@@ -2752,7 +2762,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [disabled]="!createProjectService.fundingArr.valid"
+                    [disabled]="isSaving"
                     matTooltip="Go to next"
                     class="example-button"
                     matStepperNext
@@ -2763,7 +2773,7 @@
               </div>
             </form>
           </mat-step>
-          <mat-step>
+          <mat-step [stepControl]="createProjectService.form4">
             <br />
             <mat-divider></mat-divider>
             <br />
@@ -2774,7 +2784,7 @@
               <mat-toolbar color="primary" fxLayoutAlign="space-around center">
                 <span style="font-size: 24px">OTR team</span>
               </mat-toolbar>
-              <form
+              <form stFocusInvalid
                 [formGroup]="createProjectService.form4"
                 class="normal-form"
               >
@@ -2939,7 +2949,7 @@
                     <button
                       mat-raised-button
                       color="primary"
-                      [disabled]="!createProjectService.form4.valid"
+                      [disabled]="isSaving"
                       matTooltip="Go to next"
                       class="example-button"
                       matStepperNext

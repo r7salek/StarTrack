@@ -1,4 +1,5 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { FocusInvalidDirective } from './focus-invalid.directive';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -34,7 +35,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
-  declarations: [],
+  declarations: [FocusInvalidDirective],
   imports: [
     MatSelectModule,
     MatGridListModule,
@@ -73,6 +74,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatNativeDateModule
   ],
   exports: [
+    FocusInvalidDirective,
     MatSelectModule,
     MatGridListModule,
     MatRadioModule,
@@ -112,4 +114,3 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class SharedModule { }
-

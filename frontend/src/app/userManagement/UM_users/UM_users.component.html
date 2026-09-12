@@ -1,9 +1,11 @@
 <div class="container">
-  <div class="example-container" style="margin:2em;">
+  <p *ngIf="isLoading" role="status">Loading active accounts…</p>
+  <div *ngIf="error" role="alert"><p>{{ error }}</p><button mat-stroked-button type="button" (click)="getUserData()">Try again</button></div>
+  <div class="example-container" [hidden]="isLoading || !!error">
     <mat-card appearance="outlined" fxFlexAlign="stretch">
       <div>
         <mat-form-field class="header">
-          <mat-label>Filter</mat-label>
+          <mat-label>Search active accounts</mat-label>
           <input matInput (keyup)="applyFilter2($event)" placeholder="Search.." #input>
         </mat-form-field>
 
@@ -47,7 +49,7 @@
             <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Update</th>
             <td mat-mdc-cell *matCellDef="let row">
               <button mat-raised-button color="primary" type="button" (click)="onEdit(row)"
-                matTooltip="Update User Role">
+                [attr.aria-label]="'Edit roles for ' + row.email" matTooltip="Update User Role">
                 <mat-icon>launch</mat-icon>
               </button>
             </td>
@@ -57,7 +59,7 @@
             <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Deactivate </th>
             <td mat-mdc-cell *matCellDef="let row">
               <button mat-raised-button type="button" color="accent"
-                (click)="um_HelperService.delete(row?.email)" matTooltip="Deactivate account">
+                (click)="um_HelperService.delete(row?.email)" [attr.aria-label]="'Deactivate ' + row.email" matTooltip="Deactivate account">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </td>
@@ -67,7 +69,7 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
 
           <tr class="mat-row" *matNoDataRow>
-            <td class="mat-mdc-cell" colspan="4">No data Found"{{input.value}}"</td>
+            <td class="mat-mdc-cell" colspan="8">{{ input.value ? 'No accounts match your search.' : 'No active accounts.' }}</td>
           </tr>
         </table>
         <mat-paginator #TableTwoPaginator="matPaginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>

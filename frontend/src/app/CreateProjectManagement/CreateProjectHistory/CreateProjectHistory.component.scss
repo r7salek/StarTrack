@@ -1,23 +1,13 @@
-::ng-deep #gridContainer {
-  height: 800px;
-  font-size: 16px;
-  overflow: auto;
-}
-
-::ng-deep .dx-datagrid .dx-data-row > td.bullet {
-  padding-top: 0;
-  padding-bottom: 0;
-
-}
-/* YourComponent.component.css */
-
+:host { display: block; color: var(--st-text); }
+.history-heading { padding: 24px 24px 8px; }
+h2 { margin: 0 0 12px; font-size: 24px; color: var(--st-ink); }
+p { line-height: 1.5; margin: 8px 0; }
+.history-note { color: var(--st-muted); font-size: 14px; }
+.history-message { margin: 16px 24px; }
+.buttons-column { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.my-container { overflow: auto; }
+:host ::ng-deep #gridContainer { font-size: 14px; }
 :host ::ng-deep #gridContainer .dx-datagrid-headers .dx-header-row,
-:host ::ng-deep #gridContainer .dx-datagrid-headers .dx-header-row .dx-header-cell,
 :host ::ng-deep #gridContainer .dx-datagrid-headers .dx-datagrid-filter-row {
-  background-color: #3f51b5;
-  color: white;
-  font-size: 18px;
-}
-.my-container {
-  overflow: auto;
+  background: var(--st-blue-light); color: var(--st-ink); font-size: 14px;
 }

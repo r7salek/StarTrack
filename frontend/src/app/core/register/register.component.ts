@@ -1,5 +1,5 @@
 /**User Registraton component Logic */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthService } from '../login/_services/auth.service';
@@ -18,10 +18,11 @@ export class RegisterComponent implements OnInit {
   errorMessage = ''; // Display error message
   hide = true;
   hide1 = true;
+  isSubmitting = false;
   constructor(
     private authService: AuthService, // Authservice is used to identify user from system if user doesnot exists then create user
     public notificationService: NotificationService, // notification service for messages
-    public dialogRef: MatDialogRef<RegisterComponent> // Ref box to open dialog box for the form filling
+    @Optional() public dialogRef: MatDialogRef<RegisterComponent> | null // Also available as a routed page.
     ,
     private _router: Router
   ) {}
@@ -36,25 +37,28 @@ export class RegisterComponent implements OnInit {
   }
   ngOnInit(): void {}
   onClose() {
-    this.dialogRef.close();
-    window.location.reload();
+    if (this.dialogRef) this.dialogRef.close();
+    else this._router.navigate(['home']);
   }
   // Method is used to submit form values and create new user
   onSubmit(): void {
+    if (this.isSubmitting) return;
+    if (this.form.password !== this.form.matchingPassword) {
+      this.errorMessage = 'The passwords must match.';
+      this.isSignUpFailed = true;
+      return;
+    }
+    this.isSubmitting = true;
+    this.isSignUpFailed = false;
      this.authService.register(this.form).subscribe(
       (data) => {
+        this.isSubmitting = false;
         this.isSuccessful = true;
-        if (!!this.isSuccessful) {
-          this.notificationService.success('User is registered successfully');
-         // window.location.href = '/home';
-          this._router.navigate(['home']).then(() => {
-            window.location.reload();
-          });
-        }
         this.isSignUpFailed = false;
       },
       (err) => {
-        this.errorMessage = err.error.message;
+        this.isSubmitting = false;
+        this.errorMessage = 'We could not register this account. Check your details and try again, or contact your StarTrack administrator.';
         this.notificationService.error(this.errorMessage);
         this.isSignUpFailed = true;
       }

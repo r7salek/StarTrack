@@ -1,9 +1,11 @@
 <div class="container">
-  <div class="example-container" style="margin:2em;">
+  <p *ngIf="isLoading" role="status">Loading pending accounts…</p>
+  <div *ngIf="error" role="alert"><p>{{ error }}</p><button mat-stroked-button type="button" (click)="getUserApprovalData()">Try again</button></div>
+  <div class="example-container" [hidden]="isLoading || !!error">
     <mat-card appearance="outlined" fxFlexAlign="stretch">
       <div>
         <mat-form-field class="header">
-          <mat-label>Filter</mat-label>
+          <mat-label>Search pending accounts</mat-label>
           <input matInput (keyup)="applyFilter1($event)" placeholder="Search.." #input>
         </mat-form-field>
 
@@ -33,7 +35,7 @@
             <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Accept</th>
             <td mat-mdc-cell *matCellDef="let row2">
               <button mat-raised-button color="primary" type="button"
-                (click)="um_HelperService.onUpdateUser(row2?.email)"  matTooltip="Accept user Account request">
+                (click)="um_HelperService.onUpdateUser(row2?.email)" [attr.aria-label]="'Approve account for ' + row2.email" matTooltip="Accept user Account request">
                 <mat-icon>done</mat-icon>
               </button>
             </td>
@@ -43,7 +45,7 @@
             <th mat-mdc-header-cell *matHeaderCellDef mat-sort-header> Reject </th>
             <td mat-mdc-cell *matCellDef="let row2">
               <button mat-raised-button type="button" color="accent"
-                (click)="um_HelperService.delete(row2?.email)" matTooltip="Deactivate account">
+                (click)="rejectAccount(row2.email)" [attr.aria-label]="'Reject account for ' + row2.email" matTooltip="Reject account request">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </td>
@@ -53,7 +55,7 @@
           <tr mat-row *matRowDef="let row2; columns: displayedColumns1;"></tr>
 
           <tr class="mat-row" *matNoDataRow>
-            <td class="mat-mdc-cell" colspan="4">No data Found "{{input.value}}"</td>
+            <td class="mat-mdc-cell" colspan="6">{{ input.value ? 'No accounts match your search.' : 'No accounts are awaiting approval.' }}</td>
           </tr>
         </table>
         <mat-paginator #TableOnePaginator="matPaginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>

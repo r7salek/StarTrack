@@ -1,78 +1,22 @@
-<nav class="navbar navbar-fixed-top navbar-expand-md">
-  <div class="container">
-    <mat-toolbar color="primary" class="mat-elevation-z8">
-      <button mat-icon-button [routerLink]="'home'">
-        <mat-icon>home</mat-icon>
-      </button>
-      <span autosize>STAR TRACK PROJECT</span>
-      <ng-container>
-        <div fxFlex fxLayoutAlign="flex-end center">
-          <button mat-button [routerLink]="'createProject'" *ngIf="isUser">
-            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
-              >supervisor_account</mat-icon
-            >
-            <span style="font-size: 18px">Create Project</span>
-          </button>
-          <button
-            mat-button
-            [routerLink]="'CreateProjectManagement'"
-            *ngIf="isAdmin"
-          >
-            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
-              >supervisor_account</mat-icon
-            >
-            <span style="font-size: 18px">Create Project Management</span>
-          </button>
-          <button mat-button [routerLink]="'user-management'" *ngIf="isAdmin">
-            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
-              >supervisor_account</mat-icon
-            >
-            <span style="font-size: 18px">User Management</span>
-          </button>
-          <button mat-button *ngIf="!isLoggedIn" (click)="openDialog()">
-            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
-              >Login</mat-icon
-            >
-            <span style="font-size: 18px">Sign up</span>
-          </button>
-          <button mat-button *ngIf="!isLoggedIn" (click)="openLoginDialog()">
-            <mat-icon mat-list-icon class="material-icons mat-elevation-z8 mr"
-              >Login</mat-icon
-            >
-            <span style="font-size: 18px">login</span>
-          </button>
-          <mat-divider></mat-divider>
-          <button mat-button [matMenuTriggerFor]="menu1" *ngIf="isLoggedIn">
-            <mat-icon
-              mat-list-icon
-              class="material-icons mat-elevation-z8 mr"
-              style="font-size: 18px"
-              >airplay</mat-icon
-            >
-            <span style="font-size: 16px">{{ firstName }} {{ lastName }}</span>
-          </button>
-          <mat-menu #menu1="matMenu" class="menu-item mat-elevation-z8 mr">
-            <a [routerLink]="'user'" *ngIf="isLoggedIn">
-              <button mat-menu-item>
-                <mat-icon mat-list-icon class="material-icons"
-                  >accessibility</mat-icon
-                >
-                <span style="font-size: 18px">Profile</span>
-              </button>
-            </a>
-            <mat-divider></mat-divider>
-            <a [routerLink]="'profile'" *ngIf="isLoggedIn" (click)="logout()">
-              <button mat-menu-item>
-                <mat-icon mat-list-icon class="material-icons mr"
-                  >done</mat-icon
-                >
-                <span style="font-size: 18px">Logout</span>
-              </button>
-            </a>
-            <mat-divider></mat-divider>
-          </mat-menu>
-        </div>
+<header class="site-header">
+  <nav aria-label="Main navigation">
+    <a class="brand" routerLink="/home" aria-label="StarTrack home">StarTrack<span>OTR Project and Impact Tracker</span></a>
+    <div class="nav-links">
+      <a routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
+      <ng-container *ngIf="isLoggedIn; else publicNavigation">
+        <a routerLink="/projects" routerLinkActive="active" ariaCurrentWhenActive="page">Projects</a>
+        <a routerLink="/createProject" *ngIf="isUser || isAdmin" routerLinkActive="active" ariaCurrentWhenActive="page">Create project</a>
+        <a routerLink="/user-management" *ngIf="isAdmin" routerLinkActive="active" ariaCurrentWhenActive="page">User management</a>
+        <button mat-button [matMenuTriggerFor]="accountMenu" aria-label="Account menu">{{ firstName || 'Account' }} <mat-icon>expand_more</mat-icon></button>
+        <mat-menu #accountMenu="matMenu">
+          <a mat-menu-item routerLink="/user">Profile</a>
+          <button mat-menu-item (click)="logout()">Sign out</button>
+        </mat-menu>
       </ng-container>
-    </mat-toolbar>
-  </div>
-</nav>
+      <ng-template #publicNavigation>
+        <a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Sign in</a>
+        <a class="st-button st-button-primary" routerLink="/register">Register</a>
+      </ng-template>
+    </div>
+  </nav>
+</header>

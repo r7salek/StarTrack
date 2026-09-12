@@ -19,6 +19,7 @@ import {
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ProjectsComponent } from './projects/projects.component';
 import { CoreModule } from './core/core.module';
 import { authInterceptorProviders } from './core/login/_helpers/auth.interceptor';
 import { AdminAuthGuard } from './core/login/_services/admin-auth-guard.service';
@@ -41,6 +42,7 @@ import { UserManagementComponent } from './userManagement/userManagement.compone
 @NgModule({
   declarations: [
     AppComponent,
+    ProjectsComponent,
     UserManagementComponent,
     UserComponent,
     EditedUserProfileComponent,

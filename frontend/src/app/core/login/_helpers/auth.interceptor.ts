@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TokenStorageService } from '../_services/token-storage.service';
+import { AppConstants } from '../common/app.constants';
 
 const TOKEN_HEADER_KEY = 'Authorization';
 
@@ -27,7 +28,8 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     let authReq = req;
-    const loginPath = '/login';
+    const isAuthenticationRequest = req.url === AppConstants.AUTH_API + 'signin'
+      || req.url === AppConstants.AUTH_API + 'signup';
     const token = this.token.getToken();
     if (token != null) {
       authReq = req.clone({
@@ -39,14 +41,11 @@ export class AuthInterceptor implements HttpInterceptor {
         () => {},
         (err: any) => {
           if (err instanceof HttpErrorResponse) {
-            if (err.status !== 401 || window.location.pathname === loginPath) {
+            // A rejected sign-in belongs to its form, not the global session-expiry flow.
+            if (err.status !== 401 || isAuthenticationRequest) {
               return;
             }
             this.token.signOut();
-           // window.location.href = loginPath;
-            this._router.navigate(['login']).then(() => {
-              window.location.reload();
-            });
           }
         }
       )

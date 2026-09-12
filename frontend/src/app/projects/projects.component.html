@@ -1,0 +1,42 @@
+<section class="workspace" aria-labelledby="projects-title" [attr.aria-busy]="loading">
+  <header class="workspace-heading"><div><h1 id="projects-title">{{ showArchived ? 'Archived projects' : 'Projects' }}</h1><p>{{ showArchived ? 'Retained project records and history. Archived projects are read-only.' : 'Explore the shared research portfolio and its recorded progress.' }}</p></div><a class="st-button st-button-primary" routerLink="/createProject">Create project <span aria-hidden="true">+</span></a></header>
+  <button *ngIf="isAdmin" class="st-button st-button-secondary" [disabled]="loading" (click)="toggleArchived()">{{ showArchived ? 'Back to active projects' : 'View archived projects' }}</button>
+  <p *ngIf="loading" class="state-message" role="status">Loading projects…</p>
+  <div *ngIf="!loading && error" class="state-message" role="alert"><p>{{ error }}</p><button class="st-button st-button-secondary" (click)="load()">Retry</button></div>
+  <ng-container *ngIf="!loading && !error">
+    <div *ngIf="!projects.length && !showArchived" class="state-message"><h2>Create the first project</h2><p>There are no active projects in this workspace yet. Start with the project name and principal investigator; the form will guide you through the remaining sections.</p><a class="st-button st-button-primary" routerLink="/createProject">Create project</a></div>
+    <div *ngIf="!projects.length && showArchived" class="state-message"><h2>No archived projects</h2><p>Projects archived from the active list will remain available here with their history.</p></div>
+    <ng-container *ngIf="projects.length">
+      <div class="overview-tools">
+        <div class="search"><label for="project-search">Find a project</label><input id="project-search" type="search" placeholder="Search project, PI or department" [(ngModel)]="query" (ngModelChange)="rebuild()"></div>
+        <button class="st-button st-button-secondary" (click)="clearFilters()" [disabled]="!query && !selectedStatus">Clear filters</button>
+      </div>
+      <section *ngIf="!showArchived" class="status-overview" aria-labelledby="status-title">
+        <div><h2 id="status-title">Projects by status</h2><p>Counts reflect your search.<br>Select a status to filter the list.</p></div>
+        <div class="status-bars">
+          <button *ngFor="let status of counts" class="status-bar" [class.selected]="selectedStatus === status.key" [attr.aria-pressed]="selectedStatus === status.key" [attr.aria-label]="status.label + ': ' + status.count + ' projects'" (click)="selectStatus(status.key)">
+            <span>{{ status.label }}</span><span class="bar-track" aria-hidden="true"><span [style.width.%]="status.count / maxCount * 100"></span></span><strong>{{ status.count }}</strong>
+          </button>
+        </div>
+      </section>
+      <div class="list-heading"><h2>Project list</h2><p role="status">{{ filtered.length }} of {{ projects.length }} {{ showArchived ? 'archived' : 'active' }} projects<span *ngIf="selectedStatus"> · Status filter applied</span></p></div>
+      <div *ngIf="!filtered.length" class="state-message"><h3>No matching projects</h3><p>Try another name, PI or department, or clear the filters.</p></div>
+      <ng-container *ngIf="filtered.length">
+        <div class="project-table" tabindex="0" role="region" aria-label="Project list; scroll horizontally on smaller screens">
+          <table><caption class="visually-hidden">{{ showArchived ? 'Shared archived research projects' : 'Shared active research projects' }}</caption><thead><tr>
+            <th scope="col" [attr.aria-sort]="ariaSort('projectName')"><button (click)="sort('projectName')">Project <span aria-hidden="true">↕</span></button></th>
+            <th scope="col" [attr.aria-sort]="ariaSort('pi')"><button (click)="sort('pi')">Principal investigator <span aria-hidden="true">↕</span></button></th>
+            <th scope="col" [attr.aria-sort]="ariaSort('departmentPI')"><button (click)="sort('departmentPI')">Department <span aria-hidden="true">↕</span></button></th>
+            <th scope="col" [attr.aria-sort]="ariaSort('status')"><button (click)="sort('status')">Status <span aria-hidden="true">↕</span></button></th>
+            <th scope="col">Actions</th>
+          </tr></thead><tbody><tr *ngFor="let project of visibleProjects; trackBy: trackProject">
+            <th scope="row"><button class="project-name" (click)="viewDetails(project)">{{ project.projectName || 'Untitled project' }}</button></th>
+            <td>{{ piName(project) || 'Not recorded' }}</td><td>{{ project.departmentPI || 'Not recorded' }}</td><td>{{ statusLabel(project) }}</td>
+            <td class="row-actions"><button mat-button (click)="viewHistory(project)" [attr.aria-label]="'History of ' + project.projectName">History</button><ng-container *ngIf="isAdmin && !project.archived"><button mat-icon-button [matMenuTriggerFor]="actions" [attr.aria-label]="'Manage ' + project.projectName"><mat-icon>more_horiz</mat-icon></button><mat-menu #actions="matMenu"><button mat-menu-item (click)="edit(project)">Edit project</button><button mat-menu-item (click)="changeStatus(project)">Change status</button><button mat-menu-item [disabled]="archiving" (click)="archive(project)">Archive project</button></mat-menu></ng-container></td>
+          </tr></tbody></table>
+        </div>
+        <nav class="pagination" aria-label="Project pages"><span>Page {{ page + 1 }} of {{ pages }} · Up to 15 projects per page</span><div><button class="st-button st-button-secondary" [disabled]="page === 0" (click)="page = page - 1">Previous</button><button class="st-button st-button-secondary" [disabled]="page + 1 >= pages" (click)="page = page + 1">Next</button></div></nav>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</section>

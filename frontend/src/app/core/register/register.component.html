@@ -1,61 +1,41 @@
-<mat-toolbar color="primary" fxLayoutAlign="space-around center" >
-  <span >Create New Account</span>
-</mat-toolbar>
-<form *ngIf="!isSuccessful" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate
-  class="normal-form">
-  <mat-grid-list cols="1" rowHeight="400px" class="content">
-    <mat-grid-tile>
-      <div class="controles-container form-group">
-        <mat-form-field appearance="outline">
-          <mat-label>First Name</mat-label>
-          <input matInput type="text" class="form-control" name="firstName" [(ngModel)]="form.firstName" required
-            minlength="3" maxlength="20" #firstName="ngModel" placeholder="First Name" />
-          <mat-icon matSuffix>account_box</mat-icon>
-          <mat-hint>Must be atleast 3 characters and atmost 20 characters
-          </mat-hint>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Last Name</mat-label>
-          <input matInput type="text" class="form-control" name="lastName" [(ngModel)]="form.lastName" required
-            minlength="3" maxlength="20" #lastName="ngModel" placeholder="Last Name" />
-          <mat-icon matSuffix>account_box</mat-icon>
-          <mat-hint>Must be atleast 3 characters and atmost 20 characters
-          </mat-hint>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" class="form-control" name="email" [(ngModel)]="form.email" required email
-            #email="ngModel" placeholder="Email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"/>
-            <mat-icon matSuffix>email</mat-icon>
-          <mat-hint>Please Enter valid format</mat-hint>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" class="form-control" name="password" [(ngModel)]="form.password"
-            required minlength="6" #password="ngModel" placeholder="Password" [type]="hide ? 'password' : 'text'" />
-          <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide">
-            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
-          <mat-hint>Must be atleast 6 characters
-          </mat-hint>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Confirm Password</mat-label>
-          <input matInput type="password" class="form-control" name="matchingPassword"
-            [(ngModel)]="form.matchingPassword" required minlength="6" #matchingPassword="ngModel"
-            placeholder="Confirm Password" [type]="hide1 ? 'password' : 'text'" />
-          <button mat-icon-button matSuffix (click)="hide1 = !hide1" [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide">
-            <mat-icon>{{hide1 ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
-          <mat-hint >Must match with password
-          </mat-hint>
-        </mat-form-field>
-      </div>
-    </mat-grid-tile>
-  </mat-grid-list>
-  <div class="button-row"> <button mat-raised-button color="primary"
-      matTooltip="Please fill all require fields first for registation" [matTooltipPosition]="'right'">User Registration</button><button mat-raised-button color="warn" (click)="onClose()"
-      matTooltip="Cancel Registration Process">Cancel</button></div>
-</form>
+<section class="st-account" aria-labelledby="register-title">
+  <h1 id="register-title">Request a StarTrack account</h1>
+  <ng-container *ngIf="!isSuccessful; else registered">
+    <p>Create an account to join the shared research project workspace. An administrator will need to activate it before you can sign in.</p>
+    <form stFocusInvalid name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>First name</mat-label>
+        <input matInput name="firstName" [(ngModel)]="form.firstName" required minlength="3" maxlength="20" autocomplete="given-name">
+        <mat-error>Enter your first name (3–20 characters).</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Last name</mat-label>
+        <input matInput name="lastName" [(ngModel)]="form.lastName" required minlength="3" maxlength="20" autocomplete="family-name">
+        <mat-error>Enter your last name (3–20 characters).</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" name="email" [(ngModel)]="form.email" required email pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" autocomplete="email">
+        <mat-error>Enter a valid email address.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hide ? 'password' : 'text'" name="password" [(ngModel)]="form.password" required minlength="6" autocomplete="new-password">
+        <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="hide ? 'Show password' : 'Hide password'" [attr.aria-pressed]="!hide"><mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon></button>
+        <mat-hint>At least 6 characters.</mat-hint><mat-error>Enter a password of at least 6 characters.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm password</mat-label>
+        <input matInput [type]="hide1 ? 'password' : 'text'" name="matchingPassword" [(ngModel)]="form.matchingPassword" required minlength="6" autocomplete="new-password">
+        <button type="button" mat-icon-button matSuffix (click)="hide1 = !hide1" [attr.aria-label]="hide1 ? 'Show confirmation password' : 'Hide confirmation password'" [attr.aria-pressed]="!hide1"><mat-icon>{{ hide1 ? 'visibility_off' : 'visibility' }}</mat-icon></button>
+        <mat-error>Enter the same password again.</mat-error>
+      </mat-form-field>
+      <p *ngIf="isSignUpFailed" class="st-error" role="alert">{{ errorMessage }}</p>
+      <div class="st-account-actions"><button type="submit" class="st-button st-button-primary" [disabled]="isSubmitting">{{ isSubmitting ? 'Sending request…' : 'Request account' }}</button><button type="button" class="st-button st-button-secondary" (click)="onClose()">Cancel</button></div>
+    </form>
+  </ng-container>
+  <ng-template #registered>
+    <div class="st-notice" role="status"><h2>Account requested</h2><p>Your registration was received. You can sign in once a StarTrack administrator activates your account. If you need help with approval, contact your OTR administrator.</p></div>
+    <div class="st-account-actions"><a class="st-button st-button-primary" routerLink="/login" (click)="dialogRef?.close()">Go to sign in</a></div>
+  </ng-template>
+</section>

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:ci": "node --test proxy.conf.spec.cjs local-assets.spec.cjs && CI=true ng test --watch=false --browsers=ChromeHeadlessNoSandbox --progress=false"
+    "test:ci": "node --test proxy.conf.spec.cjs local-assets.spec.cjs && CI=true ng test --watch=false --browsers=ChromeHeadlessNoSandbox --source-map=false --progress=false"
   },
   "private": true,
   "dependencies": {

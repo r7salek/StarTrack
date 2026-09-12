@@ -1,4 +1,4 @@
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { CreateProjectComponent } from './CreateProject.component';
 import { Subject } from 'rxjs';
 import { Component, ViewChild } from '@angular/core';
@@ -28,6 +28,7 @@ describe('CreateProjectComponent', () => {
     const stepper = jasmine.createSpyObj('MatStepper', ['next']);
     component.stepper = stepper;
     component.AddToProjectUpdate = { projectName: 'Draft' } as any;
+    spyOn(component, 'prepareSave').and.returnValue(true); // Isolate the delayed request boundary.
     component.storeData();
     component.storeData();
     expect(service.createProject).toHaveBeenCalledTimes(1);
@@ -45,6 +46,7 @@ describe('CreateProjectComponent', () => {
       { setLocale: () => {} } as any, {} as any);
     const draft = { projectName: 'Retained draft' } as any;
     component.AddToProjectUpdate = draft;
+    spyOn(component, 'prepareSave').and.returnValue(true);
     component.stepper = jasmine.createSpyObj('MatStepper', ['next']);
     component.storeData();
     result.error({ status: 400 });
@@ -53,14 +55,43 @@ describe('CreateProjectComponent', () => {
     expect(notices.success).not.toHaveBeenCalled();
     expect(component.isSaving).toBeFalse();
   });
+
+  it('refreshes review and saves current fields rather than a previous review snapshot', () => {
+    const result = new Subject<any>();
+    const createProject = jasmine.createSpy().and.returnValue(result);
+    const component = new CreateProjectComponent(new FormBuilder(), { detectChanges: () => {} } as any,
+      jasmine.createSpyObj('Notice', ['success', 'error']), { getUser: () => ({ id: 1 }) } as any,
+      { createProject } as any, { setLocale: () => {} } as any, {} as any);
+    component.ngOnInit();
+    component.form1.get('collaborationRows').at(0).get('collaboration').setValue(['Synthetic collaboration']);
+    component.form.patchValue({ projectName: 'Old review', otherInforPI: 'Old optional text' });
+    component.onStepChanged(6);
+    expect(component.AddToProjectUpdate.projectName).toBe('Old review');
+    component.form.patchValue({ projectName: 'Current entry', otherInforPI: '' });
+    component.storeData();
+    expect(createProject).toHaveBeenCalledWith(jasmine.objectContaining({ projectName: 'Current entry', otherInforPI: '' }));
+    expect(component.isSaving).toBeTrue();
+    component.storeData();
+    expect(createProject).toHaveBeenCalledTimes(1);
+    result.error({ status: 400 });
+    expect(component.isSaving).toBeFalse();
+    expect(component.form.value.projectName).toBe('Current entry');
+    component.form.get('projectName').setValidators(Validators.required);
+    component.form.get('projectName').setValue('');
+    component.storeData();
+    expect(createProject).toHaveBeenCalledTimes(1);
+    expect(component.form.get('projectName').touched).toBeTrue();
+  });
 });
 
 @Component({ template: `
+  <p role="status">{{editor.isSaving ? 'Saving project. Editing is paused.' : ''}}</p>
+  <div [attr.inert]="editor.isSaving ? '' : null" [attr.aria-busy]="editor.isSaving">
   <mat-stepper linear #steps
     (selectionChange)="$event.selectedIndex < steps.steps.length - 1 && editor.beginDraft()">
     <mat-step label="Overview" [completed]="editor.saveSucceeded">Draft</mat-step>
     <mat-step label="Done">Saved</mat-step>
-  </mat-stepper>` })
+  </mat-stepper></div>` })
 class CreateCompletionHost {
   @ViewChild(MatStepper) stepper!: MatStepper;
   editor!: CreateProjectComponent;
@@ -78,6 +109,7 @@ describe('Create project Material completion boundary', () => {
       { getUser: () => ({ id: 1 }) } as any,
       { createProject: () => response } as any, { setLocale: () => {} } as any, {} as any);
     fixture.componentInstance.editor = editor;
+    spyOn(editor, 'prepareSave').and.returnValue(true); // This host isolates Material completion behavior.
     fixture.detectChanges();
     editor.stepper = fixture.componentInstance.stepper;
     const clickDone = () => {
@@ -88,9 +120,14 @@ describe('Create project Material completion boundary', () => {
     clickDone();
     expect(editor.stepper.selectedIndex).toBe(0);
     editor.storeData();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('div').hasAttribute('inert')).toBeTrue();
+    expect(fixture.nativeElement.querySelector('[role="status"]').textContent).toContain('Saving project');
     clickDone();
     expect(editor.stepper.selectedIndex).toBe(0);
     response.error({ status: 400 });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('div').hasAttribute('inert')).toBeFalse();
     clickDone();
     expect(editor.stepper.selectedIndex).toBe(0);
     response = new Subject<any>();

@@ -13,6 +13,9 @@ import { TokenStorageService } from '../../core/login/_services/token-storage.se
   styleUrls: ['./EditedUserProfile.component.scss'],
 })
 export class EditedUserProfileComponent implements OnInit {
+  isSaving = false;
+  isLoading = false;
+  error = '';
   currentUser: any;
   idValue!: number;
   userData: UserData[] = [];
@@ -32,42 +35,47 @@ export class EditedUserProfileComponent implements OnInit {
   }
   //GEt current user and populate data into form
   public getUsers() {
-    if (!!this.currentUser.id) {
+    if (!!this.currentUser?.id) {
+      this.isLoading = true;
       this.service.getCurrentUser(this.currentUser.id).subscribe(
         (res1) => {
+          this.isLoading = false;
           if (!!res1) {
             this.service.populateForm(res1);
             this.idValue = this.currentUser.id;
           }
         },
         (error: HttpErrorResponse) => {
-          alert(error.message);
+          this.isLoading = false;
+          this.error = 'Your profile could not be loaded. Close this dialog and try again.';
         }
       );
     }
   }
   //Update the user data which is modify into the form
   public updateUserProfile(userData: UserData): void {
+    if (this.isSaving || this.isLoading || !this.idValue) return;
+    this.error = '';
+    this.service.form.markAllAsTouched();
     if(this.service.form.valid){
+      this.isSaving = true;
       this.service.updateUserProfile(this.idValue, userData).subscribe(
         (response: UserData) => {
-          this.getUsers();
-          this.service.form.reset();
-          this.service.initializeFormGroup();
+          this.isSaving = false;
           this.notificationService.success(
-            ':: User Profile is successfully updated'
+            'Your profile has been updated.'
           );
-          this.dialogRef.close();
-          window.location.reload();
+          this.dialogRef.close(true);
         },
         (error: HttpErrorResponse) => {
-          alert(error.message);
+          this.isSaving = false;
+          this.error = 'Your profile could not be saved. Please try again.';
         }
       );
     }
     else{
       this.notificationService.error(
-        ':: User role is unsuccessfully updated. Pelase fill out all necessary fields'
+        'Check the highlighted profile fields.'
       );
     }
     if (this.service.form.invalid) {
@@ -76,7 +84,7 @@ export class EditedUserProfileComponent implements OnInit {
   }
   // Close the dialog box
   onClose() {
+    if (this.isSaving) return;
     this.dialogRef.close();
-    window.location.reload();
   }
 }

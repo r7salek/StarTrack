@@ -19,6 +19,8 @@ import { TokenStorageService } from '../core/login/_services/token-storage.servi
   styleUrls: ['./user.component.scss'],
 })
 export class UserComponent implements OnInit {
+  isLoading = false;
+  error = '';
   userData: UserData[] = []; // Array with user data interface
   idValue: number | undefined;
   currentUser: any; // variable for current user
@@ -35,16 +37,20 @@ export class UserComponent implements OnInit {
   }
   // Get current user information
   public getUsers() {
-    if (!!this.currentUser.id) {
+    this.error = '';
+    if (!!this.currentUser?.id) {
+      this.isLoading = true;
       this.service.getCurrentUser(this.currentUser.id).subscribe(
         (res1) => {
+          this.isLoading = false;
           if (!!res1) {
             this.service.populateForm(res1);
             this.idValue = this.currentUser.id;
           }
         },
         (error: HttpErrorResponse) => {
-          alert(error.message);
+          this.isLoading = false;
+          this.error = 'Your profile could not be loaded. Please try again.';
         }
       );
     }
@@ -55,14 +61,16 @@ export class UserComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = '30%';
-    this.dialog.open(EditedUserProfileComponent, dialogConfig);
+    dialogConfig.width = '560px';
+    dialogConfig.maxWidth = 'calc(100vw - 32px)';
+    this.dialog.open(EditedUserProfileComponent, dialogConfig).afterClosed().subscribe(() => this.getUsers());
   }
   ChangePassword(){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = '30%';
+    dialogConfig.width = '560px';
+    dialogConfig.maxWidth = 'calc(100vw - 32px)';
     this.dialog.open(ChangePasswordComponent, dialogConfig);
   }
 }

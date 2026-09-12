@@ -6,6 +6,9 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
+  OnDestroy,
+  Optional,
+  HostListener,
 } from '@angular/core';
 import {
   MatDialogRef,
@@ -22,12 +25,44 @@ import { TokenStorageService } from '../../core/login/_services/token-storage.se
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { DraftSafetyService } from '../../services/draft-safety.service';
+import { forkJoin, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { MatStepper } from '@angular/material/stepper';
 @Component({
   selector: 'app-updateProject',
   templateUrl: './updateProject.component.html',
   styleUrls: ['./updateProject.component.scss'],
 })
-export class UpdateProjectComponent implements OnInit, AfterViewInit {
+export class UpdateProjectComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('stepper') stepper?: MatStepper;
+  @ViewChild('editorFields') editorFields?: ElementRef<HTMLElement>;
+  private unregisterDraft?: () => void;
+  private readonly destroyed = new Subject<void>();
+  private isDestroyed = false;
+  loading = true;
+  loadError = '';
+
+  get hasUnsavedChanges(): boolean {
+    return !this.saveSucceeded && [this.createProjectService.form, this.createProjectService.form1,
+      this.createProjectService.form2, this.createProjectService.form3,
+      this.createProjectService.form4, this.createProjectService.form5].some(form => form?.dirty);
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  protectBrowserExit(event: BeforeUnloadEvent): void {
+    if (this.drafts ? this.drafts.shouldProtect(this) : this.isSaving || this.hasUnsavedChanges) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.isDestroyed = true;
+    this.destroyed.next();
+    this.destroyed.complete();
+    this.unregisterDraft?.();
+  }
   // Component-wide data arrays
   dataSource: any[] = [];
   collaboration: any[] = [];
@@ -163,163 +198,78 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef, // Change detection
     private dateAdapter: DateAdapter<Date>, // Date adapter for localization
     @Inject(MAT_DIALOG_DATA) public data: any, // Injected data for the dialog
-    private fb: FormBuilder // Form builder for reactive forms
+    private fb: FormBuilder, // Form builder for reactive forms
+    @Optional() private drafts?: DraftSafetyService
   ) {
     dateAdapter.setLocale('en-de'); // DD/MM/YYYY
     this.currentUser = this.tokenStorageService.getUser(); // Retrieve current user details
   }
 
   ngOnInit() {
-    // Fetch and initialize group members
-    this.createProjectService
-      .getGroupMemberById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          if (!!res2) {
-            this.initializeGroupMemberRows(res2);
-          }
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    // Fetch and initialize outputs
-    this.createProjectService
-      .getOutputById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          if (!!res2) {
-            this.initializeSamplesRows(res2);
-          }
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    // Fetch and initialize collaborations
-    this.createProjectService
-      .getCollaborationById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          if (!!res2) {
-            this.initializeCollaborationRows(res2);
-          }
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    this.createProjectService
-      .getExternalAdvisorById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          if (!!res2) {
-            this.initializeExternalAdvisorRows(res2);
-          }
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    // Fetch and initialize subcontractor
-    this.createProjectService
-      .getsubcontractorById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          if (!!res2) {
-            this.initializeSubcontractorRows(res2);
-          }
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    // Fetch and initialize ppi
-    this.createProjectService
-      .getppiById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          if (!!res2) {
-            this.initializePpiRows(res2);
-          }
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    this.createProjectService
-      .getotrById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          if (!!res2) {
-            this.initializeOtrRows(res2);
-          }
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    // Get the funding rows
-    this.createProjectService
-      .getFundingById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          // Iterate through the res2 array
-          for (const item of res2) {
-            // Check if 'funding' property exists and is a string
-            if (item.funding && typeof item.funding === 'string') {
-              const fundingString = item.funding as string;
-
-              // Remove square brackets and whitespace from the string, then split by commas
-              const fundingArray = fundingString
-                .replace(/\[|\]/g, '')
-                .split(',')
-                .map((funding: string) => funding.trim());
-
-              // Update the 'funding' property of the item with the fundingArray
-              item.funding = fundingArray;
-            }
-          }
-
-          this.initializeFundingRows(res2);
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    // Get the funding overview rows
-    this.createProjectService
-      .getFundingOverviewById(this.createProjectService.form.value.id)
-      .subscribe(
-        (res2) => {
-          // Iterate through the res2 array
-          for (const item of res2) {
-            // Check if 'funding' property exists and is a string
-            if (
-              item.fundingOverview &&
-              typeof item.fundingOverview === 'string'
-            ) {
-              const fundingString = item.fundingOverview as string;
-
-              // Remove square brackets and whitespace from the string, then split by commas
-              const fundingArray = fundingString
-                .replace(/\[|\]/g, '')
-                .split(',')
-                .map((fundingOverview: string) => fundingOverview.trim());
-
-              // Update the 'funding' property of the item with the fundingArray
-              item.fundingOverview = fundingArray;
-            }
-          }
-
-          this.initializeFundingOverviewRows(res2);
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-      );
-    this.cdr.detectChanges(); // Trigger change detection to update the view
+    this.dialogRef.disableClose = true;
+    [this.createProjectService.form, this.createProjectService.form1, this.createProjectService.form2,
+      this.createProjectService.form3, this.createProjectService.form4, this.createProjectService.form5]
+      .forEach(form => form.markAsPristine());
+    this.unregisterDraft = this.drafts?.register(this);
+    this.loadProject();
   }
+  private loadProject(): void {
+    this.loading = true;
+    this.loadError = '';
+    const id = this.createProjectService.form.value.id;
+    forkJoin({
+      members: this.createProjectService.getGroupMemberById(id),
+      outputs: this.createProjectService.getOutputById(id),
+      collaborations: this.createProjectService.getCollaborationById(id),
+      advisors: this.createProjectService.getExternalAdvisorById(id),
+      subcontractors: this.createProjectService.getsubcontractorById(id),
+      ppi: this.createProjectService.getppiById(id),
+      otr: this.createProjectService.getotrById(id),
+      funding: this.createProjectService.getFundingById(id),
+      overview: this.createProjectService.getFundingOverviewById(id),
+    }).pipe(takeUntil(this.destroyed)).subscribe({
+      next: rows => {
+        // Do not expose or save a partially loaded snapshot.
+        if (Object.values(rows).some(value => !Array.isArray(value))) {
+          this.failProjectLoad();
+          return;
+        }
+        this.initializeGroupMemberRows(rows.members);
+        this.initializeSamplesRows(rows.outputs);
+        this.initializeCollaborationRows(rows.collaborations);
+        this.initializeExternalAdvisorRows(rows.advisors);
+        this.initializeSubcontractorRows(rows.subcontractors);
+        this.initializePpiRows(rows.ppi);
+        this.initializeOtrRows(rows.otr);
+        this.initializeFundingRows(this.normalizeFundingRows(rows.funding, 'funding'));
+        this.initializeFundingOverviewRows(this.normalizeFundingRows(rows.overview, 'fundingOverview'));
+        this.loading = false;
+      },
+      error: () => this.failProjectLoad(),
+      complete: () => { if (this.loading && !this.isDestroyed) this.failProjectLoad(); },
+    });
+  }
+
+  onStepChanged(index: number): void {
+    if (!this.isSaving && index === 6) this.combineData();
+  }
+
+  private normalizeFundingRows(rows: any[], key: string): any[] {
+    return rows.map(row => ({ ...row, [key]: typeof row[key] === 'string'
+      ? row[key].replace(/\[|\]/g, '').split(',').map((value: string) => value.trim())
+      : row[key] }));
+  }
+
+  private failProjectLoad(): void {
+    this.loading = false;
+    this.loadError = 'The complete project could not be loaded. No changes have been saved. Retry or close this editor.';
+  }
+
+  retryLoad(): void {
+    if (this.isDestroyed || this.loading || !this.loadError || this.isSaving || this.hasUnsavedChanges) return;
+    this.loadProject();
+  }
+
   ngAfterViewInit(): void {
     // Adjust width after the view initializes
   }
@@ -722,6 +672,10 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
   }
   combineData() {
     this.saveSucceeded = false;
+    this.otherInforPI = '';
+    this.ttoContractOtherInfo = '';
+    this.modalityOther = '';
+    this.areaOfExpertiseOther = '';
     if (this.createProjectService.form.get('otherInforPI')?.value !== '') {
       this.otherInforPI =
         this.createProjectService.form.get('otherInforPI')?.value;
@@ -995,18 +949,37 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
       return false; // Return false if funding array is empty or null
     }
   }
+  prepareSave(): boolean {
+    const forms = [this.createProjectService.form, this.createProjectService.form5,
+      this.createProjectService.form3, this.createProjectService.form1,
+      this.createProjectService.form2, this.createProjectService.form4];
+    forms.forEach(form => form.markAllAsTouched?.());
+    const invalidStep = forms.findIndex(form => !form.valid);
+    if (invalidStep !== -1) {
+      if (this.stepper) this.stepper.selectedIndex = invalidStep;
+      this.notificationService.error('Check the required fields before saving. Your entries are still here.');
+      this.cdr.detectChanges();
+      this.editorFields?.nativeElement.querySelector<HTMLElement>('input.ng-invalid, textarea.ng-invalid, mat-select.ng-invalid')?.focus();
+      return false;
+    }
+    this.combineData();
+    return true;
+  }
+
   storeData() {
-    if (this.isSaving) return;
+    if (this.isDestroyed || this.loading || this.loadError || this.isSaving) return;
     const source = this.data?.dataKey;
     if (!source?.projectId || !Number.isInteger(source.versionNumber)) {
       this.notificationService.error('Reopen the project from the latest list before saving.');
       return;
     }
+    if (!this.prepareSave()) return;
     if (this.AddToProjectUpdate) {
       this.saveSucceeded = false;
       this.isSaving = true;
       this.createProjectService
         .appendProjectVersion(source.projectId, source.versionNumber, this.AddToProjectUpdate)
+        .pipe(takeUntil(this.destroyed))
         .subscribe(
           (response: any) => {
             this.isSaving = false;
@@ -1063,6 +1036,7 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
   }
   // Add dynamically new array of fields
   addFundingOverview() {
+    this.createProjectService.form5.markAsDirty();
     this.createProjectService.fundingOverviewArr.push(
       this.createProjectService.initFundingOverviewRows()
     );
@@ -1070,6 +1044,7 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
   }
   // Delete array of fields
   deleteFundingOverview(index: number) {
+    this.createProjectService.form5.markAsDirty();
     this.createProjectService.fundingOverviewArr.removeAt(index);
   }
   calculateGridHeight(rowCount: number | undefined): string {
@@ -1294,8 +1269,11 @@ export class UpdateProjectComponent implements OnInit, AfterViewInit {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
-  onClose() {
+  async onClose(): Promise<void> {
+    if (this.isSaving) return;
+    if (this.drafts && !await this.drafts.confirmLeave()) return;
+    this.isDestroyed = true;
+    this.destroyed.next();
     this.dialogRef.close();
-    window.location.reload();
   }
 }

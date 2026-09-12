@@ -17,12 +17,19 @@ copied operational data. Runtime credentials must be supplied outside Git.
 
 ## Current state
 
-Phase 4 is complete locally on `codex/backend-modernization`: the backend now uses
+Phase 4 is complete and merged into `main`: the backend now uses
 Java 21/Spring Boot 4.1.1, with safe API failures and versioned project history.
 See [Phase 4 checkpoints](docs/PHASE4_PROGRESS.md) for measured test results and
 local and clean-checkout verification. Existing populated databases require an explicitly
 reviewed identity mapping; **do not point ordinary startup at your retained
-database to bypass that review**. No production deployment or push is included.
+database to bypass that review**. This is not a production deployment.
+
+Phase 5 UI modernisation is complete locally on `codex/ui-modernisation`: a
+Cambridge-themed public landing page, shared project overview and clearer
+project/account workflows. See the [interface guide](docs/UI_GUIDE.md) and
+[Phase 5 verification record](docs/PHASE5_PROGRESS.md). This phase is submitted
+for review separately from production deployment. SharePoint import, AI
+features and further framework upgrades remain deferred.
 
 The imported code has been matched to the public upstream revisions documented
 in [the provenance record](docs/UPSTREAM_PROVENANCE.md). It now runs locally

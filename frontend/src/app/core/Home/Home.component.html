@@ -1,23 +1,50 @@
-<mat-card appearance="outlined" fxLayoutAlign="stretch" fxFlexAlign="stretch" id="container">
-  <div fxLayout="row">
-    <div fxFlex="<flex-basic>" class="centered">OTR Project and Impact Tracker</div>
-  </div>
-  <div fxLayout="row">
-    <div fxFlex="<flex-basic>" class="centered1">Translational success tracking and read out: Please fill in the initial questionnaire with the project details to get started</div>
-  </div>
-  </mat-card>
-  <mat-card appearance="outlined" fxLayout fxLayoutAlign="stretch" fxLayout="row" fxLayout.xs="column" style="height:100px;">
-
-    <div fxLayoutAlign="stretch" class="item">
-      <img src='/assets/images/cambridge.png' alt="">
+<div class="landing">
+  <section class="introduction" aria-labelledby="welcome-title">
+    <div class="intro-copy">
+      <p class="product-name">StarTrack</p>
+      <h1 id="welcome-title">OTR Project<br>and Impact Tracker</h1>
+      <p class="intro-description">A shared record of research projects, the people behind them, and their progress towards translational impact.</p>
+      <p>Bring project details, collaborations and funding together. Keep a clear history as the work develops.</p>
+      <div class="landing-actions">
+        <a class="st-button st-button-primary" routerLink="/register">Request an account <span aria-hidden="true">↗</span></a>
+        <a class="st-button st-button-secondary" routerLink="/login">Sign in</a>
+      </div>
+      <p class="access-note">New accounts need administrator approval before sign-in.</p>
     </div>
-    <div fxLayoutAlign="stretch"  class="item">
-      <img src='/assets/images/LMU_Muenchen_Logo.svg.png' alt="">
+    <figure class="preview" aria-labelledby="preview-title" aria-describedby="preview-description">
+      <div class="preview-heading"><h2 id="preview-title">Your project overview</h2><span>Illustrative preview</span></div>
+      <div class="preview-summary"><strong>12</strong><span>research projects<br>in one shared workspace</span></div>
+      <div class="preview-bars" role="img" aria-label="Synthetic example: 5 submitted, 4 accepted, 1 rejected and 2 closed projects">
+        <div><span>Submitted</span><span class="bar-track"><span style="width:100%"></span></span><strong>5</strong></div>
+        <div><span>Accepted</span><span class="bar-track"><span style="width:80%"></span></span><strong>4</strong></div>
+        <div><span>Rejected</span><span class="bar-track"><span style="width:20%"></span></span><strong>1</strong></div>
+        <div><span>Closed</span><span class="bar-track"><span style="width:40%"></span></span><strong>2</strong></div>
+      </div>
+      <div class="preview-project"><span>Example research project</span><span>Submitted</span></div>
+      <figcaption id="preview-description">Synthetic examples only. Real project information is available after sign-in.</figcaption>
+    </figure>
+  </section>
+  <section class="purpose" aria-labelledby="purpose-title">
+    <div><h2 id="purpose-title">From project details<br>to a lasting record.</h2><p>Designed for research teams and the Office for Translational Research.</p></div>
+    <dl>
+      <div><dt>People and expertise</dt><dd>Record principal investigators, team members and research collaborators.</dd></div>
+      <div><dt>Progress and support</dt><dd>Bring together project scope, funding, outputs and OTR involvement.</dd></div>
+      <div><dt>A history you can follow</dt><dd>Review recorded versions as projects change, with earlier information retained.</dd></div>
+    </dl>
+  </section>
+  <section class="getting-started" aria-labelledby="start-title">
+    <h2 id="start-title">New to StarTrack?</h2>
+    <p>Request an account using your email address. Once an administrator activates it, sign in to explore the shared projects or create your first project. You’ll be guided through the information to provide.</p>
+    <a routerLink="/register">Request access <span aria-hidden="true">→</span></a>
+  </section>
+  <footer class="acknowledgements" aria-labelledby="acknowledgement-title">
+    <div class="partner-logos">
+      <img src="/assets/images/cambridge.png" alt="University of Cambridge" width="220" height="72">
+      <img src="/assets/images/LMU_Muenchen_Logo.svg.png" alt="Ludwig Maximilian University of Munich" width="170" height="72">
+      <img src="/assets/images/lmu.jpg" alt="NIHR Cambridge Biomedical Research Centre" width="260" height="72">
     </div>
-    <div fxLayoutAlign="stretch"  class="item">
-      <img src='/assets/images/lmu.jpg' alt="">
-    </div>
-    <div fxLayout fxLayoutAlign="right" class="item1">
-      Supported by the STAR-Track project within the Cambridge LMU Strategic Partnership in collaboration with the CPC-M bioArchive in Munich.
-       </div>
-  </mat-card>
+    <h2 id="acknowledgement-title">Acknowledgements</h2>
+    <p>Initially developed by the contributor <a href="https://github.com/zaheer004">zaheer004</a>, with original source code published by SchubertLab and credited to CPC-M bioArchive Munich. Subsequently enhanced and improved within OTR by Reza Salek.</p>
+    <p>The original application acknowledges support from the STAR-Track project within the Cambridge–LMU Strategic Partnership, in collaboration with CPC-M bioArchive Munich.</p>
+  </footer>
+</div>

@@ -1,54 +1,8 @@
-<mat-card appearance="outlined" fxFlexAlign="stretch">
-  <mat-card-title>
-    User Profile
-  </mat-card-title>
-  <div class="container">
-    <mat-card appearance="outlined">
-      <divfxFlex fxFlexAlign="space-around center" class="example-container">
-        <mat-toolbar color="primary" fxLayoutAlign="space-around center">
-          <span>User Profile</span>
-        </mat-toolbar>
-        <form [formGroup]="service.form" class="normal-form">
-          <mat-grid-list cols="3" rowHeight="100px">
-            <mat-grid-tile>
-              <div class="controles-container">
-                <input matInput readonly hidden value={{idValue}} matInput placeholder="id">
-                <mat-form-field appearance="fill">
-                  <mat-label>First Name</mat-label>
-                  <input matInput readonly formControlName="firstName" matInput placeholder="First Name">
-                  <mat-icon matSuffix>account_box</mat-icon>
-                </mat-form-field>
-              </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-              <div class="controles-container">
-                <mat-form-field appearance="fill">
-                  <mat-label>Last Name</mat-label>
-                  <input matInput readonly formControlName="lastName" matInput placeholder="Last Name">
-                  <mat-icon matSuffix>account_box</mat-icon>
-                </mat-form-field>
-              </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-              <div class="controles-container">
-                <mat-form-field appearance="fill">
-                  <mat-label>Email</mat-label>
-                  <input matInput readonly formControlName="email" matInput placeholder="Email">
-                  <mat-icon matSuffix>email</mat-icon>
-                </mat-form-field>
-              </div>
-            </mat-grid-tile>
-          </mat-grid-list>
-          <div class="example-button-row">
-            <p>
-              <button mat-raised-button color="primary" matTooltip="Update User Profile" class="example-button"
-                (click)="UpdateUserProfile(service.form.value)">Update Profile</button>
-                <button mat-raised-button color="accent" matTooltip="Change password" class="example-button"
-                (click)="ChangePassword()">Change Password</button>
-            </p>
-          </div>
-        </form>
-      </divfxFlex>
-    </mat-card>
-  </div>
-</mat-card>
+<section class="account-page">
+<h1>Manage your account</h1><p>Review your details or change your password.</p>
+<p *ngIf="isLoading" role="status">Loading your profile…</p>
+<div *ngIf="error" role="alert"><p>{{ error }}</p><button mat-stroked-button type="button" (click)="getUsers()">Try again</button></div>
+<div *ngIf="!isLoading && !error">
+<dl><dt>First name</dt><dd>{{ service.form.value.firstName }}</dd><dt>Last name</dt><dd>{{ service.form.value.lastName }}</dd><dt>Email</dt><dd>{{ service.form.value.email }}</dd></dl>
+<div class="actions"><button mat-flat-button color="primary" type="button" (click)="UpdateUserProfile(service.form.value)">Edit profile</button><button mat-stroked-button type="button" (click)="ChangePassword()">Change password</button></div>
+</div></section>

@@ -1,12 +1,13 @@
 /**Component use to define logic for TOP navigation bar
  *
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { LoginComponent } from '../login/login/login.component';
 import { TokenStorageService } from '../login/_services/token-storage.service';
 import { RegisterComponent } from '../register/register.component';
+import { DraftSafetyService } from '../../services/draft-safety.service';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class ToolbarComponent implements OnInit {
   constructor(
     private tokenStorageService: TokenStorageService, // Service is used for getting information related to user
     private dialog: MatDialog, // open fialog box
-    private _router: Router
+    private _router: Router,
+    @Optional() private drafts?: DraftSafetyService
   ) {
     // Get login information of user if he is login and store values for further processing
     const user = this.tokenStorageService.getUser();
@@ -61,13 +63,10 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
   }
   // Logout information
-   logout(): void {
+   async logout(): Promise<void> {
+    if (this.drafts && !await this.drafts.confirmLeave()) return;
+    this.drafts?.releaseForSignOut();
     this.tokenStorageService.signOut();
-    window.location.reload();
-    //window.location.href = '/home';
-    this._router.navigate(['home']).then(() => {
-      window.location.reload();
-    });
   }
   // Get current user email
   public getCurrentEmail() {
