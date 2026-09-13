@@ -1,43 +1,6 @@
-<div fxFlex fxFlexAlign="center" class="example-container">
-  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
-    <span>Modify User Role</span>
-  </mat-toolbar>
-  <div fxLayoutAlign="space-around center">
-    <form [formGroup]="service.form">
-      <mat-grid-list cols="1" rowHeight="50px" rowWidth="150px" class="content">
-        <div class="controles-container">
-          <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input formControlName="email" readonly matInput placeholder="Email">
-            <mat-icon matSuffix>email</mat-icon>
-          </mat-form-field>
-
-        </div>
-
-      </mat-grid-list>
-      <mat-grid-list cols="1" rowHeight="50px" rowWidth="150px" class="content">
-        <div class="controles-container">
-          <mat-form-field appearance="outline">
-            <mat-label>Role</mat-label>
-            <mat-select formControlName="role" required multiple>
-              <mat-option *ngFor="let role of roleList" [value]="role.description">
-                {{role.description}}
-              </mat-option>
-            </mat-select>
-            <mat-icon matSuffix>supervised_user_circle</mat-icon>
-          </mat-form-field>
-        </div>
-      </mat-grid-list>
-      <br>
-      <div class="controles-container">
-        <div class="example-button-row">
-          <p style="align:center">
-            <button mat-raised-button color="primary"
-              (click)="onUpdateUserRole(service.form.value.email, service.form.value.role)">Submit</button>
-            <button mat-raised-button color="warn" (click)="onClose()">Cancel</button>
-          </p>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
+<section class="account-dialog"><h2>Change account roles</h2><p>Roles determine which account-management controls a person can use.</p>
+<p *ngIf="isLoading" role="status">Loading roles…</p><p *ngIf="error" role="alert" class="st-error">{{ error }}</p>
+<form [formGroup]="service.form" stFocusInvalid (ngSubmit)="onUpdateUserRole(service.form.value.email, service.form.value.role)">
+<mat-form-field appearance="outline"><mat-label>Account email</mat-label><input matInput formControlName="email" readonly></mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Roles</mat-label><mat-select formControlName="role" required multiple [disabled]="isSaving || isLoading"><mat-option *ngFor="let role of roleList" [value]="role.description">{{ role.description }}</mat-option></mat-select><mat-error>Select at least one role.</mat-error></mat-form-field>
+<div class="actions"><button mat-stroked-button type="button" (click)="onClose()" [disabled]="isSaving">Cancel</button><button mat-flat-button color="primary" type="submit" [disabled]="isSaving || isLoading">{{ isSaving ? 'Saving…' : 'Save roles' }}</button></div></form></section>

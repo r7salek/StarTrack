@@ -14,6 +14,9 @@ import { RoleService } from '../../services/Role.service';
   styleUrls: ['./UpdateUser.component.scss']
 })
 export class UpdateUserComponent implements OnInit {
+  isSaving = false;
+  isLoading = true;
+  error = '';
 
   selected: any;
   roleList!: any[];
@@ -26,16 +29,17 @@ export class UpdateUserComponent implements OnInit {
     public dialogRef: MatDialogRef<UpdateUserComponent> // for dialog box
   ) {}
   ngOnInit() {
-    this.getUsers(); // get user
     this.roleService.getRoles().subscribe(
       // Get role data from API
       (res1) => {
+        this.isLoading = false;
         if (!!res1) {
           this.roleList = res1;
         }
       },
       (error: HttpErrorResponse) => {
-        alert(error.message);
+        this.isLoading = false;
+        this.error = 'Roles could not be loaded. Close this dialog and try again.';
       }
     );
   }
@@ -48,34 +52,34 @@ export class UpdateUserComponent implements OnInit {
         }
       },
       (error: HttpErrorResponse) => {
-        alert(error.message);
+        this.error = 'Accounts could not be loaded.';
       }
     );
   }
   // Method responsible for get the data for selected user and get this data into form
   public onUpdateUserRole(email: string, role: string[]): void {
+    if (this.isSaving || this.isLoading) return;
+    this.service.form.markAllAsTouched();
     if(this.service.form.valid){
+    this.error = '';
+    this.isSaving = true;
     this.service.updateUserRole(email, role).subscribe(
       (response: UserData) => {
-        this.getUsers();
-        this.service.form.reset();
-        this.service.initializeFormGroup();
+        this.isSaving = false;
         this.notificationService.success(
-          ':: User role is successfully updated'
+          'Account roles updated.'
         );
-        this.dialogRef.close();
-       // window.location.href = '/user-management';
-        this._router.navigate(['user-management']).then(() => {
-          window.location.reload();
-        });
+        this.dialogRef.close(true);
       },
       (error: HttpErrorResponse) => {
-        alert(error.message);
+        this.isSaving = false;
+        this.error = 'Roles could not be saved. Please try again.';
       }
     );
   }
 }
   onClose() {
+    if (this.isSaving) return;
     // Close the dialog box
     this.dialogRef.close();
   }

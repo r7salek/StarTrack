@@ -1,10 +1,12 @@
-<div fxFlexAlign="stretch">
-  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
-    <span style="font-size: 24px">Project Detail View</span>
-  </mat-toolbar>
+<div class="st-project-form st-project-details">
+  <header class="st-form-heading">
+    <h1 mat-dialog-title>{{ data.dataKey.projectName || 'Project details' }}</h1>
+    <p>Recorded version {{ data.dataKey.versionNumber || 'not recorded' }} · Read-only project record. Use project history to review earlier versions.</p>
+    <button type="button" class="st-button" (click)="onClose()">Close details</button>
+  </header>
   <mat-card-content>
     <div class="container">
-      <div class="example-container" style="margin: 2em">
+      <div class="example-container">
         <div id="contentToConvert">
           <mat-card>
             <!--     <mat-divider></mat-divider>

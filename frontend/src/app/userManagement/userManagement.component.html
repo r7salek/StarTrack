@@ -1,13 +1,1 @@
-<mat-card appearance="outlined" fxFlex>
-  <mat-card-title>
-    <span style="font-size: 24px;">Users Management</span>
-  </mat-card-title>
-  <mat-tab-group mat-stretch-tabs="true" mat-align-tabs="start">
-    <mat-tab label="Approve User Accounts" >
-      <app-UM_approveRequest></app-UM_approveRequest>
-    </mat-tab>
-    <mat-tab label="Users">
-      <app-UM_users></app-UM_users>
-    </mat-tab>
-  </mat-tab-group>
-</mat-card>
+<section class="account-page"><h1>User management</h1><p>Approve new accounts and manage access. These controls are for administrators.</p><mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start"><mat-tab label="Pending accounts"><app-UM_approveRequest></app-UM_approveRequest></mat-tab><mat-tab label="Active accounts"><app-UM_users></app-UM_users></mat-tab></mat-tab-group></section>

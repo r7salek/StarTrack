@@ -155,10 +155,12 @@ export class CreateProjectService {
   }
   // Add dynamically new array of fields
   addNewOutput() {
+    this.formArr.markAsDirty();
     this.formArr.push(this.initOutputRows());
   }
   // Delete array of fields
   deleteOutput(index: number) {
+    this.formArr.markAsDirty();
     this.formArr.removeAt(index);
   }
   initOutputRows(): FormGroup {
@@ -197,10 +199,12 @@ export class CreateProjectService {
   }
   // Add dynamically new array of fields
   addgroupMember() {
+    this.groupMemberArr.markAsDirty();
     this.groupMemberArr.push(this.initgroupMemberRows());
   }
   // Delete array of fields
   deletegroupMember(index: number) {
+    this.groupMemberArr.markAsDirty();
     this.groupMemberArr.removeAt(index);
   }
   get collaborationArr() {
@@ -211,10 +215,12 @@ export class CreateProjectService {
   }
   // Add dynamically new array of fields
   addNewCollaboration() {
+    this.collaborationArr.markAsDirty();
     this.collaborationArr.push(this.initCollaborationRows());
   }
   // Delete array of fields
   deleteCollaboration(index: number) {
+    this.collaborationArr.markAsDirty();
     this.collaborationArr.removeAt(index);
   }
   initExternalAdvisorRows(): FormGroup {
@@ -235,10 +241,12 @@ export class CreateProjectService {
   }
   // Add dynamically new array of fields
   addExternalAdvisor() {
+    this.externalAdvisorArr.markAsDirty();
     this.externalAdvisorArr.push(this.initExternalAdvisorRows());
   }
   // Delete array of fields
   deleteExternalAdvisor(index: number) {
+    this.externalAdvisorArr.markAsDirty();
     this.externalAdvisorArr.removeAt(index);
   }
   // add OTR logic
@@ -260,10 +268,12 @@ export class CreateProjectService {
   }
   // Add dynamically new array of fields
   addOTR() {
+    this.otrArr.markAsDirty();
     this.otrArr.push(this.initOtrRows());
   }
   // Delete array of fields
   deleteOTR(index: number) {
+    this.otrArr.markAsDirty();
     this.otrArr.removeAt(index);
   }
   //add PPI logic
@@ -284,10 +294,12 @@ export class CreateProjectService {
   }
   // Add dynamically new array of fields
   addinitPPI() {
+    this.ppiArr.markAsDirty();
     this.ppiArr.push(this.initExternalAdvisorRows());
   }
   // Delete array of fields
   deleteinitPPI(index: number) {
+    this.ppiArr.markAsDirty();
     this.ppiArr.removeAt(index);
   }
   // adding logic for subcontractor
@@ -309,10 +321,12 @@ export class CreateProjectService {
   }
   // Add dynamically new array of fields
   addNewSubContractors() {
+    this.subContractorsRowsArr.markAsDirty();
     this.subContractorsRowsArr.push(this.initSubContractorsRows());
   }
   // Delete array of fields
   deleteSubContractors(index: number) {
+    this.subContractorsRowsArr.markAsDirty();
     this.subContractorsRowsArr.removeAt(index);
   }
   // Add funding overview array data
@@ -372,10 +386,12 @@ export class CreateProjectService {
   }
   // Add dynamically new array of fields
   addFunding() {
+    this.fundingArr.markAsDirty();
     this.fundingArr.push(this.initFundingRows());
   }
   // Delete array of fields
   deleteFunding(index: number) {
+    this.fundingArr.markAsDirty();
     this.fundingArr.removeAt(index);
   }
 

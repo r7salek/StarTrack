@@ -5,6 +5,9 @@ import {
   ElementRef,
   Inject,
   OnInit,
+  OnDestroy,
+  Optional,
+  HostListener,
   ViewChild,
 } from '@angular/core';
 import html2canvas from 'html2canvas';
@@ -19,18 +22,42 @@ import { Router } from '@angular/router';
 import { DateAdapter } from '@angular/material/core';
 import { MatStepper } from '@angular/material/stepper';
 import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
+import { DraftSafetyService } from '../services/draft-safety.service';
 @Component({
   selector: 'app-CreateProject',
   templateUrl: './CreateProject.component.html',
   styleUrls: ['./CreateProject.component.scss'],
 })
-export class CreateProjectComponent implements OnInit {
+export class CreateProjectComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper?: MatStepper;
+  @ViewChild('editorFields') editorFields?: ElementRef<HTMLElement>;
   isSaving = false;
   saveSucceeded = false;
+  private unregisterDraft?: () => void;
+
+  get hasUnsavedChanges(): boolean {
+    return !this.saveSucceeded && [this.form, this.form1, this.form2, this.form3, this.form4, this.form5]
+      .some(form => form?.dirty);
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  protectBrowserExit(event: BeforeUnloadEvent): void {
+    if (this.drafts ? this.drafts.shouldProtect(this) : this.isSaving || this.hasUnsavedChanges) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  }
+
+  ngOnDestroy(): void { this.unregisterDraft?.(); }
 
   beginDraft(): void {
     this.saveSucceeded = false;
+  }
+
+  onStepChanged(index: number): void {
+    if (this.isSaving) return;
+    if (index === 6) this.combineData();
+    else if (index < 7) this.beginDraft();
   }
   /**
    * Main forms for the project creation process.
@@ -208,7 +235,8 @@ export class CreateProjectComponent implements OnInit {
     private tokenStorageService: TokenStorageService, // Service for managing user token and session
     public createProjectService: CreateProjectService, // Service to handle project creation API calls
     private dateAdapter: DateAdapter<Date>, // Adapter for customizing date formats
-    private _router: Router // Service for routing and navigation
+    private _router: Router, // Service for routing and navigation
+    @Optional() private drafts?: DraftSafetyService
   ) {
     // Setting the locale for date format
     dateAdapter.setLocale('en-de'); // DD/MM/YYYY
@@ -264,6 +292,7 @@ export class CreateProjectComponent implements OnInit {
     this.form5 = this.fb.group({
       fundingOverviewRows: this.fb.array([this.initFundingOverviewRows()]), // Funding overview rows
     });
+    this.unregisterDraft = this.drafts?.register(this);
     // Trigger a manual change detection to ensure all form data is reflected in the UI
     this.cdr.detectChanges();
   }
@@ -343,6 +372,7 @@ export class CreateProjectComponent implements OnInit {
    * Add a new group member row dynamically.
    */
   addgroupMember() {
+    this.groupMemberArr.markAsDirty();
     this.groupMemberArr.push(this.initgroupMemberRows());
   }
   /**
@@ -350,6 +380,7 @@ export class CreateProjectComponent implements OnInit {
    * @param index - The index of the group member row to remove.
    */
   deletegroupMember(index: number) {
+    this.groupMemberArr.markAsDirty();
     this.groupMemberArr.removeAt(index);
   }
   /**
@@ -373,10 +404,12 @@ export class CreateProjectComponent implements OnInit {
   }
   // Add dynamically new array of fields
   addNewSubContractors() {
+    this.subContractorsRowsArr.markAsDirty();
     this.subContractorsRowsArr.push(this.initSubContractorsRows());
   }
   // Delete array of fields
   deleteSubContractors(index: number) {
+    this.subContractorsRowsArr.markAsDirty();
     this.subContractorsRowsArr.removeAt(index);
   }
   /**
@@ -405,6 +438,7 @@ export class CreateProjectComponent implements OnInit {
    * Add a new collaboration row dynamically.
    */
   addNewCollaboration() {
+    this.collaborationArr.markAsDirty();
     this.collaborationArr.push(this.initCollaborationRows());
   }
   /**
@@ -412,6 +446,7 @@ export class CreateProjectComponent implements OnInit {
    * @param index - The index of the collaboration row to remove.
    */
   deleteCollaboration(index: number) {
+    this.collaborationArr.markAsDirty();
     this.collaborationArr.removeAt(index);
   }
   // logic for PPIROWS
@@ -432,10 +467,12 @@ export class CreateProjectComponent implements OnInit {
   }
   // Add dynamically new array of fields
   addinitPPI() {
+    this.ppiArr.markAsDirty();
     this.ppiArr.push(this.initPPIRows());
   }
   // Delete array of fields
   deleteinitPPI(index: number) {
+    this.ppiArr.markAsDirty();
     this.ppiArr.removeAt(index);
   }
   //logic for OTR rows
@@ -457,10 +494,12 @@ export class CreateProjectComponent implements OnInit {
   }
   // Add dynamically new array of fields
   addOTR() {
+    this.otrArr.markAsDirty();
     this.otrArr.push(this.initOtrRows());
   }
   // Delete array of fields
   deleteOTR(index: number) {
+    this.otrArr.markAsDirty();
     this.otrArr.removeAt(index);
   }
 
@@ -484,10 +523,12 @@ export class CreateProjectComponent implements OnInit {
   }
   // Add dynamically new array of fields
   addExternalAdvisor() {
+    this.externalAdvisorArr.markAsDirty();
     this.externalAdvisorArr.push(this.initExternalAdvisorRows());
   }
   // Delete array of fields
   deleteExternalAdvisor(index: number) {
+    this.externalAdvisorArr.markAsDirty();
     this.externalAdvisorArr.removeAt(index);
   }
   //Logic for initFundingOverviewRows
@@ -520,11 +561,13 @@ export class CreateProjectComponent implements OnInit {
   }
   // Add dynamically new array of fields
   addFundingOverview() {
+    this.fundingOverviewArr.markAsDirty();
     this.fundingOverviewArr.push(this.initFundingOverviewRows());
     this.cdr.detectChanges();
   }
   // Delete array of fields
   deleteFundingOverview(index: number) {
+    this.fundingOverviewArr.markAsDirty();
     this.fundingOverviewArr.removeAt(index);
   }
 
@@ -557,10 +600,12 @@ export class CreateProjectComponent implements OnInit {
   }
   // Add dynamically new array of fields
   addFunding() {
+    this.fundingArr.markAsDirty();
     this.fundingArr.push(this.initFundingRows());
   }
   // Delete array of fields
   deleteFunding(index: number) {
+    this.fundingArr.markAsDirty();
     this.fundingArr.removeAt(index);
   }
 
@@ -754,6 +799,10 @@ export class CreateProjectComponent implements OnInit {
    */
   combineData() {
     this.beginDraft();
+    this.otherInforPI = '';
+    this.ttoContractOtherInfo = '';
+    this.modalityOther = '';
+    this.areaOfExpertiseOther = '';
     if (this.form.get('otherInforPI').value !== '') {
       this.otherInforPI = this.form.get('otherInforPI').value;
     }
@@ -1005,8 +1054,24 @@ export class CreateProjectComponent implements OnInit {
   /**
    * Submit the project data to the server via CreateProjectService.
    */
+  prepareSave(): boolean {
+    const forms = [this.form, this.form5, this.form3, this.form1, this.form2, this.form4];
+    forms.forEach(form => form.markAllAsTouched?.());
+    const invalidStep = forms.findIndex(form => !form.valid);
+    if (invalidStep !== -1) {
+      if (this.stepper) this.stepper.selectedIndex = invalidStep;
+      this.notificationService.error('Check the required fields before saving. Your entries are still here.');
+      this.cdr.detectChanges();
+      this.editorFields?.nativeElement.querySelector<HTMLElement>('input.ng-invalid, textarea.ng-invalid, mat-select.ng-invalid')?.focus();
+      return false;
+    }
+    this.combineData();
+    return true;
+  }
+
   storeData() {
     if (this.isSaving) return;
+    if (!this.prepareSave()) return;
     if (this.AddToProjectUpdate) {
       this.beginDraft();
       this.isSaving = true;
@@ -1292,6 +1357,6 @@ export class CreateProjectComponent implements OnInit {
     }
   }
   onClose() {
-    window.location.reload();
+    this._router.navigate(['/projects']);
   }
 }

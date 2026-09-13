@@ -1,5 +1,8 @@
 
 <div>
-  <app-toolbar class="mat-elevation-z8 mr" color="primary"></app-toolbar>
-  <router-outlet></router-outlet>
+  <a class="skip-link" href="#main-content" (click)="$event.preventDefault(); focusContent()">Skip to main content</a>
+  <app-toolbar></app-toolbar>
+  <main id="main-content" #mainContent tabindex="-1">
+  <router-outlet (activate)="focusContent(true)"></router-outlet>
+  </main>
 </div>

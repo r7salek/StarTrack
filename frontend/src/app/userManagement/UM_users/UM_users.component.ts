@@ -16,6 +16,8 @@ import { UpdateUserComponent } from '../UpdateUser/UpdateUser.component';
   styleUrls: ['./UM_users.component.scss']
 })
 export class UM_usersComponent implements OnInit {
+  isLoading = false;
+  error = '';
 
   userData: UserData[] = []; // Defining data array
   public editUser!: User;
@@ -54,14 +56,18 @@ export class UM_usersComponent implements OnInit {
   }
   // Getting all the user from database
   getUserData() {
+    this.isLoading = true;
+    this.error = '';
     this.userService.getUserData().subscribe(
       (res1) => {
+        this.isLoading = false;
         if (!!res1) {
           this.dataSource2.data = res1.filter((res) => res.enabled === true);
         }
       },
       (error: HttpErrorResponse) => {
-        alert(error.message);
+        this.isLoading = false;
+        this.error = 'Accounts could not be loaded. Please try again.';
       }
     );
   }
@@ -89,9 +95,9 @@ export class UM_usersComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = '50%';
-    dialogConfig.height = '30%';
-    this.dialog.open(UpdateUserComponent, dialogConfig);
+    dialogConfig.width = '560px';
+    dialogConfig.maxWidth = 'calc(100vw - 32px)';
+    this.dialog.open(UpdateUserComponent, dialogConfig).afterClosed().subscribe((saved) => { if (saved) this.getUserData(); });
   }
 
 }

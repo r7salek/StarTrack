@@ -1,15 +1,14 @@
-<mat-card appearance="outlined" fxFlex>
-  <mat-card-title>
-    <span style="font-size: 24px">Create Project</span>
-  </mat-card-title>
-  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
-    <span style="font-size: 24px">Create New Project</span>
-  </mat-toolbar>
-  <div class="container">
+<mat-card appearance="outlined" class="st-project-form">
+  <header class="st-form-heading">
+    <h1>Create project</h1>
+    <p>Build a shared record of your project, its team and support. Work through the sections, review your entries and save when ready. Required fields are marked with an asterisk. Changes are not saved automatically.</p>
+  </header>
+  <p *ngIf="isSaving" role="status" aria-live="polite">Saving project. Please wait; editing is paused until the save finishes.</p>
+  <div class="container" #editorFields [attr.inert]="isSaving ? '' : null" [attr.aria-busy]="isSaving">
     <mat-card-content>
       <mat-card appearance="outlined">
         <mat-stepper [linear]="true" #stepper
-          (selectionChange)="$event.selectedIndex < stepper.steps.length - 1 && beginDraft()">
+          (selectionChange)="onStepChanged($event.selectedIndex)">
           <mat-step [stepControl]="form">
             <br />
             <mat-divider></mat-divider>
@@ -19,7 +18,7 @@
                 >Team information</span
               ></ng-template
             >
-            <form [formGroup]="form" class="normal-form">
+            <form stFocusInvalid [formGroup]="form" class="normal-form">
               <mat-grid-list cols="1" rowHeight="100px" rowWidth="150px">
                 <mat-grid-tile [style.width.px]="450">
                   <div class="controles-container">
@@ -411,7 +410,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [disabled]="!form.valid"
+                    [disabled]="isSaving"
                     matTooltip="Go to next"
                     class="example-button"
                     matStepperNext
@@ -430,7 +429,7 @@
               </div>
             </form>
           </mat-step>
-          <mat-step>
+          <mat-step [stepControl]="form5">
             <br />
             <mat-divider></mat-divider>
             <br />
@@ -444,7 +443,7 @@
               <mat-toolbar color="primary" fxLayoutAlign="space-around center">
                 <span style="font-size: 24px">Funding source</span>
               </mat-toolbar>
-              <form [formGroup]="form5" class="normal-form">
+              <form stFocusInvalid [formGroup]="form5" class="normal-form">
                 <h1>Primary funding information</h1>
                 <div formArrayName="fundingOverviewRows">
                   <div
@@ -1003,7 +1002,7 @@
                     <button
                       mat-raised-button
                       color="primary"
-                      [disabled]="!form5.valid"
+                      [disabled]="isSaving"
                       matTooltip="Go to next"
                       class="example-button"
                       matStepperNext
@@ -1023,7 +1022,7 @@
               </form>
             </mat-card>
           </mat-step>
-          <mat-step>
+          <mat-step [stepControl]="form3">
             <br />-
             <mat-divider></mat-divider>
             <br />
@@ -1032,7 +1031,7 @@
                 >Scope of the project</span
               ></ng-template
             >
-            <form [formGroup]="form3" class="normal-form">
+            <form stFocusInvalid [formGroup]="form3" class="normal-form">
               <mat-grid-list cols="5" rowHeight="380px" rowWidth="120px">
                 <mat-grid-tile [style.width.px]="450" class="align-top">
                   <div class="controles-container">
@@ -1281,7 +1280,7 @@
                         >Enter text here...</mat-hint
                       >
                       <mat-label style="font-size: 20px">
-                        (Characters Remaining: {{ myInput8.value.length }} /{{
+                        (Characters used: {{ myInput8.value.length }} /{{
                           maxChars1
                         }})</mat-label
                       >
@@ -1309,7 +1308,7 @@
                         >Enter text here...</mat-hint
                       >
                       <mat-label style="font-size: 20px">
-                        (Characters Remaining: {{ myInput7.value.length }} /{{
+                        (Characters used: {{ myInput7.value.length }} /{{
                           maxChars1
                         }})</mat-label
                       >
@@ -1331,7 +1330,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [disabled]="!form3.valid"
+                    [disabled]="isSaving"
                     matTooltip="Go to next"
                     class="example-button"
                     matStepperNext
@@ -1350,13 +1349,13 @@
               </div>
             </form>
           </mat-step>
-          <mat-step>
+          <mat-step [stepControl]="form1">
             <br />
             <mat-divider></mat-divider>
             <ng-template matStepLabel
               ><span style="font-size: 20px">Collaborators</span></ng-template
             >
-            <form [formGroup]="form1" class="normal-form">
+            <form stFocusInvalid [formGroup]="form1" class="normal-form">
               <h1>Collaborator</h1>
               <div formArrayName="collaborationRows">
                 <div
@@ -1372,7 +1371,7 @@
                       <div class="controles-container">
                         <mat-form-field appearance="outline">
                           <mat-label style="font-size: 20px">
-                            Collaborator</mat-label
+                            Collaborator (required)</mat-label
                           >
                           <mat-select
                             id="collaboration{{ i }}"
@@ -1385,6 +1384,7 @@
                               >{{ collaboration }}</mat-option
                             >
                           </mat-select>
+                          <mat-error *ngIf="form1.controls.collaborationRows.controls[i].get('collaboration').hasError('required')">Select a collaborator.</mat-error>
                           <mat-hint style="font-size: 16px"
                             >Please select Collaborator<span
                               *ngIf="
@@ -2028,7 +2028,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [disabled]="!form1.valid"
+                    [disabled]="isSaving"
                     matTooltip="Go to next"
                     class="example-button"
                     matStepperNext
@@ -2048,14 +2048,14 @@
             </form>
           </mat-step>
 
-          <mat-step>
+          <mat-step [stepControl]="form2">
             <br />
             <mat-divider></mat-divider>
             <br />
             <ng-template matStepLabel
               ><span style="font-size: 20px">Output</span></ng-template
             >
-            <form [formGroup]="form2" class="normal-form">
+            <form stFocusInvalid [formGroup]="form2" class="normal-form">
               <h1>Output</h1>
               <div formArrayName="outputRows">
                 <div
@@ -2087,7 +2087,7 @@
                       <div class="controles-container">
                         <mat-form-field appearance="outline">
                           <mat-label style="font-size: 20px">
-                            Confirmation</mat-label
+                            Confirmation (required)</mat-label
                           >
                           <mat-select
                             id="confirmation{{ i }}"
@@ -2105,6 +2105,7 @@
                           <mat-hint style="font-size: 16px"
                             >Please select confirmation</mat-hint
                           >
+                          <mat-error *ngIf="form2.controls.outputRows.controls[i].get('confirmation').hasError('required')">Select a confirmation for this output.</mat-error>
                         </mat-form-field>
                       </div>
                     </mat-grid-tile>
@@ -2674,7 +2675,7 @@
                   <button
                     mat-raised-button
                     color="primary"
-                    [disabled]="!form2.valid"
+                    [disabled]="isSaving"
                     matTooltip="Go to next"
                     class="example-button"
                     matStepperNext
@@ -2693,7 +2694,7 @@
               </div>
             </form>
           </mat-step>
-          <mat-step>
+          <mat-step [stepControl]="form4">
             <br />
             <mat-divider></mat-divider>
             <br />
@@ -2707,7 +2708,7 @@
               <mat-toolbar color="primary" fxLayoutAlign="space-around center">
                 <span style="font-size: 24px">OTR team</span>
               </mat-toolbar>
-              <form [formGroup]="form4" class="normal-form">
+              <form stFocusInvalid [formGroup]="form4" class="normal-form">
                 <h1>OTR Team Information</h1>
                 <div formArrayName="otrRows">
                   <div
@@ -2869,7 +2870,7 @@
                     <button
                       mat-raised-button
                       color="primary"
-                      [disabled]="!form4.valid"
+                      [disabled]="isSaving"
                       matTooltip="Go to next"
                       class="example-button"
                       matStepperNext

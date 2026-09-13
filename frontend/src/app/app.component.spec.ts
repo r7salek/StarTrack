@@ -2,6 +2,17 @@ import { AppComponent } from './app.component';
 import { TokenStorageService } from './core/login/_services/token-storage.service';
 
 describe('AppComponent', () => {
+  it('moves focus to main content for route changes and skip navigation', () => {
+    const component = new AppComponent({} as any);
+    const focus = jasmine.createSpy('focus');
+    component.mainContent = { nativeElement: { focus } } as any;
+    component.focusContent();
+    expect(focus).toHaveBeenCalledWith({ preventScroll: false });
+    const scroll = spyOn(window, 'scrollTo');
+    component.focusContent(true);
+    expect(scroll).toHaveBeenCalledWith(0, 0);
+    expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+  });
   let storage: TokenStorageService;
 
   beforeEach(() => {

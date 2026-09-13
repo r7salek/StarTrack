@@ -4,6 +4,7 @@ import {
   Component,
   Inject,
   OnInit,
+  OnDestroy,
   ViewChild,
 } from '@angular/core';
 import {
@@ -17,13 +18,17 @@ import { NotificationService } from '../../services/notification.service';
 import { CreateProjectService } from '../../services/CreateProject.service';
 import { ProjectCreateDetailsComponent } from '../ProjectCreateDetails/ProjectCreateDetails.component';
 import { UpdateProposalStatusComponent } from '../UpdateProposalStatus/UpdateProposalStatus.component';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-CreateProjectHistory',
   templateUrl: './CreateProjectHistory.component.html',
   styleUrls: ['./CreateProjectHistory.component.scss'],
 })
-export class CreateProjectHistoryComponent implements OnInit {
+export class CreateProjectHistoryComponent implements OnInit, OnDestroy {
+  error = '';
+  private readonly destroyed = new Subject<void>();
+  private readonly resizeGrid = () => this.dataGridInstance?.instance?.updateDimensions();
   readonly allowedPageSizes = [15, 25, 'all']; // Allowed page size options for the data grid
   columnResizingMode!: string; // Data grid column resizing mode
   displayMode = 'full'; // Display mode for the grid
@@ -57,11 +62,12 @@ export class CreateProjectHistoryComponent implements OnInit {
   ngOnInit() {
     // Fetches the latest project data and sets up resize handling for the grid
     this.getProjectDataLatest();
-    window.addEventListener('resize', () => {
-      if (this.dataGridInstance?.instance) {
-        this.dataGridInstance.instance.updateDimensions(); // Updates grid dimensions on resize
-      }
-    });
+    window.addEventListener('resize', this.resizeGrid);
+  }
+  ngOnDestroy() {
+    window.removeEventListener('resize', this.resizeGrid);
+    this.destroyed.next();
+    this.destroyed.complete();
   }
   collapseAllClick() {
     // Toggles the expansion state of all rows in the grid
@@ -75,15 +81,20 @@ export class CreateProjectHistoryComponent implements OnInit {
     });
   }
   getProjectDataLatest() {
+    this.isLoading = true;
+    this.error = '';
     // Fetches the history of a project using the provided data key
     this.createProjectService
       .getCreateProjectDataHistory(this.data.dataKey)
+      .pipe(takeUntil(this.destroyed))
       .subscribe(
         (res1) => {
           this.dataSource = res1;
+          this.isLoading = false;
         },
         (error: HttpErrorResponse) => {
-          alert(error.message);
+          this.isLoading = false;
+          this.error = 'Project history could not be loaded. Please try again.';
         }
       );
   }
@@ -93,13 +104,14 @@ export class CreateProjectHistoryComponent implements OnInit {
       return '';
     }
     const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-based
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
   calculateGridHeight(rowCount: number): string {
-    return `${Math.min(Math.max(800, 800), 800)}px`;
+    return `${Math.max(180, Math.min(560, window.innerHeight - 250, rowCount * 44 + 180))}px`;
   }
   viewDetails() {
     if (this.dataGridInstance.instance.getSelectedRowsData()[0]) {
@@ -115,7 +127,7 @@ export class CreateProjectHistoryComponent implements OnInit {
     }
   }
   updateStatus() {
-    if (this.isSelectedArchived()) return;
+    if (this.data.readOnly || this.isSelectedArchived()) return;
     // Opens a dialog to update the status of the selected project
     if (this.dataGridInstance.instance.getSelectedRowsData()[0]) {
       this.createProjectService.populateForm(
@@ -124,12 +136,15 @@ export class CreateProjectHistoryComponent implements OnInit {
       const dialogConfig = new MatDialogConfig();
       dialogConfig.disableClose = true;
       dialogConfig.autoFocus = true;
-      dialogConfig.width = '50%';
-      this.dialog.open(UpdateProposalStatusComponent, dialogConfig).afterClosed().subscribe(() => this.getProjectDataLatest());
+      dialogConfig.width = '520px';
+      dialogConfig.maxWidth = 'calc(100vw - 32px)';
+      this.dialog.open(UpdateProposalStatusComponent, dialogConfig).afterClosed()
+        .pipe(takeUntil(this.destroyed))
+        .subscribe((saved) => { if (saved) this.getProjectDataLatest(); });
     }
   }
   onDelete() {
-    if (this.isSelectedArchived()) return;
+    if (this.data.readOnly || this.isSelectedArchived()) return;
     // Deletes the selected project data after confirmation
     if (this.dataGridInstance.instance.getSelectedRowsData()[0]) {
       this.notificationService.confirmation(

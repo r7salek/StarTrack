@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { TokenStorageService } from './core/login/_services/token-storage.service';
 
 @Component({
@@ -7,6 +7,12 @@ import { TokenStorageService } from './core/login/_services/token-storage.servic
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
+  @ViewChild('mainContent', { static: true }) mainContent?: ElementRef<HTMLElement>;
+
+  focusContent(routeChanged = false): void {
+    if (routeChanged) window.scrollTo(0, 0);
+    this.mainContent?.nativeElement.focus({ preventScroll: routeChanged });
+  }
   private roles: string[] = [];
   isLoggedIn = false;
   showAdminBoard = false;

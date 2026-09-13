@@ -12,11 +12,12 @@ export class TokenStorageService {
   // Clear the session
   signOut(): void {
     window.sessionStorage.clear();
-    //window.location.href = '/home';
-    this._router.navigate(['home']).then(() => {
-      window.location.reload();
+    this._router.navigate(['home']).then(navigated => {
+      // A cancelled draft guard must not be bypassed by a page reload.
+      if (navigated) this.reloadPage();
     });
   }
+  private reloadPage(): void { window.location.reload(); }
   // Save Token values
   public saveToken(token: string): void {
     window.sessionStorage.removeItem(TOKEN_KEY);

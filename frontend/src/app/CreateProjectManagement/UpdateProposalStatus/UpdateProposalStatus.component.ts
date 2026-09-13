@@ -12,6 +12,8 @@ import { NotificationService } from '../../services/notification.service';
   styleUrls: ['./UpdateProposalStatus.component.scss'],
 })
 export class UpdateProposalStatusComponent implements OnInit {
+  isSaving = false;
+  error = '';
   /**
    * Constructor to inject dependencies.
    * @param dialogRef - Reference to the dialog box, used to close it.
@@ -31,18 +33,29 @@ export class UpdateProposalStatusComponent implements OnInit {
   ngOnInit() {}
   // update values of permission and store into database
   public onUpdateUserPerm(id: number, applyValue: string): void {
+    if (this.isSaving) return;
+    if (!['SUBMITTED', 'ACCEPTED', 'REJECTED', 'CLOSED'].includes(applyValue)) {
+      this.error = 'Choose a project status.';
+      return;
+    }
+    this.error = '';
+    this.isSaving = true;
+    this.dialogRef.disableClose = true;
     // Call the service method to update proposal permissions
     this.service.updateProposalPerm(id, applyValue).subscribe(
       (response: newProjectResponse) => {
+        this.isSaving = false;
         this.notificationService.success(
-          ':: Permission is successfully updated'
+          'Project status updated.'
         );
         this.dialogRef.close(true);
       },
       (error: HttpErrorResponse) => {
-        this.notificationService.error(error.status === 409
+        this.isSaving = false;
+        this.error = error.status === 409
           ? 'This project has changed. Close this dialog and reopen its latest version before changing the status.'
-          : 'The status could not be saved.');
+          : 'The status could not be saved. Please try again.';
+        this.notificationService.error(this.error);
       }
     );
   }
@@ -50,6 +63,7 @@ export class UpdateProposalStatusComponent implements OnInit {
    * Closes the dialog box without performing any actions.
    */
   onClose() {
+    if (this.isSaving) return;
     this.dialogRef.close();
   }
 }

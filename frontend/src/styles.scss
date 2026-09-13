@@ -1,4 +1,17 @@
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@use '@angular/material' as mat;
+@use 'sass:map';
+@use './scss/project-forms';
+
+@include mat.core();
+$cambridge-palette: map.merge(mat.$teal-palette, (
+  100: #D1F9F1, 500: #8EE8D8, 700: #133844,
+  contrast: map.merge(map.get(mat.$teal-palette, contrast), (100: #232830, 500: #232830, 700: #FFFFFF))
+));
+$cambridge-theme: mat.define-light-theme((
+  color: (primary: mat.define-palette($cambridge-palette), accent: mat.define-palette($cambridge-palette, 700), warn: mat.define-palette(mat.$red-palette)),
+  typography: mat.define-typography-config($font-family: 'Roboto, sans-serif'), density: 0
+));
+@include mat.all-component-themes($cambridge-theme);
 html,
 body {
   height: 100%;
@@ -10,9 +23,7 @@ body {
   // overflow-x: hidden;
 }
 
-* {
-  font-family: montserrat;
-}
+* { box-sizing: border-box; }
 
 snack-bar-container.success {
   background-color: green;
@@ -91,9 +102,9 @@ snack-bar-container.notification {
 /* Header styles */
 /* ---------------------------------------------------------- */
 .mat-mdc-header-cell {
-  background-color: #3f51b5;
-  color: white;
-  font-size: 20px;
+  background-color: var(--st-surface);
+  color: var(--st-text);
+  font-size: 14px;
 }
 .mat-mdc-header-cell:not(:first-child) {
   padding-left: 0;
@@ -338,10 +349,10 @@ body {
 }
 
 table tr th {
-  border-bottom: 1px solid #000;
-  background-color: #3f51b5;
-  color: #f5f5f5;
-  font-size: large;
+  border-bottom: 1px solid var(--st-border);
+  background-color: var(--st-surface);
+  color: var(--st-text);
+  font-size: 14px;
 }
 #contentToConvert {
   font-size: 20px; /* Increase font size */
@@ -352,3 +363,38 @@ table tr th {
     font-size: 20px; /* Adjust for print */
   }
 }
+
+// Cambridge design tokens shared by the public site and authenticated workspace.
+:root {
+  --st-blue: #8EE8D8;
+  --st-blue-light: #D1F9F1;
+  --st-blue-warm: #00BDB6;
+  --st-ink: #133844;
+  --st-text: #232830;
+  --st-muted: #546072;
+  --st-border: #B5BDC8;
+  --st-surface: #ECEEF1;
+}
+body { color: var(--st-text); background: white; font-size: 16px; line-height: 1.6; }
+a { color: var(--st-ink); text-underline-offset: 3px; }
+button, input, select, textarea { font: inherit; }
+:focus-visible { outline: 3px solid var(--st-ink); outline-offset: 3px; }
+// The landmark receives route focus; interactive controls retain visible focus rings.
+#main-content:focus { outline: none; }
+.st-button { display: inline-flex; justify-content: center; align-items: center; gap: 12px; min-height: 44px; padding: 10px 20px; border: 1px solid transparent; border-radius: 6px; font-weight: 500; text-decoration: none; cursor: pointer; line-height: 1.4; }
+.st-button-primary { background: var(--st-blue); color: var(--st-ink); }
+.st-button-primary:hover { background: var(--st-blue-light); border-color: var(--st-ink); }
+.st-button-secondary { background: white; color: var(--st-ink); border-color: var(--st-border); }
+.st-button-secondary:hover { background: var(--st-surface); }
+.st-button:disabled { opacity: .6; cursor: wait; }
+.st-account { display: block; max-width: 520px; margin: 48px auto; padding: 32px; border: 1px solid var(--st-border); border-radius: 8px; }
+.st-account h1, .st-account h2 { font-size: 28px; line-height: 1.3; margin: 0 0 16px; }
+.st-account form { display: grid; gap: 12px; }
+.st-account .mat-mdc-form-field { width: 100%; }
+.st-account-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.st-error { color: #a32118; padding: 12px; border-left: 3px solid #a32118; background: #fff4f2; }
+.st-notice { background: var(--st-blue-light); padding: 16px; }
+.st-dialog .st-account { margin: 0; border: 0; max-width: none; }
+.skip-link { position: absolute; left: 16px; top: -100px; padding: 12px; background: white; z-index: 2000; }
+.skip-link:focus { top: 12px; }
+@media (max-width: 600px) { .st-account { margin: 24px 16px; padding: 24px; } .st-dialog .st-account { margin: 0; } }

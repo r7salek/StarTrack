@@ -15,6 +15,8 @@ import { UserPassword } from '../../../models/user';
   styleUrls: ['./changePassword.component.scss'],
 })
 export class ChangePasswordComponent implements OnInit {
+  isSaving = false;
+  error = '';
   currentUser: any;
   idValue!: number;
   registerForm!: FormGroup;
@@ -44,26 +46,31 @@ export class ChangePasswordComponent implements OnInit {
   }
   //Update the user data which is modify into the form
   public updateUserPassword(userPassword: UserPassword): void {
+    if (this.isSaving) return;
+    this.error = '';
+    this.registerForm.markAllAsTouched();
     this.submitted = true;
     if (this.registerForm.valid) {
+      this.isSaving = true;
       this.service
         .updateUserPassword(this.currentUser.id, userPassword)
         .subscribe(
           (response: UserPassword) => {
+            this.isSaving = false;
             this.registerForm.reset();
             this.notificationService.success(
-              ':: Password is changed successfully'
+              'Your password has been changed.'
             );
             this.dialogRef.close();
-            window.location.reload();
           },
           (error: HttpErrorResponse) => {
-            alert(error.message);
+            this.isSaving = false;
+            this.error = 'Your password could not be changed. Please try again.';
           }
         );
     } else {
       this.notificationService.error(
-        ':: User Password is unsuccessfully updated. Pelase fill out all necessary fields'
+        'Check that both password fields are complete and match.'
       );
     }
     if (this.registerForm.invalid) {
@@ -72,7 +79,7 @@ export class ChangePasswordComponent implements OnInit {
   }
   // Close the dialog box
   onClose() {
+    if (this.isSaving) return;
     this.dialogRef.close();
-    window.location.reload();
   }
 }

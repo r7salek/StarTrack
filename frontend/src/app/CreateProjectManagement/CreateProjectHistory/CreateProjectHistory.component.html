@@ -4,12 +4,20 @@
   style="overflow: hidden"
   class="my-container"
 >
-  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
-    <span style="font-size: 24px">Project History</span>
-  </mat-toolbar>
+  <header class="history-heading">
+    <h2 mat-dialog-title>Project history</h2>
+    <p>Saved versions of {{ dataSource?.[0]?.projectName || 'this project' }}. Select a row to view its recorded details.</p>
+    <p class="history-note">Account IDs, emails and dates below are stored with each version. Blank fields mean attribution was not recorded.</p>
+  </header>
+  <p *ngIf="isLoading" role="status" class="history-message">Loading project history…</p>
+  <div *ngIf="error" role="alert" class="history-message">
+    <p>{{ error }}</p>
+    <button mat-stroked-button type="button" (click)="getProjectDataLatest()">Try again</button>
+  </div>
+  <p *ngIf="!isLoading && !error && !dataSource?.length" class="history-message">No saved versions are available.</p>
   <div class="container">
     <mat-card-content>
-      <mat-card appearance="outlined" style="overflow: hidden">
+      <mat-card *ngIf="!isLoading && !error && dataSource?.length" appearance="outlined" style="overflow: hidden">
         <!--         <div class="buttons-column">
           <dx-button stylingMode="contained" type="default" [text]="this.expanded ? 'Collapse All' : 'Expand All'"
             width="136" (onClick)="collapseAllClick()">
@@ -27,6 +35,7 @@
             icon="check"
             type="success"
             text=" Update Status"
+            *ngIf="!data.readOnly"
             [disabled]="isSelectedArchived()"
             (onClick)="updateStatus()"
           ></dx-button>
@@ -35,6 +44,7 @@
             icon="check"
             type="danger"
             text="Archive project"
+            *ngIf="!data.readOnly"
             [disabled]="isSelectedArchived()"
             (onClick)="onDelete()"
           ></dx-button>
@@ -54,10 +64,14 @@
             [showColumnLines]="true"
             [allowColumnResizing]="true"
             [columnResizingMode]="columnResizingMode"
-            [dxo-header]="{ background: 'blue' }"
             [height]="calculateGridHeight(dataSource?.length || 0)"
           >
             <dxo-selection mode="single"></dxo-selection>
+            <dxi-column dataField="versionNumber" caption="Version" [width]="90" sortOrder="desc" [sortIndex]="0"></dxi-column>
+            <dxi-column dataField="createdBy" caption="Creator account ID" [width]="150"></dxi-column>
+            <dxi-column dataField="createdEmail" caption="Recorded creator email" [width]="240"></dxi-column>
+            <dxi-column dataField="modifiedBy" caption="Modifier account ID" [width]="150"></dxi-column>
+            <dxi-column dataField="modifyEmail" caption="Recorded modifier email" [width]="240"></dxi-column>
             <dxi-column dataField="archived" caption="Archived" dataType="boolean" [width]="90"></dxi-column>
             <dxo-filter-panel [visible]="true"></dxo-filter-panel>
             <dxo-filter-builder

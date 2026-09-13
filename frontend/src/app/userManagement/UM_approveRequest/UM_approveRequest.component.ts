@@ -14,6 +14,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./UM_approveRequest.component.scss']
 })
 export class UM_approveRequestComponent implements OnInit {
+  isLoading = false;
+  error = '';
   // Defining the DataSource Fields
   public displayedColumns1: string[] = [
     'firstName',
@@ -42,17 +44,24 @@ export class UM_approveRequestComponent implements OnInit {
   }
   // Get All use data From Rest API from Server
   getUserApprovalData() {
+    this.isLoading = true;
+    this.error = '';
     this.userService.getUserApprovalData().subscribe(
       (res1) => {
+        this.isLoading = false;
         if (!!res1) {
           //Look for the records whos are pending for approval
-          this.dataSource1.data = res1.filter((res) => res.enabled === false);
+          this.dataSource1.data = res1.filter((res) => res.enabled === false && res.delete === false);
         }
       },
       (error: HttpErrorResponse) => {
-        alert(error.message);
+        this.isLoading = false;
+        this.error = 'Account requests could not be loaded. Please try again.';
       }
     );
+  }
+  rejectAccount(email: string): void {
+    this.um_HelperService.reject(email, () => this.getUserApprovalData());
   }
   //Filter the data into Table
   applyFilter1(event: Event) {

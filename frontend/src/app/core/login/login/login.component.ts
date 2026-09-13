@@ -1,7 +1,7 @@
 /**Login Component Logic for getting the data from tokenStorage and after verification
  *  Login into the system */
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
   isData = false;
   hide = true;
   errorMessage = '';
+  isSubmitting = false;
   currentUser: any[] = [];
 
   constructor(
@@ -32,7 +33,7 @@ export class LoginComponent implements OnInit {
     private _router: Router,
     private userLoginService: UserLoginService, // User login service
     public notificationService: NotificationService, // Notification service for messages
-    public dialogRef: MatDialogRef<LoginComponent>, // Ref box for dialog box user login
+    @Optional() public dialogRef: MatDialogRef<LoginComponent> | null, // Also used as a routed page.
   ) {}
 
   ngOnInit(): void {
@@ -64,25 +65,31 @@ export class LoginComponent implements OnInit {
   }
   // Login submit logic which verify user from the Server
   onSubmit(): void {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+    this.isLoginFailed = false;
     this.authService.login(this.form).subscribe(
       (data) => {
+        this.isSubmitting = false;
         this.tokenStorage.saveToken(data.accessToken);
         this.login(data.user);
         if (this.isLoggedIn) {
           this.isLoginFailed = false;
-          this.notificationService.success('User is Login successfully');
+          this.notificationService.success('Signed in successfully.');
         }
       },
       (err) => {
-        this.notificationService.error(err.error.message);
+        this.isSubmitting = false;
+        this.errorMessage = 'Unable to sign in. Check your email and password. New accounts must be activated by an administrator.';
+        this.notificationService.error(this.errorMessage);
         this.isLoginFailed = true;
         this.isLoggedIn = false;
       }
     );
   }
   onClose() {
-    this.dialogRef.close();
-    window.location.reload();
+    if (this.dialogRef) this.dialogRef.close();
+    else this._router.navigate(['home']);
   }
   // login method for getting vlaues of user after login redirect to landing page
   login(user: any): void {
@@ -100,16 +107,8 @@ export class LoginComponent implements OnInit {
     this.isLoggedIn = true;
     this.currentUser = storedUser.roles;
 
-    if (this.currentUser.includes('ROLE_USER')) {
-      this._router.navigate(['createProject']).then(() => {
-        window.location.reload();
-      });
-    }
-    else if (this.currentUser.includes('ROLE_ADMIN')) {
-     // window.location.href = '/#/user-management';
-      this._router.navigate(['user-management']).then(() => {
-        window.location.reload();
-      });
-    }
+    this._router.navigate(['projects']).then(() => {
+      window.location.reload();
+    });
   }
 }

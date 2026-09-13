@@ -1,5 +1,10 @@
-.mat-grid-tile .mat-figure {
-  justify-content: flex-start !important ;
-  align-items: flex-start !important;
-}
-
+:host { display:block; color:var(--st-text); }
+.account-page { max-width:1200px; margin:32px auto; padding:0 24px; }
+.account-dialog { padding:24px; }
+h1,h2 { color:var(--st-ink); margin:0 0 16px; }
+p { color:var(--st-muted); line-height:1.5; }
+dl { margin:24px 0; } dt { font-weight:600; margin-top:20px; } dd { margin:6px 0; overflow-wrap:anywhere; }
+fieldset { border:0; padding:0; margin:0; min-width:0; }
+mat-form-field { display:block; width:100%; margin:18px 0; }
+.actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+@media(max-width:600px) { .account-page { padding:0 16px; } .account-dialog { padding:20px; } }

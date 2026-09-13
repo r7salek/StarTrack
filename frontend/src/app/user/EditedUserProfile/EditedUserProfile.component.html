@@ -1,47 +1,9 @@
-<mat-card appearance="outlined" fxFlexAlign="stretch">
-  <!-- Create Profile  -->
-  <mat-toolbar color="primary" fxLayoutAlign="space-around center">
-    <span>User Profile Update</span>
-  </mat-toolbar>
-  <mat-card-content>
-    <form [formGroup]="service.form" class="normal-form">
-      <mat-grid-list cols="1" rowHeight="400px">
-        <mat-grid-tile>
-          <div class="controles-container">
-            <!--  <input type="hidden" formControlName="$key"> -->
-            <input matInput readonly hidden name="id" value={{idValue}} matInput placeholder="this.currentUser.id">
-            <mat-form-field appearance="outline">
-              <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" matInput required placeholder="First Name" required
-                minlength="3" maxlength="20">
-              <mat-icon matSuffix>account_box</mat-icon>
-              <mat-hint>Must be atleast 3 characters and atmost 20 characters
-              </mat-hint>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" matInput placeholder="Last Name" required minlength="3"
-                maxlength="20">
-              <mat-icon matSuffix>account_box</mat-icon>
-              <mat-hint>Must be atleast 3 characters and atmost 20 characters
-              </mat-hint>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" matInput placeholder="Email" required
-                pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$">
-              <mat-icon matSuffix>email</mat-icon>
-              <mat-hint>Please Enter valid format</mat-hint>
-            </mat-form-field>
-          </div>
-        </mat-grid-tile>
-      </mat-grid-list>
-      <div class="example-button-row">
-        <p> <button mat-raised-button color="primary" matTooltip="Update User Profile" class="example-button"
-            (click)="updateUserProfile(service.form.value)">Update
-            Profile</button><button mat-raised-button color="warn" (click)="onClose()"
-            matTooltip="Cancel Update">Cancel</button> </p>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+<section class="account-dialog"><h2 mat-dialog-title>Edit your profile</h2>
+<p *ngIf="isLoading" role="status">Loading profile…</p>
+<p *ngIf="error" class="st-error" role="alert">{{ error }}</p>
+<form [formGroup]="service.form" stFocusInvalid (ngSubmit)="updateUserProfile(service.form.value)">
+<fieldset [disabled]="isSaving || isLoading">
+<mat-form-field appearance="outline"><mat-label>First name</mat-label><input matInput formControlName="firstName" autocomplete="given-name" required minlength="3" maxlength="20"><mat-hint>3–20 characters</mat-hint><mat-error>Enter a first name of 3–20 characters.</mat-error></mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Last name</mat-label><input matInput formControlName="lastName" autocomplete="family-name" required minlength="3" maxlength="20"><mat-hint>3–20 characters</mat-hint><mat-error>Enter a last name of 3–20 characters.</mat-error></mat-form-field>
+<mat-form-field appearance="outline"><mat-label>Email</mat-label><input matInput type="email" formControlName="email" autocomplete="email" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"><mat-error>Enter a valid email address.</mat-error></mat-form-field>
+</fieldset><div class="actions"><button mat-stroked-button type="button" (click)="onClose()" [disabled]="isSaving">Cancel</button><button mat-flat-button color="primary" type="submit" [disabled]="isSaving || isLoading">{{ isSaving ? 'Saving…' : 'Save profile' }}</button></div></form></section>

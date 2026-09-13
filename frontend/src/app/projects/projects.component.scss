@@ -1,0 +1,35 @@
+.workspace { max-width: 1280px; margin: auto; padding: 40px; }
+.workspace-heading { margin-bottom: 16px; }
+.workspace-heading, .overview-tools, .list-heading, .pagination { display: flex; justify-content: space-between; gap: 24px; align-items: center; }
+h1 { font-size: 34px; font-weight: 500; line-height: 1.2; margin: 0 0 12px; }
+h2 { font-size: 22px; font-weight: 500; margin: 0 0 12px; }
+p { color: var(--st-muted); }
+.overview-tools { align-items: flex-end; margin: 28px 0; }
+.search { flex: 1; max-width: 600px; }
+label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+input { width: 100%; border: 1px solid var(--st-border); border-radius: 5px; min-height: 46px; padding: 10px 14px; color: var(--st-text); background: white; }
+.status-overview { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; padding: 28px; background: var(--st-blue-light); border: 1px solid var(--st-blue); border-radius: 8px; }
+.status-overview p { font-size: 14px; }
+.status-bars { display: grid; gap: 6px; }
+.status-bar { display: grid; grid-template-columns: 100px 1fr 36px; align-items: center; gap: 12px; text-align: left; border: 1px solid transparent; padding: 8px; border-radius: 4px; background: transparent; color: var(--st-ink); cursor: pointer; font-size: 14px; }
+.status-bar:hover, .status-bar.selected { background: white; border-color: var(--st-ink); }
+.bar-track { display: block; height: 12px; background: white; }
+.bar-track > span { display: block; height: 100%; background: var(--st-ink); }
+.status-bar strong { text-align: right; }
+.list-heading { margin: 32px 0 12px; }
+.list-heading p { font-size: 14px; margin: 0; }
+.list-heading h2 { margin: 0; }
+.project-table { overflow-x: auto; border: 1px solid var(--st-border); border-radius: 6px; }
+table { width: 100%; min-width: 750px; border-collapse: collapse; text-align: left; font-size: 14px; }
+thead th { background: var(--st-surface); color: var(--st-text); font-size: 14px; border-bottom: 1px solid var(--st-border); white-space: nowrap; }
+th, td { padding: 14px 16px; vertical-align: middle; border-bottom: 1px solid var(--st-surface); }
+tbody th { background: white; color: var(--st-text); font-size: 14px; font-weight: 500; width: 30%; }
+th button { color: inherit; background: transparent; border: 0; padding: 0; text-align: left; cursor: pointer; }
+.project-name { color: var(--st-ink); text-decoration: underline; text-underline-offset: 3px; }
+tbody tr:hover td, tbody tr:hover th { background: var(--st-blue-light); }
+.row-actions { white-space: nowrap; }
+.pagination { margin-top: 20px; font-size: 14px; }
+.pagination > div { display: flex; gap: 8px; }
+.state-message { padding: 36px; border: 1px solid var(--st-border); border-radius: 8px; margin: 24px 0; max-width: 850px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 800px) { .workspace { padding: 24px 20px; } .workspace-heading, .overview-tools, .list-heading, .pagination { flex-wrap: wrap; gap: 12px; } .status-overview { grid-template-columns: 1fr; gap: 12px; padding: 20px; } .search { min-width: 220px; } }

@@ -1,0 +1,50 @@
+// Scoped to the existing project editors; form bindings and payloads are unchanged.
+.st-project-form {
+  display: block !important; max-width: 1280px; width: 100%; margin: 0 auto;
+  padding: 32px; border: 0; color: var(--st-text);
+  .st-form-heading { margin-bottom: 24px; }
+  .st-form-heading h1 { margin: 0 0 12px; font-size: 32px; line-height: 1.2; font-weight: 500; }
+  .st-form-heading p { color: var(--st-muted); max-width: 760px; line-height: 1.6; }
+  .container, mat-card-content { width: 100%; max-width: none; padding: 0; margin: 0; }
+  mat-card { border: 0; box-shadow: none; }
+  .mat-horizontal-content-container { padding: 24px 0; }
+  .mat-horizontal-stepper-header-container { overflow-x: auto; border-bottom: 1px solid var(--st-border); }
+  .mat-horizontal-stepper-header { box-sizing: border-box; flex-shrink: 0; padding: 16px; height: 64px; }
+  .mat-step-label { min-width: max-content; }
+  .mat-stepper-horizontal-line { min-width: 16px; }
+  .mat-horizontal-stepper-content > br { display: none; }
+  .mat-step-label span { font-size: 14px !important; }
+  .mat-step-header.cdk-keyboard-focused { outline: 2px solid var(--st-ink); outline-offset: -3px; }
+  h1:not(.st-form-heading h1), h2 { font-size: 22px; line-height: 1.4; font-weight: 500; margin: 24px 0 16px; }
+  form.normal-form { width: 100%; margin: 0; }
+  mat-grid-list { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px;
+    height: auto !important; padding: 0 !important; margin: 16px 0 24px; }
+  mat-grid-list[cols="1"] { grid-template-columns: minmax(0, 1fr); }
+  mat-grid-list > div { display: contents; }
+  mat-grid-list:empty { display: none !important; }
+  mat-grid-tile { display: block; position: static !important; min-width: 0;
+    width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; overflow: visible; }
+  .mat-grid-tile-content { display: block; position: static; height: auto; padding: 0; }
+  mat-grid-tile:has(textarea), mat-grid-tile:has(dx-data-grid) { grid-column: 1 / -1; }
+  .controles-container, .example-container { display: block; width: 100%; min-width: 0; margin: 0; padding: 0; }
+  mat-form-field { width: 100%; margin: 0; }
+  mat-label, .custom-label-header { font-size: 15px !important; }
+  input, textarea, mat-select { font-size: 16px; color: var(--st-text); }
+  mat-hint, mat-error { font-size: 12px !important; line-height: 1.4; }
+  textarea { min-height: 96px; resize: vertical; }
+  .example-button-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+  .green-icon { color: #196443; }
+  .grid-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--st-border); }
+  .grid-field, .label-input-container, .label-input-container1 { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .custom-label, .custom-label_aims { font-size: 14px; line-height: 1.6; }
+  .text-container, .text-container_aims { padding: 12px; background: var(--st-surface); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .custom-input, .custom-textarea { width: 100%; padding: 10px; border: 1px solid var(--st-border); border-radius: 4px; }
+  .hover-image { display: none; max-width: 100%; }
+  div:hover > .hover-image, div:focus-within > .hover-image { display: block; }
+  .hover-image img { max-width: 100%; height: auto; }
+  .dx-datagrid { font-size: 14px; }
+  .dx-datagrid-headers { background: var(--st-surface); color: var(--st-text); }
+  .no-wrap-text { overflow-wrap: anywhere; }
+  &.st-project-details mat-toolbar { background: transparent; color: var(--st-ink); height: auto; padding: 20px 0 12px; justify-content: flex-start !important; border-bottom: 1px solid var(--st-border); }
+  @media (max-width: 700px) { padding: 20px 16px; mat-grid-list, .grid-row { grid-template-columns: minmax(0, 1fr); } .st-form-heading h1 { font-size: 28px; } }
+}
